@@ -13,7 +13,13 @@ browser's storage and in saved project files.
 | `src/ProjectBrief.html` | The Project brief app, shown inside the main app |
 | `data/register.json` | The interface component register (47 components, 3,074 interfaces) |
 | `data/statutory.json` | The statutory approvals register (233 approvals) |
+| `VERSION` | Version label and build date (the app's single version constant) |
 | `tools/build.py` | Joins the above into one file, `dist/Engage.html` |
+| `tools/dev_server.js` | Runs the whole site locally, sign-in included |
+| `tests/` | Browser tests of the app and of sign-in |
+| `api/` | Sign-in service (emailed one-time codes, approved users, administrators) |
+| `web/` | Sign-in page, admin page and Azure Static Web App settings |
+| `docs/SETUP_GUIDE.md` | Plain-English guide to running, deploying and administering ENGAGE |
 
 ## Build
 
@@ -23,6 +29,20 @@ python3 tools/build.py
 
 Open `dist/Engage.html` in a browser. Never edit `dist/` by hand; edit `src/` or
 `data/` and rebuild.
+
+## Test
+
+```
+npm ci && npx playwright install chromium
+npm test                      # app tests
+cd api && npm ci && npm test  # sign-in service tests
+```
+
+## Deploy
+
+See [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md). In short: Azure Static Web Apps (Free) hosts
+the sign-in page and the sign-in service; the app is served only after sign-in; a push to
+`main` tests and deploys once the `AZURE_STATIC_WEB_APPS_API_TOKEN` secret is set.
 
 ## Baseline
 
