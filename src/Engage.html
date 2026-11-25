@@ -2914,6 +2914,7 @@ body.focusmode::after{inset:80px 0 0!important;left:var(--isbw)!important}
       <div class="visual"><div class="vtitle">Open flags by accountable owner</div><div id="cfOwner"></div></div>
     </div>
     <div class="visual"><div class="vtitle">Change-management flags<button class="dtbtn" data-act="drill" id="dtBtnF"><svg viewBox="0 0 12 12"><path d="M4.5 2.5 8 6l-3.5 3.5"/></svg><span></span></button></div><div class="tblv" id="cfTbl"></div></div>
+    <div id="briefChanges"></div>
   </section>
   <section class="pg" id="pg-assets"></section>
   <section class="pg" id="pg-prog"></section>
@@ -4143,7 +4144,7 @@ window.addEventListener("resize",()=>closeCompPanel());
   if(S.page==="summary"){ T_("selector pane",renderSlicers); T_("summary",renderSummary) }
   T_("table view",renderTview);
   if(S.page==="overdue"){ T_("selector pane",renderSlicers); T_("overdue table",renderTable) }
-  if(S.page==="flags")T_("flags",renderFlags);
+  if(S.page==="flags")T_("flags",()=>{renderFlags();renderBriefChanges()});
   if(S.page==="assets")T_("project definition",renderAssetsPage);
   if(S.page==="brief")T_("project brief",renderBriefPage);
   if(S.page==="prog")T_("programme",renderProgPage);
@@ -5047,6 +5048,19 @@ function cfItems(){
 const ageD=f=>Math.floor(((f.state==="open"?Date.now():f.rTs)-f.ts)/864e5);
 const CF_COLS=[["state","State"],["asset","Asset"],["lvl","Zone · level"],["id","Interface"],["impact","Change impact class"],["ts","Raised"],["age","Age (days)"],["cur","Current status"],["res","Resolution"],["act",""]];
 const cfCols=()=>isMulti()?[CF_COLS[0],["comp","Component"],...CF_COLS.slice(1)]:CF_COLS;
+/* v133: brief changes made after a Project brief was frozen (BCR records kept by the brief). */
+function briefChangeList(){const b=S.brief;return b&&Array.isArray(b.changes)?b.changes.filter(c=>c&&typeof c==="object"):[]}
+function renderBriefChanges(){
+  const el=document.getElementById("briefChanges");if(!el)return;
+  const L=briefChangeList().slice().reverse();
+  const fmtAt=s=>{const d=new Date(s);return isNaN(d)?esc(s||""):esc(d.toISOString().slice(0,16).replace("T"," "))};
+  el.innerHTML=`<div class="visual" style="margin-top:12px"><div class="shead"><div class="vtitle">Brief changes after freeze <span class="dimz">${L.length}</span></div>${L.length?'<span class="sp"></span><button class="btn sm" id="btnBcrCsv" type="button">Export CSV</button>':""}</div>
+  ${L.length?`<div class="tblwrap"><table class="t"><thead><tr><th>Record</th><th>Recorded (UTC)</th><th>Asset</th><th>Frozen at</th><th>Change</th><th>Items</th><th>Reason</th><th>Authorised by</th></tr></thead><tbody>${L.map(c=>`<tr><td><b>${esc(c.id)}</b></td><td>${fmtAt(c.at)}</td><td>${esc(c.assetName||c.asset)}</td><td>${esc(c.rev)}</td><td>${esc(c.route)}</td><td><ul style="margin:0;padding-left:16px">${(Array.isArray(c.items)?c.items:[]).map(i=>`<li>${esc(i.id)} · ${esc(i.what)}: ${esc(i.from||"–")} → ${esc(i.to||"–")}</li>`).join("")}</ul></td><td>${esc(c.reason)}</td><td>${esc(c.by)}</td></tr>`).join("")}</tbody></table></div>`
+  :`<div class="note2" style="padding:8px 2px">No brief changes after freeze. When a Project brief has been issued and frozen, every change to its reviewed content is recorded here with its reason and authoriser.</div>`}</div>`;
+  const b=document.getElementById("btnBcrCsv");if(b)b.onclick=()=>{const out=[["Record","Recorded (UTC)","Asset","Frozen at","Change","Item","What","From","To","Reason","Authorised by"].map(csvq).join(",")];
+    L.forEach(c=>(Array.isArray(c.items)&&c.items.length?c.items:[{}]).forEach(i=>out.push([c.id,c.at,c.assetName||c.asset,c.rev,c.route,i.id,i.what,i.from,i.to,c.reason,c.by].map(csvq).join(","))));
+    download(`${safe(S.project)}_brief_changes.csv`,"﻿"+out.join("\r\n"),"text/csv")};
+}
 function renderFlags(){
   const all=cfItems(), open=all.filter(f=>f.state==="open"), res=all.filter(f=>f.state==="resolved");
   const xs=selSrc==="flags"&&sel.size;
