@@ -290,6 +290,12 @@ body.portalmode{overflow:hidden!important}
  .rp-measure-sandbox{display:none!important}
 }
 
+
+/* v133 response import preview */
+#dlg .imptbl{max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:6px;margin-top:6px}
+#dlg .imptbl table{font-size:11.5px;min-width:720px}#dlg .imptbl td{vertical-align:top}
+#dlg .imptbl tr.reviewed td{background:#FFF8E6}#dlg .imptbl .impnew{color:#12306B}
+#dlg .bcrlist{margin:6px 0 10px;padding-left:18px;font-size:12px;max-height:30vh;overflow:auto}
 </style>
 <style id="engage-v128-embed">
 .mock,.appbar,.ptabs{display:none!important}body{background:#fff}.ttl{top:0}.subbar{top:48px}main{padding-top:10px}.toast{z-index:9999}
@@ -591,7 +597,39 @@ function paginateRequestRecord(record){
 function printPages(p){const d=document.getElementById("printArea");d.innerHTML=p.join("");const r=d.querySelector(".rp-record");requestAnimationFrame(()=>{paginateRequestRecord(r);requestAnimationFrame(()=>setTimeout(()=>window.print(),60))})}
 function packCsv(k){const H=["Request Pack","Asset ID","Asset","Brief ID","Section","Brief item","What must be defined","Typical input","Provided by","Complete by","Response status","Response / requirement","Source / reference"];return "\ufeff"+H.map(pbqCsv).join(",")+"\r\n"+rqItems(k).map(r=>[k.id,r.assetId,r.asset,r.id,r.sec,r.item,r.q,r.inp,r.by,r.st,r.rec.st==="rc"?"Received":"",r.rec.ans||"",r.rec.src||""].map(pbqCsv).join(",")).join("\r\n")}
 function csvRows(text){const out=[],row=[];let a=row,s="",q=false;for(let n=0;n<text.length;n++){const c=text[n];if(q){if(c==='"'&&text[n+1]==='"'){s+='"';n++}else if(c==='"')q=false;else s+=c}else if(c==='"')q=true;else if(c===','){a.push(s);s=""}else if(c==='\n'){a.push(s.replace(/\r$/, ""));out.push(a);a=[];s=""}else s+=c}a.push(s.replace(/\r$/, ""));if(a.some(x=>x!==""))out.push(a);return out}
-async function importPackCsv(k,file){let text=await file.text();text=text.replace(/^\ufeff/,"");const rr=csvRows(text);if(rr.length<2){toast("The editable response pack has no response rows");return}const H=rr[0].map(x=>x.trim()),ix=n=>H.indexOf(n),need=["Request Pack","Asset ID","Brief ID","Response / requirement"];if(need.some(n=>ix(n)<0)){toast("This is not an ENGAGE editable brief response pack");return}const allowed=new Set(rqItems(k).map(r=>r.key)),updates=[],statusMap={received:"rc",confirmed:"cf",assumed:"as","not applicable":"na"};rr.slice(1).forEach(r=>{if((r[ix("Request Pack")]||"").trim()!==k.id)return;const key=(r[ix("Asset ID")]||"").trim()+"|"+(r[ix("Brief ID")]||"").trim();if(!allowed.has(key))return;const ans=(r[ix("Response / requirement")]||"").trim(),src=ix("Source / reference")>=0?(r[ix("Source / reference")]||"").trim():"",st0=ix("Response status")>=0?(r[ix("Response status")]||"").trim().toLowerCase():"";if(ans||src||statusMap[st0])updates.push({key,ans,src,st:statusMap[st0]||(ans?"rc":"")})});if(!updates.length){toast("No completed responses were found for "+k.id);return}const ok=await dlg(`Import responses – ${k.id}`,`<div class="importsummary"><b>${updates.length}</b> response${updates.length===1?"":"s"} will be brought into the Project brief requirements.</div><p>Rows are matched by request pack, asset ID and brief ID. Responses default to <b>Received</b> unless the editable pack states Confirmed, Assumed or Not applicable.</p>`,[],"Import responses");if(!ok)return;updates.forEach(u=>{const [aid,...rest]=u.key.split("|"),id=rest.join("|"),o=S.rec[aid]&&S.rec[aid][id];if(!o)return;if(u.ans)o.ans=u.ans;if(u.src)o.src=u.src;if(u.st)o.st=u.st;if(u.st==="cf")o.dt=fmt(TODAY)});k.lastImport=TODAY;log(`Responses imported to <b>${k.id}</b> – ${updates.length} item${updates.length===1?"":"s"} updated`);render();toast(`${updates.length} responses imported to ${k.id}`)}
+/* v133 response import: every row is previewed before anything changes. Imported responses
+   arrive as Received (the pack's own status column is shown but not applied), the text is kept
+   exactly as written, and items already reviewed (confirmed, assumed, not applicable) change
+   only when their row is ticked. Changes to a frozen brief also need a brief change record. */
+async function importPackCsv(k,file){let text=await file.text();text=text.replace(/^﻿/,"");const rr=csvRows(text);
+ if(rr.length<2){toast("The editable response pack has no response rows");return}
+ const H=rr[0].map(x=>x.trim()),ix=n=>H.indexOf(n),need=["Request Pack","Asset ID","Brief ID","Response / requirement"];
+ if(need.some(n=>ix(n)<0)){toast("This is not an ENGAGE editable brief response pack");return}
+ const items=new Map(rqItems(k).map(r=>[r.key,r])),cell=(r,n)=>ix(n)>=0?csvUnguard(r[ix(n)]??""):"";
+ const rows=[];let other=0,unknown=0,blank=0;
+ rr.slice(1).forEach(r=>{if(!r.some(c=>String(c).trim()))return;if(cell(r,"Request Pack").trim()!==k.id){other++;return}
+  const key=cell(r,"Asset ID").trim()+"|"+cell(r,"Brief ID").trim(),it=items.get(key);if(!it){unknown++;return}
+  const ans=cell(r,"Response / requirement"),src=cell(r,"Source / reference"),packSt=cell(r,"Response status").trim();
+  if(!ans.trim()&&!src.trim()){blank++;return}
+  const [aid,...rest]=key.split("|"),id=rest.join("|"),o=S.rec[aid]&&S.rec[aid][id];if(!o){unknown++;return}
+  const same=String(o.ans??"")===ans&&(!src.trim()||String(o.src??"")===src);
+  rows.push({key,aid,id,o,it,ans,src,packSt,same,reviewed:isReviewed(o)})});
+ const changes=rows.filter(x=>!x.same);
+ if(!changes.length){toast(rows.length?`All ${rows.length} responses in this file already match ${k.id}`:"No completed responses were found for "+k.id);return}
+ const A=id=>A_(id)||{name:id,id};
+ const sum=`<div class="importsummary"><b>${changes.length}</b> response${changes.length===1?"":"s"} differ from the Project brief${rows.length-changes.length?` · ${rows.length-changes.length} already match`:""}${blank?` · ${blank} blank`:""}${other?` · ${other} for another pack`:""}${unknown?` · ${unknown} not in this pack`:""}.</div>`;
+ const tbl=`<p>Ticked rows are brought in as <b>Received</b>, with the response text exactly as written. Items already reviewed are not ticked; tick one only if its reviewed content should be replaced.</p><div class="imptbl"><table class="t"><tr><th><input type="checkbox" data-impall checked aria-label="Tick all"></th><th>Asset</th><th>Brief ID</th><th>Now</th><th>Current response</th><th>Imported response</th><th>Pack says</th></tr>${changes.map((x,n)=>`<tr${x.reviewed?' class="reviewed"':""}><td><input type="checkbox" data-imp="${n}" ${x.reviewed?"":"checked"}></td><td>${esc(A(x.aid).name)}</td><td><b>${esc(x.id)}</b><div class="ro">${esc(shortTxt(x.it.item||""))}</div></td><td>${esc(STN[x.o.st]||x.o.st)}${x.reviewed?'<div class="ro">reviewed</div>':""}${S.frozen[x.aid]?'<div class="ro">frozen brief</div>':""}</td><td class="impold">${esc(shortTxt(x.o.ans||"–"))}</td><td class="impnew">${esc(shortTxt(x.ans||"–"))}${x.src.trim()?`<div class="ro">Source: ${esc(shortTxt(x.src))}</div>`:""}</td><td>${esc(x.packSt||"–")}</td></tr>`).join("")}</table></div>`;
+ const ok=await dlg(`Import responses – ${k.id}`,sum+tbl,[],"Import ticked responses");
+ const ticked=new Set([...document.querySelectorAll("#db [data-imp]")].filter(c=>c.checked).map(c=>+c.dataset.imp));
+ if(!ok)return;
+ const pick=changes.filter((x,n)=>ticked.has(n));if(!pick.length){toast("Nothing imported – no rows were ticked");return}
+ const groups=[...new Set(pick.map(x=>x.aid))].map(aid=>({a:A_(aid),items:pick.filter(x=>x.aid===aid&&x.reviewed).map(x=>({id:x.id,what:"Imported response",from:x.o.ans,to:x.ans}))}));
+ if(!(await briefChange(groups,"Response import "+k.id)))return;
+ pick.forEach(x=>{x.o.ans=x.ans;if(x.src.trim())x.o.src=x.src;x.o.st="rc";x.o.imp={pack:k.id,at:TODAY}});
+ k.lastImport=TODAY;
+ log(`Responses imported to <b>${esc(k.id)}</b> – ${pick.length} item${pick.length===1?"":"s"} received${changes.length-pick.length?`, ${changes.length-pick.length} left unchanged`:""}`);
+ render();toast(`${pick.length} response${pick.length===1?"":"s"} imported to ${esc(k.id)} as Received`)}
+document.addEventListener("change",e=>{if(e.target&&e.target.matches&&e.target.matches("#db [data-impall]"))document.querySelectorAll("#db [data-imp]").forEach(c=>{c.checked=e.target.checked})});
 
 
 /* ---------- v131 local-only Power Apps response portal layout preview ---------- */

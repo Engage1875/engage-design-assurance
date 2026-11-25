@@ -92,3 +92,32 @@ test('status, applicability and template changes on a frozen brief are all recor
   assert.deepEqual(app.errors, []);
   await app.close();
 });
+
+test('response import previews every row, brings ticked rows in as Received and keeps the text exactly', async () => {
+  const app = await openBrief();
+  const { frame } = app;
+  const { aid, id, id2 } = await frozenAsset(frame);
+  const id3 = await frame.evaluate(([aid]) => rows(A_(aid))[2].id, [aid]);
+  await frame.evaluate(([aid, id, id2, id3]) => {
+    delete S.frozen[aid];
+    S.rec[aid][id2].st = 'rq';
+    S.packs.push({ id: 'RP-009', to: 'Client', assets: [aid], items: [aid + '|' + id, aid + '|' + id2, aid + '|' + id3], n: 3, issued: TODAY, due: TODAY, status: 'Open', issuedBy: 'X', note: '' });
+    render();
+  }, [aid, id, id2, id3]);
+  const q = s => '"' + s.replace(/"/g, '""') + '"';
+  const H = ['Request Pack', 'Asset ID', 'Asset', 'Brief ID', 'Section', 'Brief item', 'What must be defined', 'Typical input', 'Provided by', 'Complete by', 'Response status', 'Response / requirement', 'Source / reference'];
+  const row = (bid, st, ans) => ['RP-009', aid, 'A', bid, '', '', '', '', '', '', st, ans, ''].map(q).join(',');
+  const csv = '﻿' + [H.map(q).join(','), row(id, 'Confirmed', 'Replacing a confirmed item'), row(id2, 'Confirmed', "  Two spaces, \"quotes\"\nand a new line  "), row(id3, '', "'=1+1")].join('\r\n');
+  const p = frame.evaluate(async ([csv]) => { const k = S.packs.find(x => x.id === 'RP-009'); await importPackCsv(k, new File([csv], 'r.csv')); }, [csv]);
+  await frame.waitForSelector('#dlg.on', { state: 'attached' });
+  const preview = await frame.evaluate(() => [...document.querySelectorAll('#db [data-imp]')].map(c => c.checked));
+  assert.deepEqual(preview, [false, true, true], 'the reviewed (confirmed) row is not ticked by default');
+  await frame.evaluate(() => document.getElementById('do').click());
+  await p;
+  const r = await frame.evaluate(([aid, id, id2, id3]) => [S.rec[aid][id], S.rec[aid][id2], S.rec[aid][id3]].map(o => ({ st: o.st, ans: o.ans })), [aid, id, id2, id3]);
+  assert.deepEqual(r[0], { st: 'cf', ans: 'Original answer' }, 'unticked reviewed item unchanged');
+  assert.deepEqual(r[1], { st: 'rc', ans: "  Two spaces, \"quotes\"\nand a new line  " }, 'arrives as Received, text exact');
+  assert.deepEqual(r[2], { st: 'rc', ans: '=1+1' }, 'the CSV formula guard is reversed on import');
+  assert.deepEqual(app.errors, []);
+  await app.close();
+});
