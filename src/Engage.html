@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- ENGAGE v132 CLOSE-OUT: accepted v131 corrected Project Brief auto-height and PDF-pagination baseline; 17 Nov 2026 -->
+<!-- ENGAGE @@VERSION@@ · built @@BUILT@@ from src/ with tools/build.py -->
 
 <html lang="en">
 <head>
@@ -2799,7 +2799,7 @@ body.focusmode::after{inset:80px 0 0!important;left:var(--isbw)!important}
 #pg-crs .crs-hs,#crs-hs{display:none!important}
 </style>
 <link rel="icon" href="data:,">
-<!-- ENGAGE v132 release: Project brief workflow enhancements; see in-tool Release notes on the Project brief page. -->
+<!-- Release notes: see the in-tool Release notes on the Project brief page. -->
 </head>
 <body>
 <script>(function(){try{var p=sessionStorage.getItem("engage.sb");document.body.classList.toggle("isb-col",p?p==="col":innerWidth<1400)}catch(e){}})();</script>
@@ -2823,7 +2823,7 @@ body.focusmode::after{inset:80px 0 0!important;left:var(--isbw)!important}
   <button class="tg" id="isbTg" type="button" aria-controls="isb" aria-expanded="true" data-tip="Collapse sidebar"><svg viewBox="0 0 24 24"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span>Collapse</span></button>
 </aside>
 <div id="isbTip" role="tooltip"></div>
-<footer class="ifoot"><span><b>AECOM ACT · <i>Engage</i></b> · <span id="ifVer">v132</span></span><span class="mid">AECOM Middle East — Buildings + Places</span>
+<footer class="ifoot"><span><b>AECOM ACT · <i>Engage</i></b> · <span id="ifVer">@@VERSION@@</span></span><span class="mid">AECOM Middle East — Buildings + Places</span>
   <span class="r"><span class="author">Built by S Harrison · Nov 2026</span><span>© 2026 AECOM</span></span></footer>
 <div class="appbar">
   <span class="logo"><i style="height:6px"></i><i style="height:11px"></i><i style="height:16px"></i></span>
@@ -2948,7 +2948,8 @@ const REGP=(function(P){ const t=P.t, out={};
    v52: ENGAGE release – GUI per Engage_GUI_mockup_v8 (ACT graphic style, sidebar navigation, header baseline controls, re-baseline dialog, Programme pane order).
    Data unchanged from v50/v51: register fingerprint C76A3F28, approvals fingerprint 8FF73D57. Workbook v02 = Tool Link updated + greens harmonised.
    v46: source workbook – the tool is built from the combined workbook; fingerprints match its Tool Link sheet */
-const SRCB={"tool": "ENGAGE: Design Assurance", "ver": "v132", "file": "Engage_Interface_Tool_v132.html", "wb": "2026_11_09_Combined_Interface_Component_Register_v06.xlsx", "reg": "Rev_66", "apv": "Rev G", "wbv": "v06", "built": "17 Nov 2026", "fpR": "11F16EE6", "fpA": "8FF73D57", "fpP": "D411696C", "nReg": 3074, "nComp": 47, "nApv": 233, "nPre": 47};
+const ENGAGE_BUILD=Object.freeze({ver:"@@VERSION@@",file:"Engage.html",built:"@@BUILT@@"});
+const SRCB={"tool": "ENGAGE: Design Assurance", "ver": "@@VERSION@@", "file": "Engage.html", "wb": "2026_11_09_Combined_Interface_Component_Register_v06.xlsx", "reg": "Rev_66", "apv": "Rev G", "wbv": "v06", "built": "@@BUILT@@", "fpR": "11F16EE6", "fpA": "8FF73D57", "fpP": "D411696C", "nReg": 3074, "nComp": 47, "nApv": 233, "nPre": 47};
 /* ================= v53: asset presets, Villa / Townhouse split, Zone IDs ================= */
 /* Asset presets – built from the workbook sheets Asset Presets and Preset Rules (fingerprint in SRCB.fpP). */
 const PRE={"uses":[{"id":"V","name":"Villa","color":"#4f9d54"},{"id":"W","name":"Townhouse","color":"#b8963a"},{"id":"R","name":"Residential","color":"#7c5cbf"},{"id":"H","name":"Hotel","color":"#d6567a"},{"id":"O","name":"Office","color":"#3f8fd2"},{"id":"T","name":"Retail","color":"#e8913a"},{"id":"P","name":"Parking","color":"#6b7c85"}],"groups":[{"id":"master","name":"Masterplan & Site Planning","note":"Project-level component. Not suggested by any use; tick it on the asset that carries the masterplan and site-planning interfaces, or set a tier for a use in the Preset matrix."},{"id":"use","name":"Use components","note":"One standalone register per primary use. Villa and Townhouse each have their own component, linked to the Villa and Townhouse uses."},{"id":"shared","name":"Shared & amenity components","note":"Suggested by one or more uses; the highest tier across the selected uses applies."},{"id":"mixed","name":"Mixed-use","note":""},{"id":"wide","name":"Whole-asset components","note":"Tier is set per use; the highest tier across the selected uses applies. Each one can be left as whole asset or defined by its own zones and levels."},{"id":"site","name":"Site & external","note":"Optional by default so they can be ticked once on the masterplan or site asset."},{"id":"other","name":"Other components (not in asset presets)","note":"Not suggested by any use; tick manually if needed."}],"comps":[{"n":"Masterplan & Site Planning","g":"master","p":{}},{"n":"Residential Apartment","g":"use","p":{"V":"D","R":"D","W":"D"}},{"n":"Villa","g":"use","p":{"V":"D"}},{"n":"Townhouse","g":"use","p":{"W":"D"}},{"n":"Hotel Guestroom","g":"use","p":{"H":"D"}},{"n":"Office Floor / Workplace","g":"use","p":{"O":"D"}},{"n":"Retail Unit","g":"use","p":{"T":"D"}},{"n":"Parking","g":"use","p":{"V":"O","P":"D","W":"O"}},{"n":"Terrace","g":"shared","p":{"V":"D","R":"D","H":"D","O":"O","W":"D"}},{"n":"Amenities","g":"shared","p":{"V":"D","R":"D","H":"D","O":"O","W":"D"}},{"n":"Back of House","g":"shared","p":{"R":"D","H":"D","O":"D","T":"D"}},{"n":"Commercial Kitchen","g":"shared","p":{"H":"D","O":"O","T":"O"}},{"n":"Laundry","g":"shared","p":{"V":"O","R":"O","H":"D","W":"O"}},{"n":"Pool","g":"shared","p":{"V":"D","R":"D","H":"D","W":"D"}},{"n":"Spa","g":"shared","p":{"R":"D","H":"D"}},{"n":"Loading / Logistics","g":"shared","p":{"R":"D","H":"D","O":"D","T":"D","P":"D"}},{"n":"Atria, Bridges & Links","g":"shared","p":{"R":"O","H":"O","O":"O","T":"O"}},{"n":"Mixed-Use Interfaces","g":"mixed","p":{}},{"n":"Structural Frame & Stability","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Substructure & Basement","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Fire Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Vertical Transportation","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Building Services Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"ICT, Security & Smart Building","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Sustainability & Building Physics","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Acoustics & Vibration Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Accessibility & Inclusive Design Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Façade / Building Envelope","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"O","W":"D"}},{"n":"Roof","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"O","W":"D"}},{"n":"Building Core","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Entrance & Lobby","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"O","W":"O"}},{"n":"Technical Room","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Corridor","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"O","W":"O"}},{"n":"Public Washrooms","g":"wide","p":{"V":"O","R":"O","H":"D","O":"D","T":"D","W":"O"}},{"n":"Signage & Wayfinding","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Interiors & FF&E Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"O","T":"O","W":"D"}},{"n":"Construction Logistics & Temporary Works","g":"wide","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","P":"O","W":"O"}},{"n":"Commissioning, Handover & Operational Readiness","g":"wide","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","P":"O","W":"O"}},{"n":"BIM, Information & Design Management","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Cost, Value & Risk","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Internal Walls","g":"wide","p":{"V":"D","W":"D","R":"D","H":"D","O":"D","T":"D","P":"D"}},{"n":"Site Infrastructure & Utilities","g":"site","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","P":"O","W":"O"}},{"n":"External Works","g":"site","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","W":"O"}},{"n":"Public Realm","g":"site","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","W":"O"}},{"n":"Water Feature","g":"site","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","W":"O"}},{"n":"Marina & Waterfront Structures","g":"other","p":{}},{"n":"Community Buildings","g":"other","p":{}}],"rules":[{"n":"Mixed-Use Interfaces","t":"D","min":2},{"n":"Loading / Logistics","t":"D","min":2}],"occ":["V","W","R","H","O","T"]};
@@ -10483,7 +10484,7 @@ function v113Apply(){
 }
 function v113Toast(text){const t=document.getElementById('v113Toast');if(!t)return;document.getElementById('v113ToastText').textContent=text;t.classList.add('on');clearTimeout(V113.timer);V113.timer=setTimeout(()=>t.classList.remove('on'),6000)}
 function v113Decorate(){
-  try{const ver=document.getElementById('ifVer');if(ver)ver.textContent='v132';if(typeof SRCB!=='undefined'){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}v113EnsureModal();if(S.page!=='matrix'){V113.selected.clear();V113.mode=false;return}v113EnsureBars();v113AddCellControls();v113AddRowControls();const visible=new Set(v113VisibleCells().map(td=>td.dataset.v113Key));[...V113.selected].forEach(k=>{if(!visible.has(k))V113.selected.delete(k)});v113Update()}catch(e){console.error('v113 batch integration',e)}
+  try{const ver=document.getElementById('ifVer');if(ver)ver.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=='undefined'){Object.assign(SRCB,ENGAGE_BUILD)}v113EnsureModal();if(S.page!=='matrix'){V113.selected.clear();V113.mode=false;return}v113EnsureBars();v113AddCellControls();v113AddRowControls();const visible=new Set(v113VisibleCells().map(td=>td.dataset.v113Key));[...V113.selected].forEach(k=>{if(!visible.has(k))V113.selected.delete(k)});v113Update()}catch(e){console.error('v113 batch integration',e)}
 }
 function v113Bind(){
   if(V113.bound)return;V113.bound=true;const matrix=document.getElementById('matrixV');if(matrix){
@@ -10662,8 +10663,8 @@ function v115ZoneTools(){
   [...nav.children].filter(el=>el!==icons&&el.matches('button[data-v92]')).forEach(el=>icons.appendChild(el));
   const exp=nav.querySelector(':scope>.v114-zone-export');
   if(exp)nav.appendChild(exp);
-  const ver=document.getElementById('ifVer');if(ver)ver.textContent='v132';
-  if(typeof SRCB!=='undefined'){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}
+  const ver=document.getElementById('ifVer');if(ver)ver.textContent=ENGAGE_BUILD.ver;
+  if(typeof SRCB!=='undefined'){Object.assign(SRCB,ENGAGE_BUILD)}
 }
 const previousAssets=renderAssetsPage;
 renderAssetsPage=function(){const r=previousAssets.apply(this,arguments);requestAnimationFrame(()=>setTimeout(v115ZoneTools,0));return r};
@@ -10810,7 +10811,7 @@ function bind(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('v116ClearProject')?.classList.contains('on')){e.preventDefault();closeDialog()}},true);
   const saveBtn=document.getElementById('btnSave'),baseSave=saveBtn&&saveBtn.onclick;if(saveBtn)saveBtn.onclick=function(e){const r=baseSave&&baseSave.call(this,e);try{localStorage.removeItem(RECOVERY_KEY)}catch(ignore){}updateToolbar();return r};
 }
-function decorate(){ensureUi();const ver=document.getElementById('ifVer');if(ver)ver.textContent='v132';SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}
+function decorate(){ensureUi();const ver=document.getElementById('ifVer');if(ver)ver.textContent=ENGAGE_BUILD.ver;Object.assign(SRCB,ENGAGE_BUILD)}
 decorate();bind();
 })();
 </script>
@@ -10904,7 +10905,7 @@ function evidenceBanner(){
  const im=interfaceNoEvidence(),au=authorityExceptions(),total=im+au.noev;if(!total&&!au.nodate&&S.page!=='summary')return;
  const b=document.createElement('div');b.className='visual v120-gov'+(!total&&!au.nodate?' ok':'');b.innerHTML=`<div class="vtitle">Governance exceptions · evidence and approval dates</div><div><b>${im}</b> Approved / Closed interface entr${im===1?'y':'ies'} without level-covering evidence · <b>${au.noev}</b> approved authority package${au.noev===1?'':'s'} without evidence · <b>${au.nodate}</b> approved authority package${au.nodate===1?'':'s'} missing submission or approval dates.</div><div class="mut sm">Flexible status paths are retained. These exceptions are flagged for review rather than blocked.</div>`;root.prepend(b)
 }
-function decorate(){try{const v=document.getElementById('ifVer');if(v)v.textContent='v132';if(typeof SRCB!=='undefined'){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}saRepair();evidenceBanner()}catch(e){console.error('v121 decorate',e)}}
+function decorate(){try{const v=document.getElementById('ifVer');if(v)v.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=='undefined'){Object.assign(SRCB,ENGAGE_BUILD)}saRepair();evidenceBanner()}catch(e){console.error('v121 decorate',e)}}
 const rAll=renderAll;renderAll=function(){const r=rAll.apply(this,arguments);setTimeout(decorate,0);return r};
 const rSa=renderSaPage;renderSaPage=function(){const r=rSa.apply(this,arguments);setTimeout(decorate,0);return r};
 const gPage=goPage;goPage=function(){const r=gPage.apply(this,arguments);setTimeout(decorate,0);return r};
@@ -10970,9 +10971,9 @@ decorate();
 </style>
 <script id="v124-stage-js">
 (function(){
- function brand(){const v=document.getElementById('ifVer');if(v)v.textContent='v132';if(typeof SRCB!=='undefined'){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}}
+ function brand(){const v=document.getElementById('ifVer');if(v)v.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=='undefined'){Object.assign(SRCB,ENGAGE_BUILD)}}
  document.addEventListener('click',e=>{const chip=e.target.closest&&e.target.closest('#v124StageChip'),pop=document.getElementById('v124StagePop');if(chip&&pop){e.preventDefault();const on=!pop.classList.contains('on');pop.classList.toggle('on',on);chip.setAttribute('aria-expanded',String(on));return}const go=e.target.closest&&e.target.closest('[data-v124-stage-go]');if(go){e.preventDefault();if(pop)pop.classList.remove('on');goPage('prog');setTimeout(()=>{if(window.PRG&&PRG.goStage)PRG.goStage()},0);return}if(pop&&!e.target.closest('.v124-stagewrap')){pop.classList.remove('on');const c=document.getElementById('v124StageChip');if(c)c.setAttribute('aria-expanded','false')}},true);
- const old=window.renderAll; if(typeof old==='function')window.renderAll=function(){const r=old.apply(this,arguments);setTimeout(brand,0);return r}; const vv=document.getElementById('ifVer');if(vv)new MutationObserver(()=>{if(vv.textContent!=='v132')brand()}).observe(vv,{childList:true,characterData:true,subtree:true}); window.addEventListener('load',()=>setTimeout(brand,50));brand();
+ const old=window.renderAll; if(typeof old==='function')window.renderAll=function(){const r=old.apply(this,arguments);setTimeout(brand,0);return r}; const vv=document.getElementById('ifVer');if(vv)new MutationObserver(()=>{if(vv.textContent!==ENGAGE_BUILD.ver)brand()}).observe(vv,{childList:true,characterData:true,subtree:true}); window.addEventListener('load',()=>setTimeout(brand,50));brand();
 })();
 </script>
 
@@ -11073,7 +11074,7 @@ decorate();
   root.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest('#azbar [data-az="save"]');if(!b||!changed().length)return;e.preventDefault();e.stopImmediatePropagation();saveScopes()},true);
  }
  const oldRender=window.renderAssetsPage||renderAssetsPage;window.renderAssetsPage=function(){const r=oldRender.apply(this,arguments);document.querySelectorAll('[data-v125-ind]').forEach(x=>x.indeterminate=true);return r};
- function brand(){const v=document.getElementById("ifVer");if(v)v.textContent="v132";if(typeof SRCB!=="undefined"){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}}
+ function brand(){const v=document.getElementById("ifVer");if(v)v.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=="undefined"){Object.assign(SRCB,ENGAGE_BUILD)}}
  brand();setTimeout(brand,0);
 })();
 </script>
@@ -11192,7 +11193,7 @@ decorate();
    bar.setPointerCapture(e.pointerId);bar.addEventListener("pointermove",move);bar.addEventListener("pointerup",done);bar.addEventListener("pointercancel",cancel);
   },true);
  }
- function brand(){const v=document.getElementById("ifVer");if(v)v.textContent="v132";if(typeof SRCB!=="undefined"){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}}
+ function brand(){const v=document.getElementById("ifVer");if(v)v.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=="undefined"){Object.assign(SRCB,ENGAGE_BUILD)}}
  brand();setTimeout(()=>{brand();try{if(typeof AZ!=="undefined"&&AZ.d&&typeof renderAssetsPage==="function")renderAssetsPage()}catch(e){}},0);
 })();
 </script>
@@ -11259,8 +11260,8 @@ body.brief-focusmode::after{content:"";position:fixed;top:80px;right:0;bottom:0;
  });
  document.addEventListener("click",function(e){const p=e.target.closest&&e.target.closest(".ptab[data-p]");if(p&&p.dataset.p!=="brief")setBriefHostFocus(false)},true);
  const sb=document.getElementById("btnSave"),oldSave=sb&&sb.onclick;if(sb&&oldSave)sb.onclick=function(){flush();save();return oldSave.apply(this,arguments)};
- const vv=document.getElementById("ifVer");if(vv){vv.textContent="v132";vv.title="v132: Power Apps response layout preview – open Project brief for release notes"}
- if(typeof SRCB!=="undefined"){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}
+ const vv=document.getElementById("ifVer");if(vv){vv.textContent=ENGAGE_BUILD.ver;vv.title=ENGAGE_BUILD.ver+" · built "+ENGAGE_BUILD.built+" – open Project brief for release notes"}
+ if(typeof SRCB!=="undefined"){Object.assign(SRCB,ENGAGE_BUILD)}
  window.ENGAGE_V131_CORRECTION={build:"17 Nov 2026 · Project Brief auto-height correction",pagination:"height-aware",normalModeScroll:"dynamic-iframe-height-outer-only",focusModeScroll:"single-active-pane"};
  if(S.page==="brief")window.renderBriefPage();
 })();
@@ -11269,4 +11270,4 @@ body.brief-focusmode::after{content:"";position:fixed;top:80px;right:0;bottom:0;
 </body>
 </html>
 
-<!-- ENGAGE v132 corrected Project Brief auto-height physical build · 17 Nov 2026 · baseline Engage_Interface_Tool_v132_Corrected_2026-11-17.html -->
+<!-- ENGAGE @@VERSION@@ · built @@BUILT@@ -->
