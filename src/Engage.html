@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="@@CSP@@">
 <title>ENGAGE: Design Assurance</title>
 
 <style>
@@ -3330,7 +3331,7 @@ window.addEventListener("storage",e=>{
 });
 
 /* ================= helpers ================= */
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const aq=s=>String(s).replace(/["\\]/g,"\\$&");
 const sIdx=s=>STAGES.indexOf(s);
 const zonesOf=(a,c)=>c===RA?(a.zones||[]):((a.cz&&a.cz[c])||[]);
@@ -4528,6 +4529,8 @@ const PD=()=>[S.project,S.proj.number,S.proj.client,S.proj.location];
 /* v133 CSV rule, used by every CSV export: text that a spreadsheet would run as a formula
    (starting = + - @, tab or carriage return) is prefixed with an apostrophe. Plain numbers are left alone. */
 function csvGuard(v){if(v==null)return "";if(typeof v==="number"||typeof v==="boolean")return String(v);const s=String(v);return /^[=+\-@\t\r]/.test(s)&&!/^[+-]?(\d+([.,]\d+)*|\d*\.\d+)(e[+-]?\d+)?%?$/i.test(s)&&!/^[-\s]+$/.test(s)?"'"+s:s}
+/* v133: links from project files are followed only when they are plain http(s) addresses. */
+function webUrl(u){const s=String(u??"").trim();return /^https?:\/\/[^\s<>"']+$/i.test(s)?s:""}
 const csvq=v=>`"${csvGuard(v).replace(/"/g,'""')}"`;
 function exportCsv(){
   if(S.page==="overdue")return exportTable();
@@ -5002,7 +5005,7 @@ function renderDetail(){
       <div class="tiles" style="margin-top:8px">${STATUS_ORDER.map(c=>`<button class="tile" data-act="dtset" data-a="${ai}" data-v="${c}" ${na?"disabled":""}>${stIcon(c)}${ST[c].n}…</button>`).join("")}${anyLock?`<button class="tile" data-act="dtunlock" data-a="${ai}">${ICON.unlock}Unlock…</button>`:""}</div>
       <div class="evh">${ICON.link.replace('class="ico"','class="ico" style="width:14px;height:14px"')}Evidence (${evs.length})<span class="sp"></span><button class="btn sm" data-act="evadd" data-a="${ai}">+ Add evidence</button></div>
       ${evs.length?`<table class="evt"><tr><th>Title</th><th>Document no. · Rev</th><th>Suitability</th><th>Type</th><th>Applies to</th><th>Added</th><th></th></tr>${evs.map(e=>`<tr>
-        <td>${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.title)}</a>`:esc(e.title)}</td><td>${esc(e.docNo||"–")}${e.rev?" · "+esc(e.rev):""}</td>
+        <td>${webUrl(e.url)?`<a href="${esc(webUrl(e.url))}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a>`:esc(e.title)}</td><td>${esc(e.docNo||"–")}${e.rev?" · "+esc(e.rev):""}</td>
         <td><span class="sbadge ${e.suit.toLowerCase()}" title="${esc(SUIT_N[e.suit])}">${e.suit}</span></td><td>${esc(e.type)}</td>
         <td>${e.lv==="*"?"All levels":e.lv.map(k=>esc(colByKey(a,k)?colByKey(a,k).l:k)).join(", ")}</td><td>${esc(e.by||"–")}<br><span style="color:var(--muted)">${fmtDT(e.at)}</span></td>
         <td style="white-space:nowrap"><button class="lnk" data-act="evedit" data-a="${ai}" data-v="${e.eid}">Edit</button> · <button class="lnk" data-act="evdel" data-a="${ai}" data-v="${e.eid}">Remove</button></td></tr>`).join("")}</table>`:`<div style="color:var(--muted)">No evidence linked yet.</div>`}
@@ -5825,7 +5828,7 @@ function docCard(d){
   const f=d.file, row=(l,v)=>v?`<div>${l}</div><div>${v}</div>`:"";
   return `<div class="visual doccard"><div class="vtitle">${esc(d.title)} ${dsb(d.status)}</div><div class="dgrid2">
     ${row("Source type",esc(d.type))}${row("Issuer / authority",esc(d.issuer||""))}${row("Reference",esc(d.ref||""))}${row("Version / edition",esc(d.version||""))}${row("Issue date",esc(fmtD(d.date)))}${row("Applies to",esc(d.scope||""))}
-    ${row("Controlled copy",d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.url.length>80?d.url.slice(0,78)+"…":d.url)}</a>`:"")}
+    ${row("Controlled copy",webUrl(d.url)?`<a href="${esc(webUrl(d.url))}" target="_blank" rel="noopener noreferrer">${esc(d.url.length>80?d.url.slice(0,78)+"…":d.url)}</a>`:"")}
     ${row("File recorded",f?`${esc(f.name)} · ${fmtBytes(f.size)}${f.sha?`<div class="mono">SHA-256 ${f.sha.slice(0,16)}…${f.sha.slice(-6)}</div>`:""}`:"")}
     ${row("Licence / usage",d.licence?`Licensed or restricted${d.licNote?" – "+esc(d.licNote):""}`:"")}${row("Notes",esc(d.notes||""))}</div>
     <div class="dtbar"><button class="btn sm" data-rq="dedit" data-id="${d.id}">Edit document</button><button class="btn sm danger" data-rq="ddel" data-id="${d.id}">Remove document</button></div></div>`;
@@ -6753,7 +6756,7 @@ const sName=s=>stageAlias(s)||SHORT[s]||s;
 const PAL=["#2F6FEB","#7B4FD8","#EA6119","#43A874","#E0A526","#24458A","#E3008C","#00B7C3"];
 const DESIGN="#2F6FEB", APPROVAL="#7B4FD8";
 const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const D0=(y,m,d)=>Math.floor(Date.UTC(y,m-1,d)/864e5);
 const dt=n=>new Date(n*864e5), dow=n=>(n+4)%7;
 const fmt=n=>{const d=dt(n);return `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${String(d.getUTCFullYear()).slice(2)}`};
@@ -7065,9 +7068,9 @@ function rbModal(){
   const dv=n=>n?`<b style="color:${n>0?"#A8352E":"#1F6B4A"}">${n>0?"+":""}${n} d</b>`:`<span class="dimz">–</span>`;
   const rows=mv.slice(0,CAP).map(m=>{ const t=(BYID[m.id]&&BYID[m.id].text)||"";
     return `<tr><td class="mi"><b>${esc(m.id)}</b><span>${esc(t.length>74?t.slice(0,73)+"…":t)}</span></td><td>${esc(m.asset)} · ${esc(m.c)} · ${m.s}</td><td class="n">${m.pa}% → <b>${m.pb}%</b></td><td class="n">${fmt(m.da)} → <b>${fmt(m.db)}</b></td><td class="n">${dv(m.db-m.da)}</td></tr>` }).join("");
-  return `<div class="modal on rbmodal" data-pa="rbbg" role="dialog" aria-modal="true" aria-label="Re-baseline ${rev.rev} to ${next}"><div class="mbox">
-    <h3>${ICON_OPEN} Re-baseline: ${rev.rev} → ${next}</h3>
-    <p class="hint">Review what has changed since ${rev.rev}. Accepting records every change in the re-baseline log with its old and new dates, publishes the new dates to the interface register and locks the baseline as ${next}.</p>
+  return `<div class="modal on rbmodal" data-pa="rbbg" role="dialog" aria-modal="true" aria-label="Re-baseline ${esc(rev.rev)} to ${next}"><div class="mbox">
+    <h3>${ICON_OPEN} Re-baseline: ${esc(rev.rev)} → ${next}</h3>
+    <p class="hint">Review what has changed since ${esc(rev.rev)}. Accepting records every change in the re-baseline log with its old and new dates, publishes the new dates to the interface register and locks the baseline as ${next}.</p>
     <div class="vtitle rbh">Changes · ${CHG.length}</div>
     <ul class="rbchg">${CHG.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
     ${nm?`<div class="vtitle rbh">Entry checkpoint changes · ${nm} interface${nm===1?"":"s"} <span class="rbsub">approve-by date at the old and new checkpoint</span></div>
@@ -7084,21 +7087,21 @@ function rbModal(){
 function lockNote(what){
   const rev=lastRev(), alloc=what==="allocations";
   if(BL.draft)return `<div class="banner warn"><b>No baseline yet.</b> ${alloc?"Allocations":"Complete by"} can be changed freely until the initial baseline B0 is set. <button class="btn sm" data-pa="gobase" style="margin-left:8px">Set baseline B0…</button></div>`;
-  if(BL.locked)return `<div class="banner info"><b>Baseline ${rev.rev} is locked</b> – ${alloc?"allocations are":"Complete by is"} read-only${alloc?"":" and the register dates equal the working dates"}. Use <b>Unlock to edit</b> in the header above to make changes.</div>`;
+  if(BL.locked)return `<div class="banner info"><b>Baseline ${esc(rev.rev)} is locked</b> – ${alloc?"allocations are":"Complete by is"} read-only${alloc?"":" and the register dates equal the working dates"}. Use <b>Unlock to edit</b> in the header above to make changes.</div>`;
   const n=CHG.length, mv=alloc?allocMoves().length:0;
-  return `<div class="banner warn"><b>Baseline unlocked – ${n} change${n===1?"":"s"} from ${rev.rev}.</b> ${alloc?(mv?`${mv} interface${mv===1?"":"s"} moved to a different checkpoint. `:"No checkpoint moves yet. "):""}${alloc?"Allocation changes":"A change to Complete by"} count${alloc?"":"s"} as a change from ${rev.rev}${alloc?"":"; accepting publishes the new dates to the register"} – accept them here, without leaving this page.
+  return `<div class="banner warn"><b>Baseline unlocked – ${n} change${n===1?"":"s"} from ${esc(rev.rev)}.</b> ${alloc?(mv?`${mv} interface${mv===1?"":"s"} moved to a different checkpoint. `:"No checkpoint moves yet. "):""}${alloc?"Allocation changes":"A change to Complete by"} count${alloc?"":"s"} as a change from ${esc(rev.rev)}${alloc?"":"; accepting publishes the new dates to the register"} – accept them here, without leaving this page.
     <div class="acts"><button class="btn sm pri" data-pa="rbopen" ${n?"":"disabled"}>Review &amp; accept changes…</button></div></div>`;
 }
 function toolbar(){
   const sd=P.status, L=BL.locked, rev=lastRev();
   const chip=BL.draft
     ?`<button class="chipbtn warn" data-pa="gobase" title="No baseline has been set yet – set the initial baseline when the programme is agreed">${ICON_OPEN} Draft · no baseline yet</button>`
-    :`<button class="chipbtn ${L?"":"warn"}" data-pa="gobase" title="${L?"Programme and allocations are locked to this baseline":"Baseline unlocked – the programme is being edited"}">${L?ICON_LOCK:ICON_OPEN} Baseline ${rev.rev} · ${L?"locked":`unlocked · ${CHG.length} change${CHG.length===1?"":"s"}`}</button>`;
+    :`<button class="chipbtn ${L?"":"warn"}" data-pa="gobase" title="${L?"Programme and allocations are locked to this baseline":"Baseline unlocked – the programme is being edited"}">${L?ICON_LOCK:ICON_OPEN} Baseline ${esc(rev.rev)} · ${L?"locked":`unlocked · ${CHG.length} change${CHG.length===1?"":"s"}`}</button>`;
   const blact=BL.draft?"":(L
     ?`<button class="btn sm pri" data-pa="alunlock" title="Unlock the baseline to edit the programme, calendar, allocations and Complete by">${ICON_OPEN} Unlock to edit</button>`
     :(CHG.length
-      ?`<button class="btn sm pri" data-pa="rbopen" title="Review the ${CHG.length} change${CHG.length===1?"":"s"} and accept them as the next baseline">Re-baseline…</button><button class="btn sm" data-pa="rbdiscard" title="Discard the changes and return to ${rev.rev}">Discard</button>`
-      :`<button class="btn sm" data-pa="bltog" title="No changes made – lock ${rev.rev} again">${ICON_LOCK} Lock</button>`));
+      ?`<button class="btn sm pri" data-pa="rbopen" title="Review the ${CHG.length} change${CHG.length===1?"":"s"} and accept them as the next baseline">Re-baseline…</button><button class="btn sm" data-pa="rbdiscard" title="Discard the changes and return to ${esc(rev.rev)}">Discard</button>`
+      :`<button class="btn sm" data-pa="bltog" title="No changes made – lock ${esc(rev.rev)} again">${ICON_LOCK} Lock</button>`));
   return `<span class="blgrp">${chip}${blact}</span><div class="sdctl"><label for="ppsd">Status date</label><input type="date" id="ppsd" value="${iso(sd)}"><button class="btn sm" data-pa="sdw" data-v="-1" title="Back one week">◂ 1 wk</button><button class="btn sm" data-pa="sdw" data-v="1" title="Forward one week">1 wk ▸</button><button class="btn sm" data-pa="sdt">Today</button></div>`
     +(sd>TODAY?`<span class="sdnote" title="Actual progress is only known up to today">Future date – actual progress held at today</span>`:sd<TODAY?`<span class="sdnote" title="Plan and actual are shown as they stood on this date">Looking back to ${fmt(sd)}</span>`:"");
 }
@@ -7138,7 +7141,7 @@ const plotGroups=()=>{ const m=new Map(); ASSETS.forEach((A,i)=>{const id=(typeo
 function nextGate(i){const st=curName(i),x=SCH[i].stages[st];return x?`${st} · ${fmt(x.gate)}`:"–"}
 function stageTag(i){const q=stageCtl(ASSETS[i].id);return q.hold?`<span class="v124-tag hold">${q.hold.plot?"Plot hold":"On hold"} · ${holdWeeks(q.hold)} full wk${holdWeeks(q.hold)===1?"":"s"}</span>`:q.holds.length?`<span class="note2">${q.holds.reduce((n,h)=>n+(h.weeks||0),0)} wk from past holds</span>`:`<span class="note2">–</span>`}
 function tabStage(){
- const rev=lastRev(), disabled=BL.draft?"disabled":""; let h=`<div class="visual v124-settings"><div class="shead"><div class="vtitle">Project settings</div><span class="sp"></span></div><div class="v124-settinggrid"><div><span>Stage advance rule</span><b>${PR.stageRule==="gate"?"Gate sign-off":"Programme dates (default)"}</b></div><button class="btn sm" data-pa="strule">Change…</button><div><span>Programme baseline</span><b>${BL.draft?"Draft · no baseline":`${rev.rev} · ${BL.locked?"locked":"unlocked"}`}</b></div></div></div>`;
+ const rev=lastRev(), disabled=BL.draft?"disabled":""; let h=`<div class="visual v124-settings"><div class="shead"><div class="vtitle">Project settings</div><span class="sp"></span></div><div class="v124-settinggrid"><div><span>Stage advance rule</span><b>${PR.stageRule==="gate"?"Gate sign-off":"Programme dates (default)"}</b></div><button class="btn sm" data-pa="strule">Change…</button><div><span>Programme baseline</span><b>${BL.draft?"Draft · no baseline":`${esc(rev.rev)} · ${BL.locked?"locked":"unlocked"}`}</b></div></div></div>`;
  const held=AIDX.filter(isHeld); if(held.length)h+=`<div class="banner warn"><b>${held.length} asset${held.length===1?" is":"s are"} on hold.</b> ${held.map(i=>`${esc(ASSETS[i].name)} since ${fmt(stageCtl(ASSETS[i].id).hold.from)} · ${holdWeeks(stageCtl(ASSETS[i].id).hold)} full wk`).join("; ")}. Stage and due / overdue tracking are frozen. The programme gains one week of push after each further full week.</div>`;
  h+=`<div class="visual"><div class="shead"><div class="vtitle">Stage status</div><span class="note2">The only place the current stage can be changed.</span><span class="sp"></span>${BL.draft?`<span class="chipx win">Set baseline B0 before placing holds</span>`:""}</div><div class="v124-stscroll"><table class="v124-st"><thead><tr><th>Asset</th><th>${PR.stageRule==="gate"?"Gate-approved stage":"Programme stage"}</th><th>Manual change</th><th>Effective stage</th><th>Next gate</th><th>Hold</th><th>Actions</th></tr></thead><tbody>`;
  plotGroups().forEach(pl=>{const ph=pl.ix.filter(i=>{const q=stageCtl(ASSETS[i].id);return q.hold&&q.hold.plot===pl.id}), free=pl.ix.filter(i=>!isHeld(i)); h+=`<tr class="v124-plot"><td colspan="5"><b>${esc(pl.name)}</b> <span>${pl.ix.length} asset${pl.ix.length===1?"":"s"}${ph.length?` · ${ph.length} on plot hold`:""}</span></td><td>${ph.length?`<span class="v124-tag hold">Plot hold · ${holdWeeks(stageCtl(ASSETS[ph[0]].id).hold)} wk</span>`:""}</td><td><div class="acts">${free.length?`<button class="btn sm hold" ${disabled} data-pa="stphold" data-p="${esc(pl.id)}">Place plot on hold…</button>`:""}${ph.length?`<button class="btn sm go" data-pa="stprel" data-p="${esc(pl.id)}">Release plot hold…</button>`:""}</div></td></tr>`;
@@ -7201,7 +7204,7 @@ function kpis(){
   const KC=[]; kpis.last=KC; const card=(v,l,s,c)=>{ KC.push([v,l,s,c]); return `<div class="visual card"><div class="v${String(v).replace(/<[^>]*>/g,"").length>9?" vt":""}" style="color:${c||"var(--ink)"}">${v}</div><div class="l">${l}</div><div class="s">${s||"&nbsp;"}</div></div>` };
   const stg=as.map(i=>`<span class="nw">${ASH(i)} ${curName(i)}</span>`).join(" · ");
   return `<div class="grid-c pkpis">`+
-   card(`<span class="nw">${fmt(st0)}</span> – <span class="nw">${fmt(en0)}</span>`,"Programme",`${as.map(i=>`${ASH(i)} ${wks(i)} wks`).join(" · ")}${BL.locked?` · ${lastRev().rev} locked`:endVar?` · vs ${lastRev().rev} ${endVar>0?"+":""}${endVar} d`:""}`)+
+   card(`<span class="nw">${fmt(st0)}</span> – <span class="nw">${fmt(en0)}</span>`,"Programme",`${as.map(i=>`${ASH(i)} ${wks(i)} wks`).join(" · ")}${BL.locked?` · ${esc(lastRev().rev)} locked`:endVar?` · vs ${esc(lastRev().rev)} ${endVar>0?"+":""}${endVar} d`:""}`)+
    card(stg,"Current stage (per asset)","derived from programme dates")+
    card(g.done,"Actual complete",`${pc(g.done,g.tot)}% of ${g.tot} entries · plan ${pc(g.pdue,g.tot)}%`,"#1F6B4A")+
    card(g.od,"Overdue",`Complete By before current stage`,g.od?"var(--bad)":"")+
@@ -7214,16 +7217,16 @@ function baselineCard(){
   if(BL.draft)return draftCard();
   const L=BL.locked, rev=lastRev(), n=BL.revs.length, next="B"+n;
   const tgl=`<button class="bsw ${L?"ison":"iswarn"}" role="switch" aria-checked="${L}" data-pa="bltog" title="${L?"Unlock to edit the programme, calendar and allocations":"Lock the baseline (re-baseline or discard changes first if there are any)"}"><span class="trk"></span>${L?"Baseline locked":"Baseline unlocked – editing"}</button>`;
-  let h=`<div class="visual" id="ppblcard"><div class="shead"><div class="vtitle">Baseline</div><span class="chipx blue">${rev.rev}</span><span class="chipx ${L?"ok":"win"}">${L?"Locked":"Unlocked"}</span><span class="sp"></span>${tgl}</div>
-   <div class="note2" style="margin:0 0 8px">Current baseline <b>${rev.rev}</b> set ${fmt(rev.ts)}${rev.by?" by "+esc(rev.by):""} · ${esc(rev.cat)}. ${L?"Programme dates, durations, checkpoint sets, the working calendar and its exceptions, each interface's Complete by and the allocations are read-only. Actual progress and the status date are not part of the baseline. What-if programmes are separate copies and never change it.":"Tracking continues against the edited programme. Differences from the baseline show as grey bars on the timeline and as variance columns."}</div>`;
+  let h=`<div class="visual" id="ppblcard"><div class="shead"><div class="vtitle">Baseline</div><span class="chipx blue">${esc(rev.rev)}</span><span class="chipx ${L?"ok":"win"}">${L?"Locked":"Unlocked"}</span><span class="sp"></span>${tgl}</div>
+   <div class="note2" style="margin:0 0 8px">Current baseline <b>${esc(rev.rev)}</b> set ${fmt(rev.ts)}${rev.by?" by "+esc(rev.by):""} · ${esc(rev.cat)}. ${L?"Programme dates, durations, checkpoint sets, the working calendar and its exceptions, each interface's Complete by and the allocations are read-only. Actual progress and the status date are not part of the baseline. What-if programmes are separate copies and never change it.":"Tracking continues against the edited programme. Differences from the baseline show as grey bars on the timeline and as variance columns."}</div>`;
   if(!L){
-    h+=`<div class="banner warn"><b>Editing – ${CHG.length} change${CHG.length===1?"":"s"} from ${rev.rev}.</b>${CHG.length?`<ul>${CHG.slice(0,8).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>${CHG.length>8?`<div>+ ${CHG.length-8} more</div>`:""}`:` No changes yet – edit durations, checkpoints, dates, the calendar exceptions, an interface's Complete by or allocations.`}
-     <div class="acts"><button class="btn sm pri" data-pa="rbopen" ${CHG.length?"":"disabled"}>Re-baseline…</button><button class="btn sm" data-pa="rbdiscard" ${CHG.length?"":"disabled"}>Discard changes</button>${CHG.length?`<button class="btn sm" data-pa="cmpwip" title="Compare the working programme with the baseline">Compare with ${rev.rev}</button>`:`<button class="btn sm" data-pa="bltog">Lock without changes</button>`}<label class="chkl2" style="margin-left:8px"><input type="checkbox" data-pa="tbase" ${V.tr.base?"checked":""}> Show baseline in the tracking curve</label></div></div>`;
+    h+=`<div class="banner warn"><b>Editing – ${CHG.length} change${CHG.length===1?"":"s"} from ${esc(rev.rev)}.</b>${CHG.length?`<ul>${CHG.slice(0,8).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>${CHG.length>8?`<div>+ ${CHG.length-8} more</div>`:""}`:` No changes yet – edit durations, checkpoints, dates, the calendar exceptions, an interface's Complete by or allocations.`}
+     <div class="acts"><button class="btn sm pri" data-pa="rbopen" ${CHG.length?"":"disabled"}>Re-baseline…</button><button class="btn sm" data-pa="rbdiscard" ${CHG.length?"":"disabled"}>Discard changes</button>${CHG.length?`<button class="btn sm" data-pa="cmpwip" title="Compare the working programme with the baseline">Compare with ${esc(rev.rev)}</button>`:`<button class="btn sm" data-pa="bltog">Lock without changes</button>`}<label class="chkl2" style="margin-left:8px"><input type="checkbox" data-pa="tbase" ${V.tr.base?"checked":""}> Show baseline in the tracking curve</label></div></div>`;
   }
   const rows=BL.revs.slice().reverse().map(r=>{ const cur=r===rev, open=!!V.rb.log[r.rev];
     const ends=ASSETS.map((A,i)=>{ const e=r.ends[A.id]; if(e==null)return ""; const pe=r.prevEnds?r.prevEnds[A.id]:null, dv=pe!=null?e-pe:0; return `${esc(A.name)} ${fmt(e)}${dv?` <span style="color:${dv>0?"#A8352E":"#1F6B4A"};font-weight:600">${dv>0?"+":""}${dv} d</span>`:""}`}).filter(Boolean).join(" · ");
-    return `<tr class="lrv ${cur?"cur":""}" data-pa="logo" data-k="${r.rev}" tabindex="0" aria-expanded="${open}"><td><button class="chev ${open?"":"plus"}" tabindex="-1" aria-hidden="true"></button><b>${r.rev}</b>${cur?` <span class="chipx blue">current</span>`:""}</td><td>${fmt(r.ts)}</td><td>${esc(r.by||"–")}</td><td>${esc(r.cat)}</td><td style="max-width:430px">${esc(r.reason)}</td><td>${ends}</td><td>${r.changes.length}</td><td><button class="btn sm" data-pa="cmprev" data-k="${r.rev}" title="Compare ${r.rev} with the previous revision">Compare</button></td></tr>`+
-      (open?`<tr><td class="ldet" colspan="8"><b>${r.rev} – ${r.changes.length} change${r.changes.length===1?"":"s"}</b>${r.prevEnds?" from "+BL.revs[BL.revs.indexOf(r)-1].rev:""}<ul>${r.changes.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></td></tr>`:"") }).join("");
+    return `<tr class="lrv ${cur?"cur":""}" data-pa="logo" data-k="${esc(r.rev)}" tabindex="0" aria-expanded="${open}"><td><button class="chev ${open?"":"plus"}" tabindex="-1" aria-hidden="true"></button><b>${esc(r.rev)}</b>${cur?` <span class="chipx blue">current</span>`:""}</td><td>${fmt(r.ts)}</td><td>${esc(r.by||"–")}</td><td>${esc(r.cat)}</td><td style="max-width:430px">${esc(r.reason)}</td><td>${ends}</td><td>${r.changes.length}</td><td><button class="btn sm" data-pa="cmprev" data-k="${esc(r.rev)}" title="Compare ${esc(r.rev)} with the previous revision">Compare</button></td></tr>`+
+      (open?`<tr><td class="ldet" colspan="8"><b>${esc(r.rev)} – ${r.changes.length} change${r.changes.length===1?"":"s"}</b>${r.prevEnds?" from "+BL.revs[BL.revs.indexOf(r)-1].rev:""}<ul>${r.changes.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></td></tr>`:"") }).join("");
   h+=`<div class="vtitle" style="font-size:13px;margin:6px 0 4px">Re-baseline log</div><table class="log"><thead><tr><th>Rev</th><th>Set</th><th>By</th><th>Category</th><th>Reason</th><th>Programme end (Δ vs previous)</th><th>Changes</th><th></th></tr></thead><tbody>${rows}</tbody></table>
     <div class="note2">Each re-baseline stores the full programme, calendar, Complete by and allocation, so any earlier revision can be reviewed. Click a row to see what changed, or use <b>5 What-if</b> to compare any two revisions.</div></div>`;
   return h;
@@ -7251,12 +7254,12 @@ function cmpTimeline(A,B){
   const H=30+idx.length*(24+PSTG().length*rh+8)+4; let o=`<svg class="gantt" viewBox="0 0 ${W} ${H}" role="img" aria-label="Revision timeline overlay"><defs><pattern id="pphat3" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#D3C7F0"/><rect width="2.6" height="6" fill="${APPROVAL}"/></pattern></defs>`;
   let d=dt(mn); d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1)); while(Math.floor(d.getTime()/864e5)<=mx){ const n=Math.floor(d.getTime()/864e5), x=sx(n); o+=`<line x1="${x}" y1="22" x2="${x}" y2="${H-2}" stroke="${d.getUTCMonth()===0?"#A9B6B8":"#EDF1F1"}"/><text x="${x+4}" y="16" font-size="11" fill="#5C7075">${MON[d.getUTCMonth()]}${d.getUTCMonth()===0?" "+String(d.getUTCFullYear()).slice(2):""}</text>`; d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1)) }
   let y=30;
-  idx.forEach(i=>{ o+=`<rect x="0" y="${y}" width="${W}" height="24" fill="#F3F6F6"/><rect x="0" y="${y}" width="4" height="24" fill="${ACOL[i]}"/><text x="14" y="${y+16}" font-size="13" font-weight="600">${esc(ASSETS[i].name)}</text><text x="${X0}" y="${y+16}" font-size="11" fill="#5C7075">${A.label} ends ${fmt(A.S[i].end)} · ${B.label} ends ${fmt(B.S[i].end)} · <tspan font-weight="600" fill="${B.S[i].end>A.S[i].end?"#A8352E":B.S[i].end<A.S[i].end?"#1F6B4A":"#5C7075"}">${B.S[i].end===A.S[i].end?"no change":sgn(B.S[i].end-A.S[i].end)+" d"}</tspan></text>`; y+=24;
+  idx.forEach(i=>{ o+=`<rect x="0" y="${y}" width="${W}" height="24" fill="#F3F6F6"/><rect x="0" y="${y}" width="4" height="24" fill="${ACOL[i]}"/><text x="14" y="${y+16}" font-size="13" font-weight="600">${esc(ASSETS[i].name)}</text><text x="${X0}" y="${y+16}" font-size="11" fill="#5C7075">${esc(A.label)} ends ${fmt(A.S[i].end)} · ${esc(B.label)} ends ${fmt(B.S[i].end)} · <tspan font-weight="600" fill="${B.S[i].end>A.S[i].end?"#A8352E":B.S[i].end<A.S[i].end?"#1F6B4A":"#5C7075"}">${B.S[i].end===A.S[i].end?"no change":sgn(B.S[i].end-A.S[i].end)+" d"}</tspan></text>`; y+=24;
     PSTG().forEach(s=>{ const a=A.S[i].stages[s], b=B.S[i].stages[s], dv=b.gate-a.gate;
       o+=`<text x="14" y="${y+18}" font-size="11.5">${s}<tspan fill="#5C7075" font-size="10.5"> ${esc(D.alias[s])}</tspan></text>`;
-      o+=`<path d="${pillP(sx(a.start),y+2,Math.max(2,sx(a.gate+1)-sx(a.start)),10,true,true)}" fill="#C3CED0"><title>${A.label} ${s}: ${fmt(a.start)} → ${fmt(a.gate)}</title></path>`;
-      o+=`<path d="${pillP(sx(b.start),y+14,Math.max(2,sx(b.dEnd+1)-sx(b.start)),10,true,!b.a)}" fill="${DESIGN}"><title>${B.label} ${s} design: ${fmt(b.start)} → ${fmt(b.dEnd)}</title></path>`;
-      if(b.a)o+=`<path d="${pillP(sx(b.dEnd+1),y+14,Math.max(2,sx(b.gate+1)-sx(b.dEnd+1)),10,false,true)}" fill="url(#pphat3)"><title>${B.label} ${s} approval: ${fmt(b.aS)} → ${fmt(b.gate)}</title></path>`;
+      o+=`<path d="${pillP(sx(a.start),y+2,Math.max(2,sx(a.gate+1)-sx(a.start)),10,true,true)}" fill="#C3CED0"><title>${esc(A.label)} ${s}: ${fmt(a.start)} → ${fmt(a.gate)}</title></path>`;
+      o+=`<path d="${pillP(sx(b.start),y+14,Math.max(2,sx(b.dEnd+1)-sx(b.start)),10,true,!b.a)}" fill="${DESIGN}"><title>${esc(B.label)} ${s} design: ${fmt(b.start)} → ${fmt(b.dEnd)}</title></path>`;
+      if(b.a)o+=`<path d="${pillP(sx(b.dEnd+1),y+14,Math.max(2,sx(b.gate+1)-sx(b.dEnd+1)),10,false,true)}" fill="url(#pphat3)"><title>${esc(B.label)} ${s} approval: ${fmt(b.aS)} → ${fmt(b.gate)}</title></path>`;
       o+=`<text x="${sx(Math.max(a.gate,b.gate)+1)+8}" y="${y+18}" font-size="10.5" fill="#5C7075">Gate ${fmtS(a.gate)} → ${fmtS(b.gate)}${dv?` <tspan fill="${dv>0?"#A8352E":"#1F6B4A"}" font-weight="600">${sgn(dv)} d</tspan>`:""}</text>`;
       y+=rh }); y+=8 });
   return o+`</svg>`;
@@ -7328,7 +7331,7 @@ function setupCard(i){
    <div class="shead" style="margin-top:-2px"><label class="fld2">Start date <input type="date" ${dis} value="${iso(A.start)}" data-pa="start" data-i="${i}"></label>
     <label class="fld2">Next stage starts <select ${dis} data-pa="ovl" data-i="${i}"><option value="after" ${A.overlap==="after"?"selected":""}>After approval gate (default)</option><option value="design" ${A.overlap==="design"?"selected":""}>At design end (approval overlaps)</option></select></label>
     <label class="fld2">Gap <input type="number" min="0" max="12" ${dis} value="${A.gap}" data-pa="gap" data-i="${i}"> working wks</label></div>
-   <table class="pt"><thead><tr><th>Stage</th><th class="n">Design<br>(working wks)</th><th class="n">Approval<br>(working wks)</th><th>Checkpoints in stage</th><th>Starts</th><th>Final submission</th><th>Gate – approved by</th><th class="n">vs ${lastRev().rev}<br>gate</th></tr></thead><tbody>${rows}
+   <table class="pt"><thead><tr><th>Stage</th><th class="n">Design<br>(working wks)</th><th class="n">Approval<br>(working wks)</th><th>Checkpoints in stage</th><th>Starts</th><th>Final submission</th><th>Gate – approved by</th><th class="n">vs ${esc(lastRev().rev)}<br>gate</th></tr></thead><tbody>${rows}
    <tr class="tot"><td>Programme</td><td class="n">${sumD}</td><td class="n">${sumA}</td><td>${total} working wks · ${cal} calendar wks</td><td class="dt">${fmt(S.start)}</td><td></td><td class="dt">${fmt(S.end)}</td>${dv(S.end-SB.end)}</tr></tbody></table></div>`;
 }
 /* ENGAGE: pill-shaped bar (summary-chart style). L / R = round the left / right end so adjoining segments read as one pill. */
@@ -7361,7 +7364,7 @@ function gantt(only,plain){
       o+=`${on?`<rect x="0" y="${y}" width="${W}" height="${rowH}" fill="#EAF2F6"/>`:""}<text x="14" y="${y+16}" font-size="11.5" font-weight="${on?600:400}" fill="#0F2A30">${s}<tspan fill="#5C7075" font-weight="400" font-size="10.5"> ${esc(D.alias[s]||"")}</tspan></text>`;
       o+=`<path d="${pillP(sx(x.start),ry,Math.max(2,sx(x.dEnd+1)-sx(x.start)),12,true,!x.a)}" fill="${DESIGN}"><title>${s} design: ${fmt(x.start)} → ${fmt(x.dEnd)} (${x.d} working wks)</title></path>`;
       if(x.a)o+=`<path d="${pillP(sx(x.dEnd+1),ry,Math.max(2,sx(x.gate+1)-sx(x.dEnd+1)),12,false,true)}" fill="url(#pphat)"><title>${s} approval: ${fmt(x.aS)} → ${fmt(x.gate)} (${x.a} working wks)</title></path>`;
-      if(moved)o+=`<rect x="${sx(b.start)}" y="${ry+14}" width="${Math.max(2,sx(b.gate+1)-sx(b.start))}" height="4" rx="2" fill="#B8C4C6"><title>${lastRev().rev} baseline: ${fmt(b.start)} → ${fmt(b.gate)}</title></rect>`;
+      if(moved)o+=`<rect x="${sx(b.start)}" y="${ry+14}" width="${Math.max(2,sx(b.gate+1)-sx(b.start))}" height="4" rx="2" fill="#B8C4C6"><title>${esc(lastRev().rev)} baseline: ${fmt(b.start)} → ${fmt(b.gate)}</title></rect>`;
       x.sub.forEach((sb,k)=>{ const st=cpState(i,s,k), fill={ok:"#43A874",late:"#C8453C",win:"#EA8A2F",up:"#fff",zero:"#fff"}[st], cx=sx(sb+1), cy=ry+6, n=CPN[i+"|"+s+"|"+k];
         o+=`<polygon points="${cx},${cy-6} ${cx+6},${cy} ${cx},${cy+6} ${cx-6},${cy}" fill="${fill}" stroke="${st==="up"||st==="zero"?"#5C7075":"#fff"}" stroke-width="1.3"><title>${s} ${x.cp[k]}% – submit ${fmt(sb)}, approve by ${fmt(x.app[k])}\n${n&&n.n?`${n.done} of ${n.n} entries approved / closed`:"No interfaces allocated"}</title></polygon>` });
       const dv=x.gate-b.gate;
@@ -7386,7 +7389,7 @@ function calCard(){
   const lost=CAL.exc.filter(x=>x.on&&x.kind==="off").reduce((t,x)=>t+excEffect(x,wkset),0), gain=CAL.exc.filter(x=>x.on&&x.kind==="on").reduce((t,x)=>t+excEffect(x,wkset),0);
   return `<div class="visual" id="ppcalcard"><div class="shead"><div class="vtitle">Working calendar</div><span class="chipx up">Durations are working weeks (5 working days)</span><span class="sp"></span></div>
    <div class="note2" style="margin:0 0 8px"><b>UAE working week: Monday – Friday</b>, no public holidays. Add <b>exceptions</b> for project-specific closures (client shutdown, announced bridge day, site closure) or for a weekend day the team will work. Each exception moves every later date in the programme. The calendar is part of the baseline: unlock to edit, then re-baseline.</div>
-   ${BL.locked?"":`<div class="note2" style="margin:0 0 8px;color:#8A5E10">Baseline unlocked – calendar edits count as changes from ${lastRev().rev}.</div>`}
+   ${BL.locked?"":`<div class="note2" style="margin:0 0 8px;color:#8A5E10">Baseline unlocked – calendar edits count as changes from ${esc(lastRev().rev)}.</div>`}
    ${CAL.exc.length?`<div class="excwrap"><table class="pt"><thead><tr><th></th><th>Type</th><th>From</th><th>To</th><th>Name</th><th>Effect on the programme</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
    <div class="banner info" style="margin:8px 0 0"><b>${CAL.exc.filter(x=>x.on).length} active exception${CAL.exc.filter(x=>x.on).length===1?"":"s"}:</b> ${lost} working day${lost===1?"":"s"} removed${gain?`, ${gain} weekend day${gain===1?"":"s"} added`:""} across the whole calendar. Pink bands on the timeline and the curve = non-working; green = worked weekend.</div>`:`<div class="banner info" style="margin:0">No calendar exceptions – every Monday to Friday is a working day.</div>`}
    <div class="exadd"><label>Type<select ${dis} id="ppxk"><option value="off">Non-working day(s)</option><option value="on">Working weekend day(s)</option></select></label>
@@ -7495,7 +7498,7 @@ function tabReg(){
     return `<td class="as"><span class="d1">${x.pct}% · approve ${fmt(x.app)}</span><span class="d2">submit by ${fmtS(x.sub)} · published ${fmtS(x.pub.app)} ${x.v?`<span class="${dcls(x.v)}">${sgn(x.v)} d</span>`:`<span class="zero">no change</span>`}</span><span class="d2">${x.done} / ${x.n} entries approved / closed${x.last?` · last ${fmtS(x.last)}`:""}</span></td>` };
   const rows=shown.map(({c,r,cells,diff})=>{ const was=cells.find(x=>x&&x.cbChg);
     return `<tr class="${diff?"diff":""}"><td class="id">${esc(r.id)}</td><td class="ti">${esc(r.t.length>150?r.t.slice(0,149)+"…":r.t)}<span class="sub">${esc(c)} · ${esc(r.g)} · ${esc(r.o)} · <span class="crit">${esc(r.crit)}</span></span></td>
-     <td class="cbro"><b>${r.cb}</b> ${esc(D.alias[r.cb]||STAGE_DEF[r.cb]||"")}${was?`<span class="d2" style="display:block;color:#8A5E10;font-size:11px">was ${was.pub.s} in ${rev.rev}</span>`:""}</td>${AS.map(ai=>cell(cells[ai],ai)).join("")}</tr>` }).join("");
+     <td class="cbro"><b>${r.cb}</b> ${esc(D.alias[r.cb]||STAGE_DEF[r.cb]||"")}${was?`<span class="d2" style="display:block;color:#8A5E10;font-size:11px">was ${was.pub.s} in ${esc(rev.rev)}</span>`:""}</td>${AS.map(ai=>cell(cells[ai],ai)).join("")}</tr>` }).join("");
   const stT=["all",...PSTG()].map(s=>`<button class="tile ${V.rg.s===s?"on":""}" data-pa="rgs" data-v="${s}">${s==="all"?"All stages":s}</button>`).join("");
   const cT=["all",...usedComps()].map(c=>`<button class="tile ${V.rg.c===c?"on":""}" data-pa="rgc" data-v="${esc(c)}">${c==="all"?"All components":esc(c)}</button>`).join("");
   return `
@@ -7504,7 +7507,7 @@ function tabReg(){
    <div class="visual alselp v72sel"><div class="cbar alslc">${v92PlotDD()}${msDD("ra")}${msDD("rc")}
      <span class="vbl">Complete by</span><div class="tiles">${stT}</div></div></div>
     <div class="visual alcard v72card"><div class="shead v73h"><div class="vtitle">Interface matrix dates from the programme</div><span class="sp"></span>
-     <span class="chipx ${nDiff||nCb?"win":"ok"}">${nDiff||nCb?`${nDiff} date${nDiff===1?"":"s"} differ from ${rev.rev}${nCb?` · ${nCb} Complete by changed`:""}`:`In step with ${rev.rev}`}</span>
+     <span class="chipx ${nDiff||nCb?"win":"ok"}">${nDiff||nCb?`${nDiff} date${nDiff===1?"":"s"} differ from ${esc(rev.rev)}${nCb?` · ${nCb} Complete by changed`:""}`:`In step with ${esc(rev.rev)}`}</span>
      <button class="btn sm" data-pa="rgexp" title="Download the dates shown as CSV">Export register dates (CSV)</button></div><div class="alscroll tscroll" id="pprgscroll">
       ${rows?`<div class="v72in"><table class="rg"><thead><tr><th>ID</th><th>Interface</th><th>Complete by</th>${AS.map(i=>`<th class="as" style="border-left:2px solid var(--line)">${v92PlotName(ASSETS[i].id)?esc(v92PlotName(ASSETS[i].id))+" – ":""}${esc(ASSETS[i].name)} – checkpoint · approve-by · published</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="nopanes">No interfaces match the filters.</div>`}</div>
 </div>
@@ -7548,15 +7551,15 @@ function chart(){
   series.forEach((sr,si)=>{ const i=sr.a, E=sr.E, N=E.length, col=ACOL[i];
     let x0=sr.x0,x1=-1e9; sr.stg.forEach(st=>{const x=SCH[i].stages[st]; x1=Math.max(x1,x.gate)});
     if(detail){ const yy=10+si*16; sr.stg.forEach(st=>{ const x=SCH[i].stages[st];
-        o+=`<path d="${pillP(sx(x.start),yy,Math.max(2,sx(x.dEnd+1)-sx(x.start)),8,true,!x.a)}" fill="${DESIGN}" opacity=".6"><title>${ASSETS[i].name} ${st} design ${fmt(x.start)} → ${fmt(x.dEnd)}</title></path>`;
-        if(x.a)o+=`<path d="${pillP(sx(x.dEnd+1),yy,Math.max(2,sx(x.gate+1)-sx(x.dEnd+1)),8,false,true)}" fill="url(#pphat2)"><title>${ASSETS[i].name} ${st} approval ${fmt(x.aS)} → ${fmt(x.gate)}</title></path>`;
+        o+=`<path d="${pillP(sx(x.start),yy,Math.max(2,sx(x.dEnd+1)-sx(x.start)),8,true,!x.a)}" fill="${DESIGN}" opacity=".6"><title>${esc(ASSETS[i].name)} ${st} design ${fmt(x.start)} → ${fmt(x.dEnd)}</title></path>`;
+        if(x.a)o+=`<path d="${pillP(sx(x.dEnd+1),yy,Math.max(2,sx(x.gate+1)-sx(x.dEnd+1)),8,false,true)}" fill="url(#pphat2)"><title>${esc(ASSETS[i].name)} ${st} approval ${fmt(x.aS)} → ${fmt(x.gate)}</title></path>`;
         o+=`<text x="${sx(x.start)}" y="${yy-2}" font-size="10" fill="#5C7075">${ASH(i)} · ${st} ${esc(D.alias[st]||"")}</text>`;
         x.app.forEach((ab,k)=>{ const g=E.filter(e=>e.cb===st&&e.x.k===k), cl=cellCls({n:g.length,done:g.filter(e=>e.x.doneBy).length,behind:g.filter(e=>e.x.dueCp&&!e.x.doneBy).length,win:g.filter(e=>e.x.win&&!e.x.doneBy).length}), cx=sx(ab);
-          o+=`<line x1="${cx}" x2="${cx}" y1="${yy+10}" y2="${H-B}" stroke="${col}" stroke-dasharray="2 4" opacity=".55"/><rect x="${cx-19}" y="${Tp+2+si*14}" width="38" height="13" rx="6.5" fill="${{ok:"#43A874",late:"#C8453C",win:"#EBB43C",up:"#fff",zero:"#fff"}[cl]}" stroke="${col}"/><text x="${cx}" y="${Tp+12+si*14}" font-size="10" text-anchor="middle" font-weight="600" fill="${cl==="ok"||cl==="late"?"#fff":"#0F2A30"}">${x.cp[k]}%<title>${ASSETS[i].name} ${st} ${x.cp[k]}% – submit ${fmt(x.sub[k])}, approve by ${fmt(ab)}\n${g.length} entries allocated · ${g.filter(e=>e.x.doneBy).length} approved / closed</title></text>` }) }) }
+          o+=`<line x1="${cx}" x2="${cx}" y1="${yy+10}" y2="${H-B}" stroke="${col}" stroke-dasharray="2 4" opacity=".55"/><rect x="${cx-19}" y="${Tp+2+si*14}" width="38" height="13" rx="6.5" fill="${{ok:"#43A874",late:"#C8453C",win:"#EBB43C",up:"#fff",zero:"#fff"}[cl]}" stroke="${col}"/><text x="${cx}" y="${Tp+12+si*14}" font-size="10" text-anchor="middle" font-weight="600" fill="${cl==="ok"||cl==="late"?"#fff":"#0F2A30"}">${x.cp[k]}%<title>${esc(ASSETS[i].name)} ${st} ${x.cp[k]}% – submit ${fmt(x.sub[k])}, approve by ${fmt(ab)}\n${g.length} entries allocated · ${g.filter(e=>e.x.doneBy).length} approved / closed</title></text>` }) }) }
     const plan=stepPath(E.map(e=>e.x.ab),N,x0,x1,sx,sy);
     o+=`<path d="${plan.path}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 4"><title>${esc(ASSETS[i].name)} – planned cumulative approved / closed</title></path>`;
     if(showB){ const bp=stepPath(E.map(e=>{const cbb=CB(RSN,e.id), b=SCHB[i].stages[cbb]; return b.app[Math.min(b.cp.length-1,ALB[i][e.c][e.id])]}),N,Math.min(...sr.stg.map(st=>SCHB[i].stages[st].start)),Math.max(...sr.stg.map(st=>SCHB[i].stages[st].gate)),sx,sy);
-      o+=`<path d="${bp.path}" fill="none" stroke="#8C9C9F" stroke-width="1.6" stroke-dasharray="2 3"><title>${esc(ASSETS[i].name)} – ${lastRev().rev} baseline plan</title></path>` }
+      o+=`<path d="${bp.path}" fill="none" stroke="#8C9C9F" stroke-width="1.6" stroke-dasharray="2 3"><title>${esc(ASSETS[i].name)} – ${esc(lastRev().rev)} baseline plan</title></path>` }
     if(wiW){ const wp=stepPath(E.map(e=>{const cbw=CB(wiW,e.id), st=wiS[i].stages[cbw]; return st.app[Math.min(st.cp.length-1,wiW.alloc[i][e.c][e.id])]}),N,Math.min(...sr.stg.map(st=>wiS[i].stages[st].start)),Math.max(...sr.stg.map(st=>wiS[i].stages[st].gate)),sx,sy);
       o+=`<path d="${wp.path}" fill="none" stroke="#EA6119" stroke-width="2" stroke-dasharray="8 3 2 3"><title>${esc(ASSETS[i].name)} – what-if “${esc(wiW.name)}” plan</title></path>` }
     const done=E.filter(e=>e.st==="done"&&e.ds<=Tc).map(e=>e.ds); let actNow=0;
@@ -7572,7 +7575,7 @@ function chart(){
     const b=E.filter(e=>e.x.dueCp&&!e.x.doneBy).length, od=E.filter(e=>e.x.od).length, stl=sr.stg.length===1?`${sr.stg[0]} ${D.alias[sr.stg[0]]||""}`:"all stages";
     sum.push(`<div class="sumline"><i class="dotc" style="background:${col}"></i><b>${esc(ASSETS[i].name)}</b> · ${esc(stl)} · ${N} entries · plan at ${fmtS(T)} <b>${Math.round(planNow*100)}%</b> (${E.filter(e=>e.x.dueCp).length}) · actual <b>${Math.round(actNow*100)}%</b> (${E.filter(e=>e.x.doneBy).length}) · behind checkpoint <b>${b}</b> · overdue <b>${od}</b>${fcTxt}</div>`);
     leg.push(`<span><i class="sw" style="background:${col};height:3px"></i>${esc(ASSETS[i].name)} actual</span><span><i class="sw" style="background:repeating-linear-gradient(90deg,${col} 0 4px,#fff 4px 7px);height:3px"></i>plan</span>`+(fcOn?`<span><i class="sw" style="background:repeating-linear-gradient(90deg,${col} 0 1.5px,#fff 1.5px 6px);height:3px"></i>forecast</span>`:"")) });
-  if(showB)leg.push(`<span><i class="sw" style="background:repeating-linear-gradient(90deg,#8C9C9F 0 2px,#fff 2px 5px);height:3px"></i>${lastRev().rev} baseline plan</span>`);
+  if(showB)leg.push(`<span><i class="sw" style="background:repeating-linear-gradient(90deg,#8C9C9F 0 2px,#fff 2px 5px);height:3px"></i>${esc(lastRev().rev)} baseline plan</span>`);
   if(wiW)leg.push(`<span><i class="sw" style="background:repeating-linear-gradient(90deg,#EA6119 0 6px,#fff 6px 8px);height:3px"></i>What-if “${esc(wiW.name)}” plan</span>`);
   if(CAL.exc.some(x=>x.on))leg.push(`<span><i class="sw" style="background:#F3CBC6"></i>Non-working exception</span><span><i class="sw" style="background:#BFE3CE"></i>Working weekend</span>`);
   if(T>=mn&&T<=mx)o+=`<line x1="${sx(T)}" x2="${sx(T)}" y1="${Tp}" y2="${H-B}" stroke="#0F2A30" stroke-width="1.4" stroke-dasharray="5 3"/><rect x="${sx(T)-(T===TODAY?40:27)}" y="${H-B+20}" width="${T===TODAY?80:54}" height="16" rx="8" fill="#0F2A30"/><text x="${sx(T)}" y="${H-B+31.5}" font-size="10.5" font-weight="600" text-anchor="middle" fill="#fff">${fmtS(T)}${T===TODAY?" · today":""}</text>`;
@@ -7584,7 +7587,7 @@ function chartCard(){
   const sel=V.tr.s, curTxt=assetsInScope().map(i=>`${ASH(i)} ${curName(i)}`).join(" · "), fc=V.tr.fc;
   const tiles=[["all","Overall (all stages)"],["cur",`Current stage (${curTxt})`],...PSTG().map(s=>[s,s])].map(([k,l])=>`<button class="tile ${sel===k?"on":""}" data-pa="tst" data-v="${k}" title="${k.length<4&&k!=="all"&&k!=="cur"?esc(STAGE_DEF[k]):""}">${esc(l)}</button>`).join("");
   return `<div class="visual"><div class="shead"><div class="vtitle">Cumulative approved / closed – plan v actual</div><span class="sp"></span>
-    ${!BL.locked&&CHG.length?`<label class="chkl2"><input type="checkbox" data-pa="tbase" ${V.tr.base?"checked":""}> Show ${lastRev().rev} baseline</label>`:""}
+    ${!BL.locked&&CHG.length?`<label class="chkl2"><input type="checkbox" data-pa="tbase" ${V.tr.base?"checked":""}> Show ${esc(lastRev().rev)} baseline</label>`:""}
     ${WI.length?`<label class="ctl">What-if overlay <select data-pa="tfwi"><option value="">None</option>${WI.map(w=>`<option value="${w.id}" ${String(V.tr.wi)===String(w.id)?"selected":""}>${esc(w.name)}</option>`).join("")}</select></label>`:""}
     ${fc?`<label class="ctl">Rate basis <select data-pa="tfcw"><option value="28" ${V.tr.fcw===28?"selected":""}>Last 4 weeks</option><option value="56" ${V.tr.fcw===56?"selected":""}>Last 8 weeks</option><option value="0" ${V.tr.fcw===0?"selected":""}>Whole programme to date</option></select></label>`:""}
     <button class="bsw ${fc?"ison":""}" role="switch" aria-checked="${fc}" data-pa="tfc" title="Show or hide the forecast line"><span class="trk"></span>Forecast</button></div>
@@ -7675,7 +7678,7 @@ function wiSetup(w,i,S){
    <div class="shead" style="margin-top:-2px"><label class="fld2">Start date <input type="date" value="${iso(A.start)}" data-pa="wstart" data-i="${i}"></label>
     <label class="fld2">Next stage starts <select data-pa="wovl" data-i="${i}"><option value="after" ${A.overlap==="after"?"selected":""}>After approval gate (default)</option><option value="design" ${A.overlap==="design"?"selected":""}>At design end (approval overlaps)</option></select></label>
     <label class="fld2">Gap <input type="number" min="0" max="12" value="${A.gap}" data-pa="wgap" data-i="${i}"> working wks</label></div>
-   <table class="pt"><thead><tr><th>Stage</th><th class="n">Design<br>(working wks)</th><th class="n">Approval<br>(working wks)</th><th>Checkpoints in stage</th><th>Interface allocation</th><th>Starts</th><th>Final submission</th><th>Gate – approved by</th><th class="n">vs ${lastRev().rev}<br>gate</th></tr></thead><tbody>${rows}
+   <table class="pt"><thead><tr><th>Stage</th><th class="n">Design<br>(working wks)</th><th class="n">Approval<br>(working wks)</th><th>Checkpoints in stage</th><th>Interface allocation</th><th>Starts</th><th>Final submission</th><th>Gate – approved by</th><th class="n">vs ${esc(lastRev().rev)}<br>gate</th></tr></thead><tbody>${rows}
    <tr class="tot"><td>Programme</td><td class="n">${sumD}</td><td class="n">${sumA}</td><td>${total} working wks</td><td></td><td class="dt">${fmt(S[i].start)}</td><td></td><td class="dt">${fmt(S[i].end)}</td>${dv(de)}</tr></tbody></table></div>`;
 }
 function wiCalCard(w){
@@ -7709,13 +7712,13 @@ function wiImpactCard(w){
      +num("Overdue entries (stage-based)",p.od,q.od)+num("Behind checkpoint",p.behind,q.behind) });
   rows+=`<tr class="ah"><td colspan="4">Both assets</td></tr>`+num("Entries planned approved by the status date",ib.pdue,iw.pdue,false)+num("Checkpoints met",ib.met,iw.met,false)+tr("Checkpoints due",ib.due,iw.due,iw.due-ib.due?sgn(iw.due-ib.due):"no change","");
   return `<div class="visual"><div class="shead"><div class="vtitle">Impact of this what-if</div><span class="chipx up">at status date ${fmt(P.status)}</span><span class="sp"></span></div>
-   <table class="pt"><thead><tr><th></th><th class="n">Baseline ${L.rev}</th><th class="n">${esc(w.name)}</th><th class="n">Change</th></tr></thead><tbody>${rows}</tbody></table>
+   <table class="pt"><thead><tr><th></th><th class="n">Baseline ${esc(L.rev)}</th><th class="n">${esc(w.name)}</th><th class="n">Change</th></tr></thead><tbody>${rows}</tbody></table>
    <div class="note2">Actual progress is unchanged. A what-if changes the dates the entries are measured against, so overdue and behind-checkpoint show how <b>today's actuals would read against the alternative programme</b>. Move the status date to test other points in time.</div></div>`;
 }
 function tabWi(){
   const L=lastRev(), w=V.wi.sel!=null?wiById(V.wi.sel):null, full=WI.length>=WI_MAX;
   const tiles=WI.map(x=>`<button class="tile ${w&&x.id===w.id?"on":""}" data-pa="wsel" data-v="${x.id}">${esc(x.name)}<span class="n">from ${esc(x.baseRev)}</span></button>`).join("");
-  const opts=[`<option value="base">Baseline ${L.rev}${BL.locked?" (locked)":""}</option>`];
+  const opts=[`<option value="base">Baseline ${esc(L.rev)}${BL.locked?" (locked)":""}</option>`];
   if(!BL.locked&&CHG.length)opts.push(`<option value="WIP">Working programme with ${CHG.length} unsaved change${CHG.length===1?"":"s"}</option>`);
   WI.forEach(x=>opts.push(`<option value="WI:${x.id}">${esc(x.name)}</option>`));
   let h=`
@@ -7728,9 +7731,9 @@ function tabWi(){
   h+=`${V.wi.note?`<div class="banner info note moved">${esc(V.wi.note)}</div>`:""}
    <div class="visual"><div class="shead"><i class="dotc" style="background:#EA6119;width:12px;height:12px"></i><input type="text" value="${esc(w.name)}" data-pa="wname" style="height:30px;border:1px solid var(--n300);border-radius:2px;padding:0 8px;font-size:14px;font-weight:600;width:300px" aria-label="What-if name"><span class="chipx blue">Copied from ${esc(w.from)}</span><span class="chipx up">Created ${fmt(w.created)}</span><span class="sp"></span>
      <button class="btn sm" data-pa="wshow" title="Overlay this what-if's plan on the tracking curve">${shown?"Hide on tracking curve":"Show on tracking curve"}</button>
-     <button class="btn sm" data-pa="wdup" ${full?"disabled":""}>Duplicate</button><button class="btn sm" data-pa="wreset" title="Throw away the edits and start again from the current baseline">Reset to ${L.rev}</button>
+     <button class="btn sm" data-pa="wdup" ${full?"disabled":""}>Duplicate</button><button class="btn sm" data-pa="wreset" title="Throw away the edits and start again from the current baseline">Reset to ${esc(L.rev)}</button>
      <button class="btn sm pri" data-pa="wadoptq">Adopt as working programme…</button><button class="btn sm" data-pa="wdel">Delete</button></div>
-    ${stale?`<div class="banner warn" style="margin:0 0 8px">This what-if was copied from <b>${esc(w.baseRev)}</b>; the baseline is now <b>${L.rev}</b>. The comparison below still works, but you may want to <b>Reset to ${L.rev}</b> to start from the current baseline.</div>`:""}
+    ${stale?`<div class="banner warn" style="margin:0 0 8px">This what-if was copied from <b>${esc(w.baseRev)}</b>; the baseline is now <b>${esc(L.rev)}</b>. The comparison below still works, but you may want to <b>Reset to ${esc(L.rev)}</b> to start from the current baseline.</div>`:""}
     ${V.wi.adopt?`<div class="banner warn" style="margin:0 0 8px"><b>Adopt “${esc(w.name)}” as the working programme?</b> The baseline will be unlocked and the working programme, calendar and allocations replaced with this what-if${(!BL.locked&&CHG.length)?`, <b>discarding the ${CHG.length} unsaved change${CHG.length===1?"":"s"} you have now</b>`:""}. Nothing is published until you re-baseline with a reason.<div class="acts"><button class="btn sm pri" data-pa="wadopt">Adopt and go to baseline</button><button class="btn sm" data-pa="wadoptx">Cancel</button></div></div>`:""}
     <label class="fld2" style="display:flex;align-items:flex-start;gap:8px"><span style="padding-top:4px">Notes</span><textarea rows="2" data-pa="wnote" placeholder="What is this option testing? e.g. compress Concept by 2 weeks to recover the S2 gate" style="width:720px;max-width:100%;border:1px solid var(--n300);border-radius:2px;padding:4px 6px">${esc(w.notes||"")}</textarea></label></div>
    ${wiImpactCard(w)}${AIDX.map(i=>wiSetup(w,i,S)).join("")}${wiCalCard(w)}`;
@@ -8055,7 +8058,7 @@ const CATC={"Registration":"#8C9C9F","Planning":"#EA6119","NOC":"#E0A526","Desig
 const STATUS=["Not started","In preparation","Submitted","Comments received","Resubmitted","Approved","Not required"];
 const STC={"Not started":"#A9B6B8","In preparation":"#E0A526","Submitted":"#2F6FEB","Comments received":"#C8453C","Resubmitted":"#7B4FD8","Approved":"#43A874","Not required":"#CBD5D6"};
 const PRE_SUB=["Not started","In preparation"];     /* statuses where the submission has not yet gone in */
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const cls=s=>String(s).replace(/[^A-Za-z]+/g,"-");
 const JN=Object.fromEntries(DJ.map(j=>[j.n,j.c])), JC=Object.fromEntries(DJ.map(j=>[j.c,j.n]));
 /* asset-level triggers – answered per asset; all others are project-level */
@@ -8523,7 +8526,7 @@ function setAid(o){ const a=S.assets.find(x=>(x.name||"(unnamed)")===o.asset); o
 const BASE_DAY='2026-10-28';   /* the sample data is written around this date and shifted to the status date when it is loaded */
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const fd=d=>{if(!d)return'—';const p=d.split('-');return (+p[2])+' '+MON[+p[1]-1]};
-const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const cl=s=>String(s).replace(/[^A-Za-z0-9]+/g,'-').replace(/-$/,'');
 const $=s=>Q1(s);
 
@@ -11081,7 +11084,7 @@ decorate();
   let q=Promise.resolve();
   function show(o){ return new Promise(res=>{
     let m=document.getElementById("engDlg"); if(!m){m=document.createElement("div");m.id="engDlg";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");document.body.appendChild(m)}
-    const e=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+    const e=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
     m.innerHTML=`<div class="ed-box"><div class="ed-head">${e(o.title||"ENGAGE")}</div><div class="ed-body">${e(o.body||"")}${o.items&&o.items.length?`<ul>${o.items.map(i=>`<li>${e(i)}</li>`).join("")}</ul>`:""}${o.inputs&&o.inputs.length?o.inputs.map((f,n)=>`<label class="ed-fl">${e(f.label)}${f.multi?`<textarea class="ed-in" data-n="${n}" rows="3">${e(f.value||"")}</textarea>`:`<input class="ed-in" data-n="${n}" type="text" value="${e(f.value||"")}">`}</label>`).join("")+`<div class="ed-err"></div>`:""}</div><div class="ed-foot">${o.cancel===null?"":`<button type="button" class="ed-cancel">${e(o.cancel||"Cancel")}</button>`}<button type="button" class="ed-ok ${o.danger?"danger":""}">${e(o.ok||"OK")}</button></div></div>`;
     const prev=document.activeElement; let done=false;
     const fin=v=>{ if(done)return; done=true; m.classList.remove("on"); document.removeEventListener("keydown",key,true); if(prev&&prev.focus&&document.body.contains(prev))try{prev.focus({preventScroll:true})}catch(x){} res(v) };

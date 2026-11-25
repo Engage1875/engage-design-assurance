@@ -152,3 +152,28 @@ test('every CSV export from the main app applies the rule', async () => {
   }
   await app.close();
 });
+
+test('Content-Security-Policy lets the app run but blocks injected script', async () => {
+  const app = await openApp();
+  const p = app.page;
+  await goPage(p, 'brief');
+  await p.waitForFunction(() => { const f = document.getElementById('briefFrame'); return f && f.contentWindow && f.contentWindow.EngageBrief; });
+  const r = await p.evaluate(async () => {
+    document.body.insertAdjacentHTML('beforeend', '<img src="x" onerror="window.__xss=1"><a id="jsl" href="javascript:window.__xss=2">x</a>');
+    document.getElementById('jsl').click();
+    const f = document.getElementById('briefFrame').contentDocument;
+    f.body.insertAdjacentHTML('beforeend', '<img src="x" onerror="parent.__xss=3">');
+    await new Promise(r => setTimeout(r, 300));
+    return { xss: window.__xss, csp: !!document.querySelector('meta[http-equiv="Content-Security-Policy"]') };
+  });
+  assert.deepEqual(r, { xss: undefined, csp: true });
+  app.errors.length = 0; // the blocked attempts are reported as console errors, as intended
+  await app.close();
+});
+
+test('links from project files are followed only when plain http(s)', async () => {
+  const app = await openApp();
+  const r = await app.page.evaluate(() => ['https://a.b/c', 'http://x', 'javascript:alert(1)', ' JAVASCRIPT:x', 'data:text/html,x', 'https://a b', 'ftp://x'].map(webUrl));
+  assert.deepEqual(r, ['https://a.b/c', 'http://x', '', '', '', '', '']);
+  await app.close();
+});
