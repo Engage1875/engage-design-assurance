@@ -1,0 +1,16 @@
+{
+  "name": "engage-signin-api",
+  "private": true,
+  "description": "ENGAGE sign-in service: emailed one-time codes, approved users and administrators",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "@azure/communication-email": "1.1.0",
+    "@azure/data-tables": "13.3.2",
+    "@azure/functions": "4.17.1"
+  }
+}

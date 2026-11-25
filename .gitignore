@@ -1,5 +1,7 @@
 dist/
 node_modules/
+api/node_modules/
+api/app/
 *.log
 .env
 local.settings.json

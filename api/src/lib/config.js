@@ -1,0 +1,68 @@
+'use strict';
+// Settings for the sign-in service. In Azure these are the Static Web App's
+// "Environment variables" (application settings). Locally, tools/dev_server.js sets them.
+//
+//   SESSION_SECRET              long random text used to sign sessions and hash codes (required)
+//   ADMIN_EMAILS                permanent administrators, comma-separated (required)
+//   AUTH_ALLOWED_DOMAINS        optional: only addresses at these domains may ever be approved
+//   ENGAGE_TABLES_CONNECTION    Azure Storage connection string (Table Storage)
+//   ACS_EMAIL_CONNECTION_STRING Azure Communication Services connection string
+//   ACS_EMAIL_SENDER            the sender address ACS gives you, e.g. DoNotReply@xxxx.azurecomm.net
+//   ENGAGE_ALLOWED_ORIGIN       the site's own address, e.g. https://name.azurestaticapps.net
+//
+// Development-only switches (refused when running in Azure, see isAzure()):
+//   ENGAGE_DEV_MEMORY_STORE=1   keep everything in memory instead of Table Storage
+//   ENGAGE_DEV_PRINT_CODES=1    print codes to the console instead of emailing them
+
+const MIN_SECRET = 32;
+
+function list(v) {
+  return String(v || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+}
+
+// Azure sets these on every Functions host; they cannot be removed by an app setting.
+function isAzure(env) {
+  return !!(env.WEBSITE_INSTANCE_ID || env.WEBSITE_SITE_NAME || env.CONTAINER_NAME || env.FUNCTIONS_WORKER_RUNTIME_VERSION && env.WEBSITE_HOSTNAME);
+}
+
+function load(env = process.env) {
+  const azure = isAzure(env);
+  const devStore = env.ENGAGE_DEV_MEMORY_STORE === '1';
+  const devPrint = env.ENGAGE_DEV_PRINT_CODES === '1';
+  if (azure && (devStore || devPrint)) {
+    throw new Error('Development switches are set in Azure. Remove ENGAGE_DEV_MEMORY_STORE and ENGAGE_DEV_PRINT_CODES.');
+  }
+  const secret = String(env.SESSION_SECRET || '');
+  if (secret.length < MIN_SECRET) throw new Error(`SESSION_SECRET must be at least ${MIN_SECRET} characters.`);
+  const admins = list(env.ADMIN_EMAILS);
+  if (!admins.length) throw new Error('ADMIN_EMAILS must name at least one administrator.');
+  const origin = String(env.ENGAGE_ALLOWED_ORIGIN || '').replace(/\/+$/, '');
+  if (azure && !/^https:\/\/[^/]+$/.test(origin)) throw new Error('ENGAGE_ALLOWED_ORIGIN must be the https address of the site.');
+  if (!devStore && !env.ENGAGE_TABLES_CONNECTION) throw new Error('ENGAGE_TABLES_CONNECTION is not set.');
+  if (!devPrint && !(env.ACS_EMAIL_CONNECTION_STRING && env.ACS_EMAIL_SENDER)) throw new Error('ACS_EMAIL_CONNECTION_STRING and ACS_EMAIL_SENDER are not set.');
+  return {
+    azure,
+    secret,
+    admins,
+    domains: list(env.AUTH_ALLOWED_DOMAINS),
+    origin,
+    devStore,
+    devPrint,
+    tablesConnection: env.ENGAGE_TABLES_CONNECTION || '',
+    acsConnection: env.ACS_EMAIL_CONNECTION_STRING || '',
+    acsSender: env.ACS_EMAIL_SENDER || '',
+    secureCookie: azure || /^https:/.test(origin),
+    // Policy numbers (from the v133 design). Tests may override some of them.
+    codeTtlMs: 10 * 60 * 1000,
+    maxAttempts: 5,
+    resendGapMs: 45 * 1000,
+    maxSendsPerHour: 5,
+    maxRequestsPerIpPerHour: 30,
+    sessionMs: 3 * 60 * 60 * 1000,
+    requestFloorMs: Number(env.ENGAGE_REQUEST_FLOOR_MS || 4000),
+    mailTimeoutMs: Number(env.ENGAGE_MAIL_TIMEOUT_MS || 3000),
+    maxApproved: 200,
+  };
+}
+
+module.exports = { load, isAzure, list };

@@ -6,6 +6,7 @@ Inputs
   src/ProjectBrief.html  the Project brief app (shown inside the main app)
   data/register.json     the interface register   (REG_PACK)
   data/statutory.json    the statutory approvals  (SAD)
+  VERSION                version label and build date (the app's ENGAGE_BUILD)
 
 Output
   dist/Engage.html       the single file people open in a browser
@@ -56,9 +57,72 @@ def build(data_dir: pathlib.Path) -> bytes:
     if sorted(names) != [b"register.json", b"statutory.json"]:
         sys.exit(f"build: unexpected data placeholders {names}")
 
+    version, built = read_version()
+    brief = brief.replace(b"@@VERSION@@", version).replace(b"@@BUILT@@", built)
+    main = main.replace(b"@@VERSION@@", version).replace(b"@@BUILT@@", built)
+    has_csp = CSP_MARK in main
+    if has_csp:
+        if brief.count(CSP_MARK) != 1 or main.count(CSP_MARK) != 1:
+            sys.exit("build: @@CSP@@ must appear once in each source file")
+        brief_hashes = script_hashes(brief)
+        brief = brief.replace(CSP_MARK, csp(brief_hashes))
     out = DATA_RE.sub(lambda m: read_data(data_dir, m.group(1)), main)
     out = out.replace(BRIEF_MARK, base64.b64encode(brief))
+    if has_csp:
+        # The Project brief runs in a srcdoc frame, which inherits this page's policy,
+        # so the page's policy must allow the brief's scripts as well as its own.
+        out = out.replace(CSP_MARK, csp(script_hashes(out) + brief_hashes))
     return out
+
+
+CSP_MARK = b"@@CSP@@"
+SCRIPT_RE = re.compile(rb"<script(?:\s[^>]*)?>(.*?)</script", re.S | re.I)
+# The one inline event handler the app writes into its markup (a <select> in the
+# programme allocation table). Allowed by hash rather than rewriting that code.
+INLINE_HANDLERS = [b"event.stopPropagation()"]
+
+
+def sha(b: bytes) -> bytes:
+    return b"'sha256-" + base64.b64encode(hashlib.sha256(b).digest()) + b"'"
+
+
+def script_hashes(html: bytes) -> list:
+    return [sha(m.group(1)) for m in SCRIPT_RE.finditer(html)]
+
+
+def csp(hashes: list) -> bytes:
+    """Content-Security-Policy: only the app's own scripts may run (each is allowed by its
+    SHA-256 hash), nothing is fetched from the network, and project text that slips into
+    the page as markup cannot run code, load anything or submit forms."""
+    seen = []
+    for h in hashes + [sha(x) for x in INLINE_HANDLERS]:
+        if h not in seen:
+            seen.append(h)
+    parts = [
+        b"default-src 'none'",
+        b"script-src " + b" ".join(seen) + b" 'unsafe-hashes'",
+        b"style-src 'unsafe-inline'",
+        b"img-src data: blob:",
+        b"font-src data:",
+        b"connect-src 'none'",
+        b"frame-src 'self' data: blob:",
+        b"object-src 'none'",
+        b"base-uri 'none'",
+        b"form-action 'none'",
+    ]
+    return b"; ".join(parts)
+
+
+def read_version():
+    """VERSION holds two lines: the version label (e.g. v133) and the build date.
+    It is the one place the version is set; the app reads it as ENGAGE_BUILD."""
+    path = ROOT / "VERSION"
+    if not path.exists():  # the v132 baseline had no VERSION file
+        return b"@@VERSION@@", b"@@BUILT@@"
+    lines = [x.strip() for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
+    if len(lines) != 2 or not re.fullmatch(r"v\d+(\.\d+)*", lines[0]):
+        sys.exit("build: VERSION must have two lines: a label like v133, then the build date")
+    return lines[0].encode(), lines[1].encode()
 
 
 def main() -> None:

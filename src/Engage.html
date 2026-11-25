@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<!-- ENGAGE v132 CLOSE-OUT: accepted v131 corrected Project Brief auto-height and PDF-pagination baseline; 17 Nov 2026 -->
+<!-- ENGAGE @@VERSION@@ · built @@BUILT@@ from src/ with tools/build.py -->
 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="@@CSP@@">
 <title>ENGAGE: Design Assurance</title>
 
 <style>
@@ -2797,9 +2798,15 @@ html body #pg-matrix .matrixv.focus.focus{position:fixed!important;top:88px!impo
 html body .matrixv.focus .back{display:none!important}
 body.focusmode::after{inset:80px 0 0!important;left:var(--isbw)!important}
 #pg-crs .crs-hs,#crs-hs{display:none!important}
+/* v133 notices */
+#engageNotices{position:fixed;right:16px;bottom:16px;z-index:10000;display:flex;flex-direction:column;gap:8px;max-width:min(460px,calc(100vw - 32px))}
+.engage-notice{background:#fff;border:1px solid #CBD5D6;border-left:4px solid #2F6FEB;border-radius:8px;box-shadow:0 6px 24px rgba(13,43,49,.18);padding:10px 12px;font-size:12.5px;color:#0D2B31;display:flex;flex-direction:column;gap:4px}
+.engage-notice.bad{border-left-color:#C8453C;background:#fff8f7}.engage-notice.ok{border-left-color:#2F8A5C}
+.engage-notice b{font-size:13px}.engage-notice-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+@media print{#engageNotices{display:none!important}}
 </style>
 <link rel="icon" href="data:,">
-<!-- ENGAGE v132 release: Project brief workflow enhancements; see in-tool Release notes on the Project brief page. -->
+<!-- Release notes: see the in-tool Release notes on the Project brief page. -->
 </head>
 <body>
 <script>(function(){try{var p=sessionStorage.getItem("engage.sb");document.body.classList.toggle("isb-col",p?p==="col":innerWidth<1400)}catch(e){}})();</script>
@@ -2823,7 +2830,7 @@ body.focusmode::after{inset:80px 0 0!important;left:var(--isbw)!important}
   <button class="tg" id="isbTg" type="button" aria-controls="isb" aria-expanded="true" data-tip="Collapse sidebar"><svg viewBox="0 0 24 24"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg><span>Collapse</span></button>
 </aside>
 <div id="isbTip" role="tooltip"></div>
-<footer class="ifoot"><span><b>AECOM ACT · <i>Engage</i></b> · <span id="ifVer">v132</span></span><span class="mid">AECOM Middle East — Buildings + Places</span>
+<footer class="ifoot"><span><b>AECOM ACT · <i>Engage</i></b> · <span id="ifVer">@@VERSION@@</span></span><span class="mid">AECOM Middle East — Buildings + Places</span>
   <span class="r"><span class="author">Built by S Harrison · Nov 2026</span><span>© 2026 AECOM</span></span></footer>
 <div class="appbar">
   <span class="logo"><i style="height:6px"></i><i style="height:11px"></i><i style="height:16px"></i></span>
@@ -2907,10 +2914,11 @@ body.focusmode::after{inset:80px 0 0!important;left:var(--isbw)!important}
       <div class="visual"><div class="vtitle">Open flags by accountable owner</div><div id="cfOwner"></div></div>
     </div>
     <div class="visual"><div class="vtitle">Change-management flags<button class="dtbtn" data-act="drill" id="dtBtnF"><svg viewBox="0 0 12 12"><path d="M4.5 2.5 8 6l-3.5 3.5"/></svg><span></span></button></div><div class="tblv" id="cfTbl"></div></div>
+    <div id="briefChanges"></div>
   </section>
   <section class="pg" id="pg-assets"></section>
   <section class="pg" id="pg-prog"></section>
-  <section class="pg" id="pg-brief"><details class="v128-release"><summary>Release notes · v132 corrected · 17 Nov 2026 11:54 GST</summary><ul><li><b>v132 correction verification marker:</b> Height-aware request-pack pagination, bottom-anchored issued-record footnotes, normal-mode outer scrolling and one focused-pane scroller rebuilt from the actual v132 baseline · 17 Nov 2026 11:54 GST.</li><li><b>v132 issued request-pack PDF:</b> Rebuilt the Project Brief request-pack PDF as a static issued record aligned to the Power Apps response portal visual hierarchy. It now includes the ENGAGE header, request-pack reference, project and asset/group, addressee, issue and response dates, reference/status details and compact Project, Assets, Requested by, Respond by and Requirements cards.</li><li><b>Asset and Brief-section grouping:</b> Requirements are ordered first by asset and then by Brief section. Every requirement shows Brief ID above the item title, the full question, Typical input, Complete by S1/S2, and fixed Response / requirement and Supporting reference instructions.</li><li><b>Static record boundary:</b> Portal navigation, progress-entry indicators, editable fields, response-position choices, Save draft, Review responses and Submit responses are deliberately excluded from the PDF. The issued-record footer confirms that responses are submitted separately and remain subject to design-team review before controlled-brief incorporation.</li><li><b>Portal preserved:</b> The local Power Apps response layout preview and its v130 Previous/Next navigation correction remain unchanged.</li><li><b>v130 and earlier functionality retained:</b> Request-pack actions, focus modes, Scope toggle, Brief Issue navigation, manual CSV export/import, proposals, normal ENGAGE navigation and Save/Open/browser-reopen persistence remain in place.</li></ul></details><iframe id="briefFrame" class="v128-brief-frame" title="Project brief"></iframe></section>
+  <section class="pg" id="pg-brief"><details class="v128-release"><summary>Release notes · @@VERSION@@ · built @@BUILT@@</summary><ul><li><b>@@VERSION@@:</b> Open shows what the file contains before anything changes; the project in the browser is kept, and Restore previous brings it back. A file that fails to open or draw leaves the current project untouched.</li><li><b>@@VERSION@@:</b> A stored project that cannot be loaded is set aside and can be downloaded; ENGAGE still starts.</li><li><b>@@VERSION@@:</b> Text from project files is always shown as text, links open only when they are plain http(s) addresses, and a Content-Security-Policy stops anything else from running.</li><li><b>@@VERSION@@:</b> Every CSV export neutralises text that a spreadsheet would run as a formula.</li><li><b>@@VERSION@@:</b> Response import previews each row; imported responses arrive as Received with the text exactly as written, and reviewed items change only when ticked.</li><li><b>@@VERSION@@:</b> After a brief is frozen, every change to reviewed content asks for a reason and an authoriser and is listed on the Change flags page.</li><li><b>@@VERSION@@:</b> Request packs and brief issues keep a copy of what was issued and print from it; older ones are labelled as legacy records.</li><li><b>@@VERSION@@:</b> The Brief PDF prints every requirement, continuing long tables onto further pages.</li><li><b>@@VERSION@@:</b> A mixed-use asset carries the brief template of each of its uses.</li><li><b>@@VERSION@@:</b> Notices appear when browser storage is full or another tab changes the project.</li><li><b>@@VERSION@@:</b> One version constant, set in the VERSION file at build time.</li><li><b>v132 correction verification marker:</b> Height-aware request-pack pagination, bottom-anchored issued-record footnotes, normal-mode outer scrolling and one focused-pane scroller rebuilt from the actual v132 baseline · 17 Nov 2026 11:54 GST.</li><li><b>v132 issued request-pack PDF:</b> Rebuilt the Project Brief request-pack PDF as a static issued record aligned to the Power Apps response portal visual hierarchy. It now includes the ENGAGE header, request-pack reference, project and asset/group, addressee, issue and response dates, reference/status details and compact Project, Assets, Requested by, Respond by and Requirements cards.</li><li><b>Asset and Brief-section grouping:</b> Requirements are ordered first by asset and then by Brief section. Every requirement shows Brief ID above the item title, the full question, Typical input, Complete by S1/S2, and fixed Response / requirement and Supporting reference instructions.</li><li><b>Static record boundary:</b> Portal navigation, progress-entry indicators, editable fields, response-position choices, Save draft, Review responses and Submit responses are deliberately excluded from the PDF. The issued-record footer confirms that responses are submitted separately and remain subject to design-team review before controlled-brief incorporation.</li><li><b>Portal preserved:</b> The local Power Apps response layout preview and its v130 Previous/Next navigation correction remain unchanged.</li><li><b>v130 and earlier functionality retained:</b> Request-pack actions, focus modes, Scope toggle, Brief Issue navigation, manual CSV export/import, proposals, normal ENGAGE navigation and Save/Open/browser-reopen persistence remain in place.</li></ul></details><iframe id="briefFrame" class="v128-brief-frame" title="Project brief"></iframe></section>
   <script>window.renderBriefPage=window.renderBriefPage||function(){};</script>
   <section class="pg" id="pg-sa"></section>
   <section class="pg" id="pg-crs"></section>
@@ -2948,7 +2956,8 @@ const REGP=(function(P){ const t=P.t, out={};
    v52: ENGAGE release – GUI per Engage_GUI_mockup_v8 (ACT graphic style, sidebar navigation, header baseline controls, re-baseline dialog, Programme pane order).
    Data unchanged from v50/v51: register fingerprint C76A3F28, approvals fingerprint 8FF73D57. Workbook v02 = Tool Link updated + greens harmonised.
    v46: source workbook – the tool is built from the combined workbook; fingerprints match its Tool Link sheet */
-const SRCB={"tool": "ENGAGE: Design Assurance", "ver": "v132", "file": "Engage_Interface_Tool_v132.html", "wb": "2026_11_09_Combined_Interface_Component_Register_v06.xlsx", "reg": "Rev_66", "apv": "Rev G", "wbv": "v06", "built": "17 Nov 2026", "fpR": "11F16EE6", "fpA": "8FF73D57", "fpP": "D411696C", "nReg": 3074, "nComp": 47, "nApv": 233, "nPre": 47};
+const ENGAGE_BUILD=Object.freeze({ver:"@@VERSION@@",file:"Engage.html",built:"@@BUILT@@"});
+const SRCB={"tool": "ENGAGE: Design Assurance", "ver": "@@VERSION@@", "file": "Engage.html", "wb": "2026_11_09_Combined_Interface_Component_Register_v06.xlsx", "reg": "Rev_66", "apv": "Rev G", "wbv": "v06", "built": "@@BUILT@@", "fpR": "11F16EE6", "fpA": "8FF73D57", "fpP": "D411696C", "nReg": 3074, "nComp": 47, "nApv": 233, "nPre": 47};
 /* ================= v53: asset presets, Villa / Townhouse split, Zone IDs ================= */
 /* Asset presets – built from the workbook sheets Asset Presets and Preset Rules (fingerprint in SRCB.fpP). */
 const PRE={"uses":[{"id":"V","name":"Villa","color":"#4f9d54"},{"id":"W","name":"Townhouse","color":"#b8963a"},{"id":"R","name":"Residential","color":"#7c5cbf"},{"id":"H","name":"Hotel","color":"#d6567a"},{"id":"O","name":"Office","color":"#3f8fd2"},{"id":"T","name":"Retail","color":"#e8913a"},{"id":"P","name":"Parking","color":"#6b7c85"}],"groups":[{"id":"master","name":"Masterplan & Site Planning","note":"Project-level component. Not suggested by any use; tick it on the asset that carries the masterplan and site-planning interfaces, or set a tier for a use in the Preset matrix."},{"id":"use","name":"Use components","note":"One standalone register per primary use. Villa and Townhouse each have their own component, linked to the Villa and Townhouse uses."},{"id":"shared","name":"Shared & amenity components","note":"Suggested by one or more uses; the highest tier across the selected uses applies."},{"id":"mixed","name":"Mixed-use","note":""},{"id":"wide","name":"Whole-asset components","note":"Tier is set per use; the highest tier across the selected uses applies. Each one can be left as whole asset or defined by its own zones and levels."},{"id":"site","name":"Site & external","note":"Optional by default so they can be ticked once on the masterplan or site asset."},{"id":"other","name":"Other components (not in asset presets)","note":"Not suggested by any use; tick manually if needed."}],"comps":[{"n":"Masterplan & Site Planning","g":"master","p":{}},{"n":"Residential Apartment","g":"use","p":{"V":"D","R":"D","W":"D"}},{"n":"Villa","g":"use","p":{"V":"D"}},{"n":"Townhouse","g":"use","p":{"W":"D"}},{"n":"Hotel Guestroom","g":"use","p":{"H":"D"}},{"n":"Office Floor / Workplace","g":"use","p":{"O":"D"}},{"n":"Retail Unit","g":"use","p":{"T":"D"}},{"n":"Parking","g":"use","p":{"V":"O","P":"D","W":"O"}},{"n":"Terrace","g":"shared","p":{"V":"D","R":"D","H":"D","O":"O","W":"D"}},{"n":"Amenities","g":"shared","p":{"V":"D","R":"D","H":"D","O":"O","W":"D"}},{"n":"Back of House","g":"shared","p":{"R":"D","H":"D","O":"D","T":"D"}},{"n":"Commercial Kitchen","g":"shared","p":{"H":"D","O":"O","T":"O"}},{"n":"Laundry","g":"shared","p":{"V":"O","R":"O","H":"D","W":"O"}},{"n":"Pool","g":"shared","p":{"V":"D","R":"D","H":"D","W":"D"}},{"n":"Spa","g":"shared","p":{"R":"D","H":"D"}},{"n":"Loading / Logistics","g":"shared","p":{"R":"D","H":"D","O":"D","T":"D","P":"D"}},{"n":"Atria, Bridges & Links","g":"shared","p":{"R":"O","H":"O","O":"O","T":"O"}},{"n":"Mixed-Use Interfaces","g":"mixed","p":{}},{"n":"Structural Frame & Stability","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Substructure & Basement","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Fire Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Vertical Transportation","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Building Services Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"ICT, Security & Smart Building","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Sustainability & Building Physics","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Acoustics & Vibration Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Accessibility & Inclusive Design Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Façade / Building Envelope","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"O","W":"D"}},{"n":"Roof","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"O","W":"D"}},{"n":"Building Core","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Entrance & Lobby","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"O","W":"O"}},{"n":"Technical Room","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Corridor","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"O","W":"O"}},{"n":"Public Washrooms","g":"wide","p":{"V":"O","R":"O","H":"D","O":"D","T":"D","W":"O"}},{"n":"Signage & Wayfinding","g":"wide","p":{"V":"O","R":"D","H":"D","O":"D","T":"D","P":"D","W":"O"}},{"n":"Interiors & FF&E Strategy","g":"wide","p":{"V":"D","R":"D","H":"D","O":"O","T":"O","W":"D"}},{"n":"Construction Logistics & Temporary Works","g":"wide","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","P":"O","W":"O"}},{"n":"Commissioning, Handover & Operational Readiness","g":"wide","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","P":"O","W":"O"}},{"n":"BIM, Information & Design Management","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Cost, Value & Risk","g":"wide","p":{"V":"D","R":"D","H":"D","O":"D","T":"D","P":"D","W":"D"}},{"n":"Internal Walls","g":"wide","p":{"V":"D","W":"D","R":"D","H":"D","O":"D","T":"D","P":"D"}},{"n":"Site Infrastructure & Utilities","g":"site","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","P":"O","W":"O"}},{"n":"External Works","g":"site","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","W":"O"}},{"n":"Public Realm","g":"site","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","W":"O"}},{"n":"Water Feature","g":"site","p":{"V":"O","R":"O","H":"O","O":"O","T":"O","W":"O"}},{"n":"Marina & Waterfront Structures","g":"other","p":{}},{"n":"Community Buildings","g":"other","p":{}}],"rules":[{"n":"Mixed-Use Interfaces","t":"D","min":2},{"n":"Loading / Logistics","t":"D","min":2}],"occ":["V","W","R","H","O","T"]};
@@ -3205,8 +3214,22 @@ function demoCores(s){
   s.assets[0].cz[COR]=[{id:uid(),name:"Core 1",levels:["B1","G","03–15","16–30","31–42","RF"]}];
   s.assets[1].cz[COR]=[{id:uid(),name:"Core 2",levels:["B1","G","03–20","RF"]}]; return s;
 }
-let S; try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
-if(!S||!S.assets)S=demoCores(demoState());
+/* v133 safe start-up: a stored project that cannot be read, migrated or drawn is set aside
+   (kept under SETASIDE_KEY, downloadable from a notice) instead of being silently overwritten. */
+const SETASIDE_KEY=KEY+".setAside", SETASIDE_META_KEY=KEY+".setAside.meta";
+let STARTUP_ISSUE=null, S_FROM_STORAGE=false;
+function setAsideStored(reason){
+  let raw=null;try{raw=localStorage.getItem(KEY)}catch(e){}
+  if(raw===null||(STARTUP_ISSUE&&STARTUP_ISSUE.raw===raw))return;
+  STARTUP_ISSUE={reason:String(reason||"Unknown problem"),raw,stored:false,at:new Date().toISOString()};
+  try{localStorage.setItem(SETASIDE_KEY,raw);localStorage.setItem(SETASIDE_META_KEY,JSON.stringify({at:STARTUP_ISSUE.at,reason:STARTUP_ISSUE.reason,bytes:raw.length}));localStorage.removeItem(KEY);STARTUP_ISSUE.stored=true}
+  catch(e){try{localStorage.removeItem(SETASIDE_KEY)}catch(ig){}}
+  console.warn("ENGAGE: stored project set aside –",STARTUP_ISSUE.reason);
+}
+let S=null;
+try{const raw=localStorage.getItem(KEY);if(raw!==null){const x=JSON.parse(raw);if(x&&typeof x==="object"&&Array.isArray(x.assets)){S=x;S_FROM_STORAGE=true}else setAsideStored("The stored project has no asset list.")}}
+catch(e){setAsideStored("The stored project could not be read ("+(e&&e.message||e)+").")}
+if(!S)S=demoCores(demoState());
 /* v30: overview fields – one definition, in the order used by the PDF roll-up (status counts, then Overdue / Due / Flags). */
 const PCOLDEF=[
  {k:"nm",l:"Pane",fixed:1,tip:"Pane name. Sorts A–Z; the default order follows the component, asset and zone order of the project."},
@@ -3267,14 +3290,49 @@ function normalise(){
     S.prog=(S.prog&&S.prog.v===1)?S.prog:null; progApplyCb();
 pdNormalise(); S.version=56;
 }
-normalise();
+try{normalise()}catch(e){if(!S_FROM_STORAGE)throw e;console.error("ENGAGE start-up: stored project could not be migrated",e);setAsideStored("The stored project could not be migrated ("+(e&&e.message||e)+").");S=demoCores(demoState());S_FROM_STORAGE=false;normalise()}
 let savedAt=null, openDD=null, ddQuery="", selSrc=null, drill=null, tview=null, tvSort={key:null,dir:1};
 const sel=new Set(), selCats=new Set(), fpOpen=new Set(); let fpQuery="", fcQuery={};
 const kb={active:false,mode:null,rk:null,idx:0,sel:null};
-const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));savedAt=new Date()};
+/* v133 save: never throws; tells the user when the browser refuses to store the project,
+   and does not overwrite a set-aside project that could not be copied aside. */
+let saveFailing=false, lastStoredText=null;
+const save=()=>{
+  if(STARTUP_ISSUE&&!STARTUP_ISSUE.stored&&!STARTUP_ISSUE.released){engageNotice({id:"setaside"});return false}
+  let txt;try{txt=JSON.stringify(S)}catch(e){console.error("ENGAGE save",e);return false}
+  try{localStorage.setItem(KEY,txt);lastStoredText=txt;savedAt=new Date();if(saveFailing){saveFailing=false;engageNotice({id:"quota",close:true})}return true}
+  catch(e){saveFailing=true;savedAt=null;engageNotice({id:"quota",kind:"bad",title:"Changes are not being stored in this browser",
+    text:"The browser refused to store the project ("+(e&&e.name||"storage error")+"), usually because its storage is full. Your latest changes exist only in this tab. Use Save to download the project file now.",
+    actions:[{label:"Save project file",run:()=>document.getElementById("btnSave").click()}]});return false}
+};
+/* v133 notices: one small stack of dismissible messages, shown as text only. */
+function engageNotice(o){
+  let box=document.getElementById("engageNotices");
+  if(!box){box=document.createElement("div");box.id="engageNotices";box.setAttribute("role","status");box.setAttribute("aria-live","polite");document.body.appendChild(box)}
+  let el=o.id?box.querySelector('[data-notice="'+o.id+'"]'):null;
+  if(o.close){if(el)el.remove();return}
+  if(!o.title){return}
+  if(!el){el=document.createElement("div");if(o.id)el.dataset.notice=o.id;box.appendChild(el)}
+  el.className="engage-notice"+(o.kind==="bad"?" bad":o.kind==="ok"?" ok":"");el.textContent="";
+  const b=document.createElement("b");b.textContent=o.title;el.appendChild(b);
+  if(o.text){const s=document.createElement("span");s.textContent=o.text;el.appendChild(s)}
+  const row=document.createElement("div");row.className="engage-notice-actions";
+  (o.actions||[]).forEach(a=>{const btn=document.createElement("button");btn.type="button";btn.className="btn";btn.textContent=a.label;btn.onclick=()=>{try{a.run()}finally{if(a.close!==false&&!a.keep)el.remove()}};row.appendChild(btn)});
+  if(o.dismiss!==false){const x=document.createElement("button");x.type="button";x.className="btn";x.textContent="Dismiss";x.onclick=()=>{if(o.onDismiss)o.onDismiss();el.remove()};row.appendChild(x)}
+  el.appendChild(row);
+  return el;
+}
+window.engageNotice=engageNotice;
+/* v133: warn when the same project is changed in another tab or window of this browser. */
+window.addEventListener("storage",e=>{
+  if(e.key!==KEY||e.newValue===null||e.newValue===lastStoredText)return;
+  engageNotice({id:"othertab",kind:"bad",title:"This project was changed in another tab or window",
+    text:"ENGAGE is open more than once in this browser. Each copy saves over the other. Load the other version to continue from its changes, or keep this version to overwrite them.",
+    actions:[{label:"Load the other version",run:()=>location.reload()},{label:"Keep this version",run:()=>save()}]});
+});
 
 /* ================= helpers ================= */
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const aq=s=>String(s).replace(/["\\]/g,"\\$&");
 const sIdx=s=>STAGES.indexOf(s);
 const zonesOf=(a,c)=>c===RA?(a.zones||[]):((a.cz&&a.cz[c])||[]);
@@ -4086,7 +4144,7 @@ window.addEventListener("resize",()=>closeCompPanel());
   if(S.page==="summary"){ T_("selector pane",renderSlicers); T_("summary",renderSummary) }
   T_("table view",renderTview);
   if(S.page==="overdue"){ T_("selector pane",renderSlicers); T_("overdue table",renderTable) }
-  if(S.page==="flags")T_("flags",renderFlags);
+  if(S.page==="flags")T_("flags",()=>{renderFlags();renderBriefChanges()});
   if(S.page==="assets")T_("project definition",renderAssetsPage);
   if(S.page==="brief")T_("project brief",renderBriefPage);
   if(S.page==="prog")T_("programme",renderProgPage);
@@ -4469,7 +4527,12 @@ function download(name,text,type){const b=new Blob([text],{type});const u=URL.cr
 const safe=s=>(s||"project").replace(/[^\w\-]+/g,"_");
 const PDH=["Project","Project number","Project client","Project location"];
 const PD=()=>[S.project,S.proj.number,S.proj.client,S.proj.location];
-const csvq=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+/* v133 CSV rule, used by every CSV export: text that a spreadsheet would run as a formula
+   (starting = + - @, tab or carriage return) is prefixed with an apostrophe. Plain numbers are left alone. */
+function csvGuard(v){if(v==null)return "";if(typeof v==="number"||typeof v==="boolean")return String(v);const s=String(v);return /^[=+\-@\t\r]/.test(s)&&!/^[+-]?(\d+([.,]\d+)*|\d*\.\d+)(e[+-]?\d+)?%?$/i.test(s)&&!/^[-\s]+$/.test(s)?"'"+s:s}
+/* v133: links from project files are followed only when they are plain http(s) addresses. */
+function webUrl(u){const s=String(u??"").trim();return /^https?:\/\/[^\s<>"']+$/i.test(s)?s:""}
+const csvq=v=>`"${csvGuard(v).replace(/"/g,'""')}"`;
 function exportCsv(){
   if(S.page==="overdue")return exportTable();
   if(S.page==="flags")return exportFlags();
@@ -4943,7 +5006,7 @@ function renderDetail(){
       <div class="tiles" style="margin-top:8px">${STATUS_ORDER.map(c=>`<button class="tile" data-act="dtset" data-a="${ai}" data-v="${c}" ${na?"disabled":""}>${stIcon(c)}${ST[c].n}…</button>`).join("")}${anyLock?`<button class="tile" data-act="dtunlock" data-a="${ai}">${ICON.unlock}Unlock…</button>`:""}</div>
       <div class="evh">${ICON.link.replace('class="ico"','class="ico" style="width:14px;height:14px"')}Evidence (${evs.length})<span class="sp"></span><button class="btn sm" data-act="evadd" data-a="${ai}">+ Add evidence</button></div>
       ${evs.length?`<table class="evt"><tr><th>Title</th><th>Document no. · Rev</th><th>Suitability</th><th>Type</th><th>Applies to</th><th>Added</th><th></th></tr>${evs.map(e=>`<tr>
-        <td>${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.title)}</a>`:esc(e.title)}</td><td>${esc(e.docNo||"–")}${e.rev?" · "+esc(e.rev):""}</td>
+        <td>${webUrl(e.url)?`<a href="${esc(webUrl(e.url))}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a>`:esc(e.title)}</td><td>${esc(e.docNo||"–")}${e.rev?" · "+esc(e.rev):""}</td>
         <td><span class="sbadge ${e.suit.toLowerCase()}" title="${esc(SUIT_N[e.suit])}">${e.suit}</span></td><td>${esc(e.type)}</td>
         <td>${e.lv==="*"?"All levels":e.lv.map(k=>esc(colByKey(a,k)?colByKey(a,k).l:k)).join(", ")}</td><td>${esc(e.by||"–")}<br><span style="color:var(--muted)">${fmtDT(e.at)}</span></td>
         <td style="white-space:nowrap"><button class="lnk" data-act="evedit" data-a="${ai}" data-v="${e.eid}">Edit</button> · <button class="lnk" data-act="evdel" data-a="${ai}" data-v="${e.eid}">Remove</button></td></tr>`).join("")}</table>`:`<div style="color:var(--muted)">No evidence linked yet.</div>`}
@@ -4985,6 +5048,19 @@ function cfItems(){
 const ageD=f=>Math.floor(((f.state==="open"?Date.now():f.rTs)-f.ts)/864e5);
 const CF_COLS=[["state","State"],["asset","Asset"],["lvl","Zone · level"],["id","Interface"],["impact","Change impact class"],["ts","Raised"],["age","Age (days)"],["cur","Current status"],["res","Resolution"],["act",""]];
 const cfCols=()=>isMulti()?[CF_COLS[0],["comp","Component"],...CF_COLS.slice(1)]:CF_COLS;
+/* v133: brief changes made after a Project brief was frozen (BCR records kept by the brief). */
+function briefChangeList(){const b=S.brief;return b&&Array.isArray(b.changes)?b.changes.filter(c=>c&&typeof c==="object"):[]}
+function renderBriefChanges(){
+  const el=document.getElementById("briefChanges");if(!el)return;
+  const L=briefChangeList().slice().reverse();
+  const fmtAt=s=>{const d=new Date(s);return isNaN(d)?esc(s||""):esc(d.toISOString().slice(0,16).replace("T"," "))};
+  el.innerHTML=`<div class="visual" style="margin-top:12px"><div class="shead"><div class="vtitle">Brief changes after freeze <span class="dimz">${L.length}</span></div>${L.length?'<span class="sp"></span><button class="btn sm" id="btnBcrCsv" type="button">Export CSV</button>':""}</div>
+  ${L.length?`<div class="tblwrap"><table class="t"><thead><tr><th>Record</th><th>Recorded (UTC)</th><th>Asset</th><th>Frozen at</th><th>Change</th><th>Items</th><th>Reason</th><th>Authorised by</th></tr></thead><tbody>${L.map(c=>`<tr><td><b>${esc(c.id)}</b></td><td>${fmtAt(c.at)}</td><td>${esc(c.assetName||c.asset)}</td><td>${esc(c.rev)}</td><td>${esc(c.route)}</td><td><ul style="margin:0;padding-left:16px">${(Array.isArray(c.items)?c.items:[]).map(i=>`<li>${esc(i.id)} · ${esc(i.what)}: ${esc(i.from||"–")} → ${esc(i.to||"–")}</li>`).join("")}</ul></td><td>${esc(c.reason)}</td><td>${esc(c.by)}</td></tr>`).join("")}</tbody></table></div>`
+  :`<div class="note2" style="padding:8px 2px">No brief changes after freeze. When a Project brief has been issued and frozen, every change to its reviewed content is recorded here with its reason and authoriser.</div>`}</div>`;
+  const b=document.getElementById("btnBcrCsv");if(b)b.onclick=()=>{const out=[["Record","Recorded (UTC)","Asset","Frozen at","Change","Item","What","From","To","Reason","Authorised by"].map(csvq).join(",")];
+    L.forEach(c=>(Array.isArray(c.items)&&c.items.length?c.items:[{}]).forEach(i=>out.push([c.id,c.at,c.assetName||c.asset,c.rev,c.route,i.id,i.what,i.from,i.to,c.reason,c.by].map(csvq).join(","))));
+    download(`${safe(S.project)}_brief_changes.csv`,"﻿"+out.join("\r\n"),"text/csv")};
+}
 function renderFlags(){
   const all=cfItems(), open=all.filter(f=>f.state==="open"), res=all.filter(f=>f.state==="resolved");
   const xs=selSrc==="flags"&&sel.size;
@@ -5766,7 +5842,7 @@ function docCard(d){
   const f=d.file, row=(l,v)=>v?`<div>${l}</div><div>${v}</div>`:"";
   return `<div class="visual doccard"><div class="vtitle">${esc(d.title)} ${dsb(d.status)}</div><div class="dgrid2">
     ${row("Source type",esc(d.type))}${row("Issuer / authority",esc(d.issuer||""))}${row("Reference",esc(d.ref||""))}${row("Version / edition",esc(d.version||""))}${row("Issue date",esc(fmtD(d.date)))}${row("Applies to",esc(d.scope||""))}
-    ${row("Controlled copy",d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.url.length>80?d.url.slice(0,78)+"…":d.url)}</a>`:"")}
+    ${row("Controlled copy",webUrl(d.url)?`<a href="${esc(webUrl(d.url))}" target="_blank" rel="noopener noreferrer">${esc(d.url.length>80?d.url.slice(0,78)+"…":d.url)}</a>`:"")}
     ${row("File recorded",f?`${esc(f.name)} · ${fmtBytes(f.size)}${f.sha?`<div class="mono">SHA-256 ${f.sha.slice(0,16)}…${f.sha.slice(-6)}</div>`:""}`:"")}
     ${row("Licence / usage",d.licence?`Licensed or restricted${d.licNote?" – "+esc(d.licNote):""}`:"")}${row("Notes",esc(d.notes||""))}</div>
     <div class="dtbar"><button class="btn sm" data-rq="dedit" data-id="${d.id}">Edit document</button><button class="btn sm danger" data-rq="ddel" data-id="${d.id}">Remove document</button></div></div>`;
@@ -6694,7 +6770,7 @@ const sName=s=>stageAlias(s)||SHORT[s]||s;
 const PAL=["#2F6FEB","#7B4FD8","#EA6119","#43A874","#E0A526","#24458A","#E3008C","#00B7C3"];
 const DESIGN="#2F6FEB", APPROVAL="#7B4FD8";
 const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const D0=(y,m,d)=>Math.floor(Date.UTC(y,m-1,d)/864e5);
 const dt=n=>new Date(n*864e5), dow=n=>(n+4)%7;
 const fmt=n=>{const d=dt(n);return `${d.getUTCDate()} ${MON[d.getUTCMonth()]} ${String(d.getUTCFullYear()).slice(2)}`};
@@ -7006,9 +7082,9 @@ function rbModal(){
   const dv=n=>n?`<b style="color:${n>0?"#A8352E":"#1F6B4A"}">${n>0?"+":""}${n} d</b>`:`<span class="dimz">–</span>`;
   const rows=mv.slice(0,CAP).map(m=>{ const t=(BYID[m.id]&&BYID[m.id].text)||"";
     return `<tr><td class="mi"><b>${esc(m.id)}</b><span>${esc(t.length>74?t.slice(0,73)+"…":t)}</span></td><td>${esc(m.asset)} · ${esc(m.c)} · ${m.s}</td><td class="n">${m.pa}% → <b>${m.pb}%</b></td><td class="n">${fmt(m.da)} → <b>${fmt(m.db)}</b></td><td class="n">${dv(m.db-m.da)}</td></tr>` }).join("");
-  return `<div class="modal on rbmodal" data-pa="rbbg" role="dialog" aria-modal="true" aria-label="Re-baseline ${rev.rev} to ${next}"><div class="mbox">
-    <h3>${ICON_OPEN} Re-baseline: ${rev.rev} → ${next}</h3>
-    <p class="hint">Review what has changed since ${rev.rev}. Accepting records every change in the re-baseline log with its old and new dates, publishes the new dates to the interface register and locks the baseline as ${next}.</p>
+  return `<div class="modal on rbmodal" data-pa="rbbg" role="dialog" aria-modal="true" aria-label="Re-baseline ${esc(rev.rev)} to ${next}"><div class="mbox">
+    <h3>${ICON_OPEN} Re-baseline: ${esc(rev.rev)} → ${next}</h3>
+    <p class="hint">Review what has changed since ${esc(rev.rev)}. Accepting records every change in the re-baseline log with its old and new dates, publishes the new dates to the interface register and locks the baseline as ${next}.</p>
     <div class="vtitle rbh">Changes · ${CHG.length}</div>
     <ul class="rbchg">${CHG.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
     ${nm?`<div class="vtitle rbh">Entry checkpoint changes · ${nm} interface${nm===1?"":"s"} <span class="rbsub">approve-by date at the old and new checkpoint</span></div>
@@ -7025,21 +7101,21 @@ function rbModal(){
 function lockNote(what){
   const rev=lastRev(), alloc=what==="allocations";
   if(BL.draft)return `<div class="banner warn"><b>No baseline yet.</b> ${alloc?"Allocations":"Complete by"} can be changed freely until the initial baseline B0 is set. <button class="btn sm" data-pa="gobase" style="margin-left:8px">Set baseline B0…</button></div>`;
-  if(BL.locked)return `<div class="banner info"><b>Baseline ${rev.rev} is locked</b> – ${alloc?"allocations are":"Complete by is"} read-only${alloc?"":" and the register dates equal the working dates"}. Use <b>Unlock to edit</b> in the header above to make changes.</div>`;
+  if(BL.locked)return `<div class="banner info"><b>Baseline ${esc(rev.rev)} is locked</b> – ${alloc?"allocations are":"Complete by is"} read-only${alloc?"":" and the register dates equal the working dates"}. Use <b>Unlock to edit</b> in the header above to make changes.</div>`;
   const n=CHG.length, mv=alloc?allocMoves().length:0;
-  return `<div class="banner warn"><b>Baseline unlocked – ${n} change${n===1?"":"s"} from ${rev.rev}.</b> ${alloc?(mv?`${mv} interface${mv===1?"":"s"} moved to a different checkpoint. `:"No checkpoint moves yet. "):""}${alloc?"Allocation changes":"A change to Complete by"} count${alloc?"":"s"} as a change from ${rev.rev}${alloc?"":"; accepting publishes the new dates to the register"} – accept them here, without leaving this page.
+  return `<div class="banner warn"><b>Baseline unlocked – ${n} change${n===1?"":"s"} from ${esc(rev.rev)}.</b> ${alloc?(mv?`${mv} interface${mv===1?"":"s"} moved to a different checkpoint. `:"No checkpoint moves yet. "):""}${alloc?"Allocation changes":"A change to Complete by"} count${alloc?"":"s"} as a change from ${esc(rev.rev)}${alloc?"":"; accepting publishes the new dates to the register"} – accept them here, without leaving this page.
     <div class="acts"><button class="btn sm pri" data-pa="rbopen" ${n?"":"disabled"}>Review &amp; accept changes…</button></div></div>`;
 }
 function toolbar(){
   const sd=P.status, L=BL.locked, rev=lastRev();
   const chip=BL.draft
     ?`<button class="chipbtn warn" data-pa="gobase" title="No baseline has been set yet – set the initial baseline when the programme is agreed">${ICON_OPEN} Draft · no baseline yet</button>`
-    :`<button class="chipbtn ${L?"":"warn"}" data-pa="gobase" title="${L?"Programme and allocations are locked to this baseline":"Baseline unlocked – the programme is being edited"}">${L?ICON_LOCK:ICON_OPEN} Baseline ${rev.rev} · ${L?"locked":`unlocked · ${CHG.length} change${CHG.length===1?"":"s"}`}</button>`;
+    :`<button class="chipbtn ${L?"":"warn"}" data-pa="gobase" title="${L?"Programme and allocations are locked to this baseline":"Baseline unlocked – the programme is being edited"}">${L?ICON_LOCK:ICON_OPEN} Baseline ${esc(rev.rev)} · ${L?"locked":`unlocked · ${CHG.length} change${CHG.length===1?"":"s"}`}</button>`;
   const blact=BL.draft?"":(L
     ?`<button class="btn sm pri" data-pa="alunlock" title="Unlock the baseline to edit the programme, calendar, allocations and Complete by">${ICON_OPEN} Unlock to edit</button>`
     :(CHG.length
-      ?`<button class="btn sm pri" data-pa="rbopen" title="Review the ${CHG.length} change${CHG.length===1?"":"s"} and accept them as the next baseline">Re-baseline…</button><button class="btn sm" data-pa="rbdiscard" title="Discard the changes and return to ${rev.rev}">Discard</button>`
-      :`<button class="btn sm" data-pa="bltog" title="No changes made – lock ${rev.rev} again">${ICON_LOCK} Lock</button>`));
+      ?`<button class="btn sm pri" data-pa="rbopen" title="Review the ${CHG.length} change${CHG.length===1?"":"s"} and accept them as the next baseline">Re-baseline…</button><button class="btn sm" data-pa="rbdiscard" title="Discard the changes and return to ${esc(rev.rev)}">Discard</button>`
+      :`<button class="btn sm" data-pa="bltog" title="No changes made – lock ${esc(rev.rev)} again">${ICON_LOCK} Lock</button>`));
   return `<span class="blgrp">${chip}${blact}</span><div class="sdctl"><label for="ppsd">Status date</label><input type="date" id="ppsd" value="${iso(sd)}"><button class="btn sm" data-pa="sdw" data-v="-1" title="Back one week">◂ 1 wk</button><button class="btn sm" data-pa="sdw" data-v="1" title="Forward one week">1 wk ▸</button><button class="btn sm" data-pa="sdt">Today</button></div>`
     +(sd>TODAY?`<span class="sdnote" title="Actual progress is only known up to today">Future date – actual progress held at today</span>`:sd<TODAY?`<span class="sdnote" title="Plan and actual are shown as they stood on this date">Looking back to ${fmt(sd)}</span>`:"");
 }
@@ -7079,7 +7155,7 @@ const plotGroups=()=>{ const m=new Map(); ASSETS.forEach((A,i)=>{const id=(typeo
 function nextGate(i){const st=curName(i),x=SCH[i].stages[st];return x?`${st} · ${fmt(x.gate)}`:"–"}
 function stageTag(i){const q=stageCtl(ASSETS[i].id);return q.hold?`<span class="v124-tag hold">${q.hold.plot?"Plot hold":"On hold"} · ${holdWeeks(q.hold)} full wk${holdWeeks(q.hold)===1?"":"s"}</span>`:q.holds.length?`<span class="note2">${q.holds.reduce((n,h)=>n+(h.weeks||0),0)} wk from past holds</span>`:`<span class="note2">–</span>`}
 function tabStage(){
- const rev=lastRev(), disabled=BL.draft?"disabled":""; let h=`<div class="visual v124-settings"><div class="shead"><div class="vtitle">Project settings</div><span class="sp"></span></div><div class="v124-settinggrid"><div><span>Stage advance rule</span><b>${PR.stageRule==="gate"?"Gate sign-off":"Programme dates (default)"}</b></div><button class="btn sm" data-pa="strule">Change…</button><div><span>Programme baseline</span><b>${BL.draft?"Draft · no baseline":`${rev.rev} · ${BL.locked?"locked":"unlocked"}`}</b></div></div></div>`;
+ const rev=lastRev(), disabled=BL.draft?"disabled":""; let h=`<div class="visual v124-settings"><div class="shead"><div class="vtitle">Project settings</div><span class="sp"></span></div><div class="v124-settinggrid"><div><span>Stage advance rule</span><b>${PR.stageRule==="gate"?"Gate sign-off":"Programme dates (default)"}</b></div><button class="btn sm" data-pa="strule">Change…</button><div><span>Programme baseline</span><b>${BL.draft?"Draft · no baseline":`${esc(rev.rev)} · ${BL.locked?"locked":"unlocked"}`}</b></div></div></div>`;
  const held=AIDX.filter(isHeld); if(held.length)h+=`<div class="banner warn"><b>${held.length} asset${held.length===1?" is":"s are"} on hold.</b> ${held.map(i=>`${esc(ASSETS[i].name)} since ${fmt(stageCtl(ASSETS[i].id).hold.from)} · ${holdWeeks(stageCtl(ASSETS[i].id).hold)} full wk`).join("; ")}. Stage and due / overdue tracking are frozen. The programme gains one week of push after each further full week.</div>`;
  h+=`<div class="visual"><div class="shead"><div class="vtitle">Stage status</div><span class="note2">The only place the current stage can be changed.</span><span class="sp"></span>${BL.draft?`<span class="chipx win">Set baseline B0 before placing holds</span>`:""}</div><div class="v124-stscroll"><table class="v124-st"><thead><tr><th>Asset</th><th>${PR.stageRule==="gate"?"Gate-approved stage":"Programme stage"}</th><th>Manual change</th><th>Effective stage</th><th>Next gate</th><th>Hold</th><th>Actions</th></tr></thead><tbody>`;
  plotGroups().forEach(pl=>{const ph=pl.ix.filter(i=>{const q=stageCtl(ASSETS[i].id);return q.hold&&q.hold.plot===pl.id}), free=pl.ix.filter(i=>!isHeld(i)); h+=`<tr class="v124-plot"><td colspan="5"><b>${esc(pl.name)}</b> <span>${pl.ix.length} asset${pl.ix.length===1?"":"s"}${ph.length?` · ${ph.length} on plot hold`:""}</span></td><td>${ph.length?`<span class="v124-tag hold">Plot hold · ${holdWeeks(stageCtl(ASSETS[ph[0]].id).hold)} wk</span>`:""}</td><td><div class="acts">${free.length?`<button class="btn sm hold" ${disabled} data-pa="stphold" data-p="${esc(pl.id)}">Place plot on hold…</button>`:""}${ph.length?`<button class="btn sm go" data-pa="stprel" data-p="${esc(pl.id)}">Release plot hold…</button>`:""}</div></td></tr>`;
@@ -7142,7 +7218,7 @@ function kpis(){
   const KC=[]; kpis.last=KC; const card=(v,l,s,c)=>{ KC.push([v,l,s,c]); return `<div class="visual card"><div class="v${String(v).replace(/<[^>]*>/g,"").length>9?" vt":""}" style="color:${c||"var(--ink)"}">${v}</div><div class="l">${l}</div><div class="s">${s||"&nbsp;"}</div></div>` };
   const stg=as.map(i=>`<span class="nw">${ASH(i)} ${curName(i)}</span>`).join(" · ");
   return `<div class="grid-c pkpis">`+
-   card(`<span class="nw">${fmt(st0)}</span> – <span class="nw">${fmt(en0)}</span>`,"Programme",`${as.map(i=>`${ASH(i)} ${wks(i)} wks`).join(" · ")}${BL.locked?` · ${lastRev().rev} locked`:endVar?` · vs ${lastRev().rev} ${endVar>0?"+":""}${endVar} d`:""}`)+
+   card(`<span class="nw">${fmt(st0)}</span> – <span class="nw">${fmt(en0)}</span>`,"Programme",`${as.map(i=>`${ASH(i)} ${wks(i)} wks`).join(" · ")}${BL.locked?` · ${esc(lastRev().rev)} locked`:endVar?` · vs ${esc(lastRev().rev)} ${endVar>0?"+":""}${endVar} d`:""}`)+
    card(stg,"Current stage (per asset)","derived from programme dates")+
    card(g.done,"Actual complete",`${pc(g.done,g.tot)}% of ${g.tot} entries · plan ${pc(g.pdue,g.tot)}%`,"#1F6B4A")+
    card(g.od,"Overdue",`Complete By before current stage`,g.od?"var(--bad)":"")+
@@ -7155,16 +7231,16 @@ function baselineCard(){
   if(BL.draft)return draftCard();
   const L=BL.locked, rev=lastRev(), n=BL.revs.length, next="B"+n;
   const tgl=`<button class="bsw ${L?"ison":"iswarn"}" role="switch" aria-checked="${L}" data-pa="bltog" title="${L?"Unlock to edit the programme, calendar and allocations":"Lock the baseline (re-baseline or discard changes first if there are any)"}"><span class="trk"></span>${L?"Baseline locked":"Baseline unlocked – editing"}</button>`;
-  let h=`<div class="visual" id="ppblcard"><div class="shead"><div class="vtitle">Baseline</div><span class="chipx blue">${rev.rev}</span><span class="chipx ${L?"ok":"win"}">${L?"Locked":"Unlocked"}</span><span class="sp"></span>${tgl}</div>
-   <div class="note2" style="margin:0 0 8px">Current baseline <b>${rev.rev}</b> set ${fmt(rev.ts)}${rev.by?" by "+esc(rev.by):""} · ${esc(rev.cat)}. ${L?"Programme dates, durations, checkpoint sets, the working calendar and its exceptions, each interface's Complete by and the allocations are read-only. Actual progress and the status date are not part of the baseline. What-if programmes are separate copies and never change it.":"Tracking continues against the edited programme. Differences from the baseline show as grey bars on the timeline and as variance columns."}</div>`;
+  let h=`<div class="visual" id="ppblcard"><div class="shead"><div class="vtitle">Baseline</div><span class="chipx blue">${esc(rev.rev)}</span><span class="chipx ${L?"ok":"win"}">${L?"Locked":"Unlocked"}</span><span class="sp"></span>${tgl}</div>
+   <div class="note2" style="margin:0 0 8px">Current baseline <b>${esc(rev.rev)}</b> set ${fmt(rev.ts)}${rev.by?" by "+esc(rev.by):""} · ${esc(rev.cat)}. ${L?"Programme dates, durations, checkpoint sets, the working calendar and its exceptions, each interface's Complete by and the allocations are read-only. Actual progress and the status date are not part of the baseline. What-if programmes are separate copies and never change it.":"Tracking continues against the edited programme. Differences from the baseline show as grey bars on the timeline and as variance columns."}</div>`;
   if(!L){
-    h+=`<div class="banner warn"><b>Editing – ${CHG.length} change${CHG.length===1?"":"s"} from ${rev.rev}.</b>${CHG.length?`<ul>${CHG.slice(0,8).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>${CHG.length>8?`<div>+ ${CHG.length-8} more</div>`:""}`:` No changes yet – edit durations, checkpoints, dates, the calendar exceptions, an interface's Complete by or allocations.`}
-     <div class="acts"><button class="btn sm pri" data-pa="rbopen" ${CHG.length?"":"disabled"}>Re-baseline…</button><button class="btn sm" data-pa="rbdiscard" ${CHG.length?"":"disabled"}>Discard changes</button>${CHG.length?`<button class="btn sm" data-pa="cmpwip" title="Compare the working programme with the baseline">Compare with ${rev.rev}</button>`:`<button class="btn sm" data-pa="bltog">Lock without changes</button>`}<label class="chkl2" style="margin-left:8px"><input type="checkbox" data-pa="tbase" ${V.tr.base?"checked":""}> Show baseline in the tracking curve</label></div></div>`;
+    h+=`<div class="banner warn"><b>Editing – ${CHG.length} change${CHG.length===1?"":"s"} from ${esc(rev.rev)}.</b>${CHG.length?`<ul>${CHG.slice(0,8).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>${CHG.length>8?`<div>+ ${CHG.length-8} more</div>`:""}`:` No changes yet – edit durations, checkpoints, dates, the calendar exceptions, an interface's Complete by or allocations.`}
+     <div class="acts"><button class="btn sm pri" data-pa="rbopen" ${CHG.length?"":"disabled"}>Re-baseline…</button><button class="btn sm" data-pa="rbdiscard" ${CHG.length?"":"disabled"}>Discard changes</button>${CHG.length?`<button class="btn sm" data-pa="cmpwip" title="Compare the working programme with the baseline">Compare with ${esc(rev.rev)}</button>`:`<button class="btn sm" data-pa="bltog">Lock without changes</button>`}<label class="chkl2" style="margin-left:8px"><input type="checkbox" data-pa="tbase" ${V.tr.base?"checked":""}> Show baseline in the tracking curve</label></div></div>`;
   }
   const rows=BL.revs.slice().reverse().map(r=>{ const cur=r===rev, open=!!V.rb.log[r.rev];
     const ends=ASSETS.map((A,i)=>{ const e=r.ends[A.id]; if(e==null)return ""; const pe=r.prevEnds?r.prevEnds[A.id]:null, dv=pe!=null?e-pe:0; return `${esc(A.name)} ${fmt(e)}${dv?` <span style="color:${dv>0?"#A8352E":"#1F6B4A"};font-weight:600">${dv>0?"+":""}${dv} d</span>`:""}`}).filter(Boolean).join(" · ");
-    return `<tr class="lrv ${cur?"cur":""}" data-pa="logo" data-k="${r.rev}" tabindex="0" aria-expanded="${open}"><td><button class="chev ${open?"":"plus"}" tabindex="-1" aria-hidden="true"></button><b>${r.rev}</b>${cur?` <span class="chipx blue">current</span>`:""}</td><td>${fmt(r.ts)}</td><td>${esc(r.by||"–")}</td><td>${esc(r.cat)}</td><td style="max-width:430px">${esc(r.reason)}</td><td>${ends}</td><td>${r.changes.length}</td><td><button class="btn sm" data-pa="cmprev" data-k="${r.rev}" title="Compare ${r.rev} with the previous revision">Compare</button></td></tr>`+
-      (open?`<tr><td class="ldet" colspan="8"><b>${r.rev} – ${r.changes.length} change${r.changes.length===1?"":"s"}</b>${r.prevEnds?" from "+BL.revs[BL.revs.indexOf(r)-1].rev:""}<ul>${r.changes.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></td></tr>`:"") }).join("");
+    return `<tr class="lrv ${cur?"cur":""}" data-pa="logo" data-k="${esc(r.rev)}" tabindex="0" aria-expanded="${open}"><td><button class="chev ${open?"":"plus"}" tabindex="-1" aria-hidden="true"></button><b>${esc(r.rev)}</b>${cur?` <span class="chipx blue">current</span>`:""}</td><td>${fmt(r.ts)}</td><td>${esc(r.by||"–")}</td><td>${esc(r.cat)}</td><td style="max-width:430px">${esc(r.reason)}</td><td>${ends}</td><td>${r.changes.length}</td><td><button class="btn sm" data-pa="cmprev" data-k="${esc(r.rev)}" title="Compare ${esc(r.rev)} with the previous revision">Compare</button></td></tr>`+
+      (open?`<tr><td class="ldet" colspan="8"><b>${esc(r.rev)} – ${r.changes.length} change${r.changes.length===1?"":"s"}</b>${r.prevEnds?" from "+BL.revs[BL.revs.indexOf(r)-1].rev:""}<ul>${r.changes.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></td></tr>`:"") }).join("");
   h+=`<div class="vtitle" style="font-size:13px;margin:6px 0 4px">Re-baseline log</div><table class="log"><thead><tr><th>Rev</th><th>Set</th><th>By</th><th>Category</th><th>Reason</th><th>Programme end (Δ vs previous)</th><th>Changes</th><th></th></tr></thead><tbody>${rows}</tbody></table>
     <div class="note2">Each re-baseline stores the full programme, calendar, Complete by and allocation, so any earlier revision can be reviewed. Click a row to see what changed, or use <b>5 What-if</b> to compare any two revisions.</div></div>`;
   return h;
@@ -7192,12 +7268,12 @@ function cmpTimeline(A,B){
   const H=30+idx.length*(24+PSTG().length*rh+8)+4; let o=`<svg class="gantt" viewBox="0 0 ${W} ${H}" role="img" aria-label="Revision timeline overlay"><defs><pattern id="pphat3" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#D3C7F0"/><rect width="2.6" height="6" fill="${APPROVAL}"/></pattern></defs>`;
   let d=dt(mn); d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1)); while(Math.floor(d.getTime()/864e5)<=mx){ const n=Math.floor(d.getTime()/864e5), x=sx(n); o+=`<line x1="${x}" y1="22" x2="${x}" y2="${H-2}" stroke="${d.getUTCMonth()===0?"#A9B6B8":"#EDF1F1"}"/><text x="${x+4}" y="16" font-size="11" fill="#5C7075">${MON[d.getUTCMonth()]}${d.getUTCMonth()===0?" "+String(d.getUTCFullYear()).slice(2):""}</text>`; d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1)) }
   let y=30;
-  idx.forEach(i=>{ o+=`<rect x="0" y="${y}" width="${W}" height="24" fill="#F3F6F6"/><rect x="0" y="${y}" width="4" height="24" fill="${ACOL[i]}"/><text x="14" y="${y+16}" font-size="13" font-weight="600">${esc(ASSETS[i].name)}</text><text x="${X0}" y="${y+16}" font-size="11" fill="#5C7075">${A.label} ends ${fmt(A.S[i].end)} · ${B.label} ends ${fmt(B.S[i].end)} · <tspan font-weight="600" fill="${B.S[i].end>A.S[i].end?"#A8352E":B.S[i].end<A.S[i].end?"#1F6B4A":"#5C7075"}">${B.S[i].end===A.S[i].end?"no change":sgn(B.S[i].end-A.S[i].end)+" d"}</tspan></text>`; y+=24;
+  idx.forEach(i=>{ o+=`<rect x="0" y="${y}" width="${W}" height="24" fill="#F3F6F6"/><rect x="0" y="${y}" width="4" height="24" fill="${ACOL[i]}"/><text x="14" y="${y+16}" font-size="13" font-weight="600">${esc(ASSETS[i].name)}</text><text x="${X0}" y="${y+16}" font-size="11" fill="#5C7075">${esc(A.label)} ends ${fmt(A.S[i].end)} · ${esc(B.label)} ends ${fmt(B.S[i].end)} · <tspan font-weight="600" fill="${B.S[i].end>A.S[i].end?"#A8352E":B.S[i].end<A.S[i].end?"#1F6B4A":"#5C7075"}">${B.S[i].end===A.S[i].end?"no change":sgn(B.S[i].end-A.S[i].end)+" d"}</tspan></text>`; y+=24;
     PSTG().forEach(s=>{ const a=A.S[i].stages[s], b=B.S[i].stages[s], dv=b.gate-a.gate;
       o+=`<text x="14" y="${y+18}" font-size="11.5">${s}<tspan fill="#5C7075" font-size="10.5"> ${esc(D.alias[s])}</tspan></text>`;
-      o+=`<path d="${pillP(sx(a.start),y+2,Math.max(2,sx(a.gate+1)-sx(a.start)),10,true,true)}" fill="#C3CED0"><title>${A.label} ${s}: ${fmt(a.start)} → ${fmt(a.gate)}</title></path>`;
-      o+=`<path d="${pillP(sx(b.start),y+14,Math.max(2,sx(b.dEnd+1)-sx(b.start)),10,true,!b.a)}" fill="${DESIGN}"><title>${B.label} ${s} design: ${fmt(b.start)} → ${fmt(b.dEnd)}</title></path>`;
-      if(b.a)o+=`<path d="${pillP(sx(b.dEnd+1),y+14,Math.max(2,sx(b.gate+1)-sx(b.dEnd+1)),10,false,true)}" fill="url(#pphat3)"><title>${B.label} ${s} approval: ${fmt(b.aS)} → ${fmt(b.gate)}</title></path>`;
+      o+=`<path d="${pillP(sx(a.start),y+2,Math.max(2,sx(a.gate+1)-sx(a.start)),10,true,true)}" fill="#C3CED0"><title>${esc(A.label)} ${s}: ${fmt(a.start)} → ${fmt(a.gate)}</title></path>`;
+      o+=`<path d="${pillP(sx(b.start),y+14,Math.max(2,sx(b.dEnd+1)-sx(b.start)),10,true,!b.a)}" fill="${DESIGN}"><title>${esc(B.label)} ${s} design: ${fmt(b.start)} → ${fmt(b.dEnd)}</title></path>`;
+      if(b.a)o+=`<path d="${pillP(sx(b.dEnd+1),y+14,Math.max(2,sx(b.gate+1)-sx(b.dEnd+1)),10,false,true)}" fill="url(#pphat3)"><title>${esc(B.label)} ${s} approval: ${fmt(b.aS)} → ${fmt(b.gate)}</title></path>`;
       o+=`<text x="${sx(Math.max(a.gate,b.gate)+1)+8}" y="${y+18}" font-size="10.5" fill="#5C7075">Gate ${fmtS(a.gate)} → ${fmtS(b.gate)}${dv?` <tspan fill="${dv>0?"#A8352E":"#1F6B4A"}" font-weight="600">${sgn(dv)} d</tspan>`:""}</text>`;
       y+=rh }); y+=8 });
   return o+`</svg>`;
@@ -7269,7 +7345,7 @@ function setupCard(i){
    <div class="shead" style="margin-top:-2px"><label class="fld2">Start date <input type="date" ${dis} value="${iso(A.start)}" data-pa="start" data-i="${i}"></label>
     <label class="fld2">Next stage starts <select ${dis} data-pa="ovl" data-i="${i}"><option value="after" ${A.overlap==="after"?"selected":""}>After approval gate (default)</option><option value="design" ${A.overlap==="design"?"selected":""}>At design end (approval overlaps)</option></select></label>
     <label class="fld2">Gap <input type="number" min="0" max="12" ${dis} value="${A.gap}" data-pa="gap" data-i="${i}"> working wks</label></div>
-   <table class="pt"><thead><tr><th>Stage</th><th class="n">Design<br>(working wks)</th><th class="n">Approval<br>(working wks)</th><th>Checkpoints in stage</th><th>Starts</th><th>Final submission</th><th>Gate – approved by</th><th class="n">vs ${lastRev().rev}<br>gate</th></tr></thead><tbody>${rows}
+   <table class="pt"><thead><tr><th>Stage</th><th class="n">Design<br>(working wks)</th><th class="n">Approval<br>(working wks)</th><th>Checkpoints in stage</th><th>Starts</th><th>Final submission</th><th>Gate – approved by</th><th class="n">vs ${esc(lastRev().rev)}<br>gate</th></tr></thead><tbody>${rows}
    <tr class="tot"><td>Programme</td><td class="n">${sumD}</td><td class="n">${sumA}</td><td>${total} working wks · ${cal} calendar wks</td><td class="dt">${fmt(S.start)}</td><td></td><td class="dt">${fmt(S.end)}</td>${dv(S.end-SB.end)}</tr></tbody></table></div>`;
 }
 /* ENGAGE: pill-shaped bar (summary-chart style). L / R = round the left / right end so adjoining segments read as one pill. */
@@ -7302,7 +7378,7 @@ function gantt(only,plain){
       o+=`${on?`<rect x="0" y="${y}" width="${W}" height="${rowH}" fill="#EAF2F6"/>`:""}<text x="14" y="${y+16}" font-size="11.5" font-weight="${on?600:400}" fill="#0F2A30">${s}<tspan fill="#5C7075" font-weight="400" font-size="10.5"> ${esc(D.alias[s]||"")}</tspan></text>`;
       o+=`<path d="${pillP(sx(x.start),ry,Math.max(2,sx(x.dEnd+1)-sx(x.start)),12,true,!x.a)}" fill="${DESIGN}"><title>${s} design: ${fmt(x.start)} → ${fmt(x.dEnd)} (${x.d} working wks)</title></path>`;
       if(x.a)o+=`<path d="${pillP(sx(x.dEnd+1),ry,Math.max(2,sx(x.gate+1)-sx(x.dEnd+1)),12,false,true)}" fill="url(#pphat)"><title>${s} approval: ${fmt(x.aS)} → ${fmt(x.gate)} (${x.a} working wks)</title></path>`;
-      if(moved)o+=`<rect x="${sx(b.start)}" y="${ry+14}" width="${Math.max(2,sx(b.gate+1)-sx(b.start))}" height="4" rx="2" fill="#B8C4C6"><title>${lastRev().rev} baseline: ${fmt(b.start)} → ${fmt(b.gate)}</title></rect>`;
+      if(moved)o+=`<rect x="${sx(b.start)}" y="${ry+14}" width="${Math.max(2,sx(b.gate+1)-sx(b.start))}" height="4" rx="2" fill="#B8C4C6"><title>${esc(lastRev().rev)} baseline: ${fmt(b.start)} → ${fmt(b.gate)}</title></rect>`;
       x.sub.forEach((sb,k)=>{ const st=cpState(i,s,k), fill={ok:"#43A874",late:"#C8453C",win:"#EA8A2F",up:"#fff",zero:"#fff"}[st], cx=sx(sb+1), cy=ry+6, n=CPN[i+"|"+s+"|"+k];
         o+=`<polygon points="${cx},${cy-6} ${cx+6},${cy} ${cx},${cy+6} ${cx-6},${cy}" fill="${fill}" stroke="${st==="up"||st==="zero"?"#5C7075":"#fff"}" stroke-width="1.3"><title>${s} ${x.cp[k]}% – submit ${fmt(sb)}, approve by ${fmt(x.app[k])}\n${n&&n.n?`${n.done} of ${n.n} entries approved / closed`:"No interfaces allocated"}</title></polygon>` });
       const dv=x.gate-b.gate;
@@ -7327,7 +7403,7 @@ function calCard(){
   const lost=CAL.exc.filter(x=>x.on&&x.kind==="off").reduce((t,x)=>t+excEffect(x,wkset),0), gain=CAL.exc.filter(x=>x.on&&x.kind==="on").reduce((t,x)=>t+excEffect(x,wkset),0);
   return `<div class="visual" id="ppcalcard"><div class="shead"><div class="vtitle">Working calendar</div><span class="chipx up">Durations are working weeks (5 working days)</span><span class="sp"></span></div>
    <div class="note2" style="margin:0 0 8px"><b>UAE working week: Monday – Friday</b>, no public holidays. Add <b>exceptions</b> for project-specific closures (client shutdown, announced bridge day, site closure) or for a weekend day the team will work. Each exception moves every later date in the programme. The calendar is part of the baseline: unlock to edit, then re-baseline.</div>
-   ${BL.locked?"":`<div class="note2" style="margin:0 0 8px;color:#8A5E10">Baseline unlocked – calendar edits count as changes from ${lastRev().rev}.</div>`}
+   ${BL.locked?"":`<div class="note2" style="margin:0 0 8px;color:#8A5E10">Baseline unlocked – calendar edits count as changes from ${esc(lastRev().rev)}.</div>`}
    ${CAL.exc.length?`<div class="excwrap"><table class="pt"><thead><tr><th></th><th>Type</th><th>From</th><th>To</th><th>Name</th><th>Effect on the programme</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
    <div class="banner info" style="margin:8px 0 0"><b>${CAL.exc.filter(x=>x.on).length} active exception${CAL.exc.filter(x=>x.on).length===1?"":"s"}:</b> ${lost} working day${lost===1?"":"s"} removed${gain?`, ${gain} weekend day${gain===1?"":"s"} added`:""} across the whole calendar. Pink bands on the timeline and the curve = non-working; green = worked weekend.</div>`:`<div class="banner info" style="margin:0">No calendar exceptions – every Monday to Friday is a working day.</div>`}
    <div class="exadd"><label>Type<select ${dis} id="ppxk"><option value="off">Non-working day(s)</option><option value="on">Working weekend day(s)</option></select></label>
@@ -7415,7 +7491,7 @@ function tabAlloc(){
 }
 
 /* ====================== TAB 3: register link ====================== */
-const csvCell=v=>{v=String(v??""); return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+const csvCell=v=>{v=csvGuard(v); return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
 function dlCsv(name,rows){ const blob=new Blob(["\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500) }
 const PJ=()=>[D.proj.number,D.proj.client,D.proj.location];
 function regRows(){
@@ -7436,7 +7512,7 @@ function tabReg(){
     return `<td class="as"><span class="d1">${x.pct}% · approve ${fmt(x.app)}</span><span class="d2">submit by ${fmtS(x.sub)} · published ${fmtS(x.pub.app)} ${x.v?`<span class="${dcls(x.v)}">${sgn(x.v)} d</span>`:`<span class="zero">no change</span>`}</span><span class="d2">${x.done} / ${x.n} entries approved / closed${x.last?` · last ${fmtS(x.last)}`:""}</span></td>` };
   const rows=shown.map(({c,r,cells,diff})=>{ const was=cells.find(x=>x&&x.cbChg);
     return `<tr class="${diff?"diff":""}"><td class="id">${esc(r.id)}</td><td class="ti">${esc(r.t.length>150?r.t.slice(0,149)+"…":r.t)}<span class="sub">${esc(c)} · ${esc(r.g)} · ${esc(r.o)} · <span class="crit">${esc(r.crit)}</span></span></td>
-     <td class="cbro"><b>${r.cb}</b> ${esc(D.alias[r.cb]||STAGE_DEF[r.cb]||"")}${was?`<span class="d2" style="display:block;color:#8A5E10;font-size:11px">was ${was.pub.s} in ${rev.rev}</span>`:""}</td>${AS.map(ai=>cell(cells[ai],ai)).join("")}</tr>` }).join("");
+     <td class="cbro"><b>${r.cb}</b> ${esc(D.alias[r.cb]||STAGE_DEF[r.cb]||"")}${was?`<span class="d2" style="display:block;color:#8A5E10;font-size:11px">was ${was.pub.s} in ${esc(rev.rev)}</span>`:""}</td>${AS.map(ai=>cell(cells[ai],ai)).join("")}</tr>` }).join("");
   const stT=["all",...PSTG()].map(s=>`<button class="tile ${V.rg.s===s?"on":""}" data-pa="rgs" data-v="${s}">${s==="all"?"All stages":s}</button>`).join("");
   const cT=["all",...usedComps()].map(c=>`<button class="tile ${V.rg.c===c?"on":""}" data-pa="rgc" data-v="${esc(c)}">${c==="all"?"All components":esc(c)}</button>`).join("");
   return `
@@ -7445,7 +7521,7 @@ function tabReg(){
    <div class="visual alselp v72sel"><div class="cbar alslc">${v92PlotDD()}${msDD("ra")}${msDD("rc")}
      <span class="vbl">Complete by</span><div class="tiles">${stT}</div></div></div>
     <div class="visual alcard v72card"><div class="shead v73h"><div class="vtitle">Interface matrix dates from the programme</div><span class="sp"></span>
-     <span class="chipx ${nDiff||nCb?"win":"ok"}">${nDiff||nCb?`${nDiff} date${nDiff===1?"":"s"} differ from ${rev.rev}${nCb?` · ${nCb} Complete by changed`:""}`:`In step with ${rev.rev}`}</span>
+     <span class="chipx ${nDiff||nCb?"win":"ok"}">${nDiff||nCb?`${nDiff} date${nDiff===1?"":"s"} differ from ${esc(rev.rev)}${nCb?` · ${nCb} Complete by changed`:""}`:`In step with ${esc(rev.rev)}`}</span>
      <button class="btn sm" data-pa="rgexp" title="Download the dates shown as CSV">Export register dates (CSV)</button></div><div class="alscroll tscroll" id="pprgscroll">
       ${rows?`<div class="v72in"><table class="rg"><thead><tr><th>ID</th><th>Interface</th><th>Complete by</th>${AS.map(i=>`<th class="as" style="border-left:2px solid var(--line)">${v92PlotName(ASSETS[i].id)?esc(v92PlotName(ASSETS[i].id))+" – ":""}${esc(ASSETS[i].name)} – checkpoint · approve-by · published</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="nopanes">No interfaces match the filters.</div>`}</div>
 </div>
@@ -7489,15 +7565,15 @@ function chart(){
   series.forEach((sr,si)=>{ const i=sr.a, E=sr.E, N=E.length, col=ACOL[i];
     let x0=sr.x0,x1=-1e9; sr.stg.forEach(st=>{const x=SCH[i].stages[st]; x1=Math.max(x1,x.gate)});
     if(detail){ const yy=10+si*16; sr.stg.forEach(st=>{ const x=SCH[i].stages[st];
-        o+=`<path d="${pillP(sx(x.start),yy,Math.max(2,sx(x.dEnd+1)-sx(x.start)),8,true,!x.a)}" fill="${DESIGN}" opacity=".6"><title>${ASSETS[i].name} ${st} design ${fmt(x.start)} → ${fmt(x.dEnd)}</title></path>`;
-        if(x.a)o+=`<path d="${pillP(sx(x.dEnd+1),yy,Math.max(2,sx(x.gate+1)-sx(x.dEnd+1)),8,false,true)}" fill="url(#pphat2)"><title>${ASSETS[i].name} ${st} approval ${fmt(x.aS)} → ${fmt(x.gate)}</title></path>`;
+        o+=`<path d="${pillP(sx(x.start),yy,Math.max(2,sx(x.dEnd+1)-sx(x.start)),8,true,!x.a)}" fill="${DESIGN}" opacity=".6"><title>${esc(ASSETS[i].name)} ${st} design ${fmt(x.start)} → ${fmt(x.dEnd)}</title></path>`;
+        if(x.a)o+=`<path d="${pillP(sx(x.dEnd+1),yy,Math.max(2,sx(x.gate+1)-sx(x.dEnd+1)),8,false,true)}" fill="url(#pphat2)"><title>${esc(ASSETS[i].name)} ${st} approval ${fmt(x.aS)} → ${fmt(x.gate)}</title></path>`;
         o+=`<text x="${sx(x.start)}" y="${yy-2}" font-size="10" fill="#5C7075">${ASH(i)} · ${st} ${esc(D.alias[st]||"")}</text>`;
         x.app.forEach((ab,k)=>{ const g=E.filter(e=>e.cb===st&&e.x.k===k), cl=cellCls({n:g.length,done:g.filter(e=>e.x.doneBy).length,behind:g.filter(e=>e.x.dueCp&&!e.x.doneBy).length,win:g.filter(e=>e.x.win&&!e.x.doneBy).length}), cx=sx(ab);
-          o+=`<line x1="${cx}" x2="${cx}" y1="${yy+10}" y2="${H-B}" stroke="${col}" stroke-dasharray="2 4" opacity=".55"/><rect x="${cx-19}" y="${Tp+2+si*14}" width="38" height="13" rx="6.5" fill="${{ok:"#43A874",late:"#C8453C",win:"#EBB43C",up:"#fff",zero:"#fff"}[cl]}" stroke="${col}"/><text x="${cx}" y="${Tp+12+si*14}" font-size="10" text-anchor="middle" font-weight="600" fill="${cl==="ok"||cl==="late"?"#fff":"#0F2A30"}">${x.cp[k]}%<title>${ASSETS[i].name} ${st} ${x.cp[k]}% – submit ${fmt(x.sub[k])}, approve by ${fmt(ab)}\n${g.length} entries allocated · ${g.filter(e=>e.x.doneBy).length} approved / closed</title></text>` }) }) }
+          o+=`<line x1="${cx}" x2="${cx}" y1="${yy+10}" y2="${H-B}" stroke="${col}" stroke-dasharray="2 4" opacity=".55"/><rect x="${cx-19}" y="${Tp+2+si*14}" width="38" height="13" rx="6.5" fill="${{ok:"#43A874",late:"#C8453C",win:"#EBB43C",up:"#fff",zero:"#fff"}[cl]}" stroke="${col}"/><text x="${cx}" y="${Tp+12+si*14}" font-size="10" text-anchor="middle" font-weight="600" fill="${cl==="ok"||cl==="late"?"#fff":"#0F2A30"}">${x.cp[k]}%<title>${esc(ASSETS[i].name)} ${st} ${x.cp[k]}% – submit ${fmt(x.sub[k])}, approve by ${fmt(ab)}\n${g.length} entries allocated · ${g.filter(e=>e.x.doneBy).length} approved / closed</title></text>` }) }) }
     const plan=stepPath(E.map(e=>e.x.ab),N,x0,x1,sx,sy);
     o+=`<path d="${plan.path}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 4"><title>${esc(ASSETS[i].name)} – planned cumulative approved / closed</title></path>`;
     if(showB){ const bp=stepPath(E.map(e=>{const cbb=CB(RSN,e.id), b=SCHB[i].stages[cbb]; return b.app[Math.min(b.cp.length-1,ALB[i][e.c][e.id])]}),N,Math.min(...sr.stg.map(st=>SCHB[i].stages[st].start)),Math.max(...sr.stg.map(st=>SCHB[i].stages[st].gate)),sx,sy);
-      o+=`<path d="${bp.path}" fill="none" stroke="#8C9C9F" stroke-width="1.6" stroke-dasharray="2 3"><title>${esc(ASSETS[i].name)} – ${lastRev().rev} baseline plan</title></path>` }
+      o+=`<path d="${bp.path}" fill="none" stroke="#8C9C9F" stroke-width="1.6" stroke-dasharray="2 3"><title>${esc(ASSETS[i].name)} – ${esc(lastRev().rev)} baseline plan</title></path>` }
     if(wiW){ const wp=stepPath(E.map(e=>{const cbw=CB(wiW,e.id), st=wiS[i].stages[cbw]; return st.app[Math.min(st.cp.length-1,wiW.alloc[i][e.c][e.id])]}),N,Math.min(...sr.stg.map(st=>wiS[i].stages[st].start)),Math.max(...sr.stg.map(st=>wiS[i].stages[st].gate)),sx,sy);
       o+=`<path d="${wp.path}" fill="none" stroke="#EA6119" stroke-width="2" stroke-dasharray="8 3 2 3"><title>${esc(ASSETS[i].name)} – what-if “${esc(wiW.name)}” plan</title></path>` }
     const done=E.filter(e=>e.st==="done"&&e.ds<=Tc).map(e=>e.ds); let actNow=0;
@@ -7513,7 +7589,7 @@ function chart(){
     const b=E.filter(e=>e.x.dueCp&&!e.x.doneBy).length, od=E.filter(e=>e.x.od).length, stl=sr.stg.length===1?`${sr.stg[0]} ${D.alias[sr.stg[0]]||""}`:"all stages";
     sum.push(`<div class="sumline"><i class="dotc" style="background:${col}"></i><b>${esc(ASSETS[i].name)}</b> · ${esc(stl)} · ${N} entries · plan at ${fmtS(T)} <b>${Math.round(planNow*100)}%</b> (${E.filter(e=>e.x.dueCp).length}) · actual <b>${Math.round(actNow*100)}%</b> (${E.filter(e=>e.x.doneBy).length}) · behind checkpoint <b>${b}</b> · overdue <b>${od}</b>${fcTxt}</div>`);
     leg.push(`<span><i class="sw" style="background:${col};height:3px"></i>${esc(ASSETS[i].name)} actual</span><span><i class="sw" style="background:repeating-linear-gradient(90deg,${col} 0 4px,#fff 4px 7px);height:3px"></i>plan</span>`+(fcOn?`<span><i class="sw" style="background:repeating-linear-gradient(90deg,${col} 0 1.5px,#fff 1.5px 6px);height:3px"></i>forecast</span>`:"")) });
-  if(showB)leg.push(`<span><i class="sw" style="background:repeating-linear-gradient(90deg,#8C9C9F 0 2px,#fff 2px 5px);height:3px"></i>${lastRev().rev} baseline plan</span>`);
+  if(showB)leg.push(`<span><i class="sw" style="background:repeating-linear-gradient(90deg,#8C9C9F 0 2px,#fff 2px 5px);height:3px"></i>${esc(lastRev().rev)} baseline plan</span>`);
   if(wiW)leg.push(`<span><i class="sw" style="background:repeating-linear-gradient(90deg,#EA6119 0 6px,#fff 6px 8px);height:3px"></i>What-if “${esc(wiW.name)}” plan</span>`);
   if(CAL.exc.some(x=>x.on))leg.push(`<span><i class="sw" style="background:#F3CBC6"></i>Non-working exception</span><span><i class="sw" style="background:#BFE3CE"></i>Working weekend</span>`);
   if(T>=mn&&T<=mx)o+=`<line x1="${sx(T)}" x2="${sx(T)}" y1="${Tp}" y2="${H-B}" stroke="#0F2A30" stroke-width="1.4" stroke-dasharray="5 3"/><rect x="${sx(T)-(T===TODAY?40:27)}" y="${H-B+20}" width="${T===TODAY?80:54}" height="16" rx="8" fill="#0F2A30"/><text x="${sx(T)}" y="${H-B+31.5}" font-size="10.5" font-weight="600" text-anchor="middle" fill="#fff">${fmtS(T)}${T===TODAY?" · today":""}</text>`;
@@ -7525,7 +7601,7 @@ function chartCard(){
   const sel=V.tr.s, curTxt=assetsInScope().map(i=>`${ASH(i)} ${curName(i)}`).join(" · "), fc=V.tr.fc;
   const tiles=[["all","Overall (all stages)"],["cur",`Current stage (${curTxt})`],...PSTG().map(s=>[s,s])].map(([k,l])=>`<button class="tile ${sel===k?"on":""}" data-pa="tst" data-v="${k}" title="${k.length<4&&k!=="all"&&k!=="cur"?esc(STAGE_DEF[k]):""}">${esc(l)}</button>`).join("");
   return `<div class="visual"><div class="shead"><div class="vtitle">Cumulative approved / closed – plan v actual</div><span class="sp"></span>
-    ${!BL.locked&&CHG.length?`<label class="chkl2"><input type="checkbox" data-pa="tbase" ${V.tr.base?"checked":""}> Show ${lastRev().rev} baseline</label>`:""}
+    ${!BL.locked&&CHG.length?`<label class="chkl2"><input type="checkbox" data-pa="tbase" ${V.tr.base?"checked":""}> Show ${esc(lastRev().rev)} baseline</label>`:""}
     ${WI.length?`<label class="ctl">What-if overlay <select data-pa="tfwi"><option value="">None</option>${WI.map(w=>`<option value="${w.id}" ${String(V.tr.wi)===String(w.id)?"selected":""}>${esc(w.name)}</option>`).join("")}</select></label>`:""}
     ${fc?`<label class="ctl">Rate basis <select data-pa="tfcw"><option value="28" ${V.tr.fcw===28?"selected":""}>Last 4 weeks</option><option value="56" ${V.tr.fcw===56?"selected":""}>Last 8 weeks</option><option value="0" ${V.tr.fcw===0?"selected":""}>Whole programme to date</option></select></label>`:""}
     <button class="bsw ${fc?"ison":""}" role="switch" aria-checked="${fc}" data-pa="tfc" title="Show or hide the forecast line"><span class="trk"></span>Forecast</button></div>
@@ -7616,7 +7692,7 @@ function wiSetup(w,i,S){
    <div class="shead" style="margin-top:-2px"><label class="fld2">Start date <input type="date" value="${iso(A.start)}" data-pa="wstart" data-i="${i}"></label>
     <label class="fld2">Next stage starts <select data-pa="wovl" data-i="${i}"><option value="after" ${A.overlap==="after"?"selected":""}>After approval gate (default)</option><option value="design" ${A.overlap==="design"?"selected":""}>At design end (approval overlaps)</option></select></label>
     <label class="fld2">Gap <input type="number" min="0" max="12" value="${A.gap}" data-pa="wgap" data-i="${i}"> working wks</label></div>
-   <table class="pt"><thead><tr><th>Stage</th><th class="n">Design<br>(working wks)</th><th class="n">Approval<br>(working wks)</th><th>Checkpoints in stage</th><th>Interface allocation</th><th>Starts</th><th>Final submission</th><th>Gate – approved by</th><th class="n">vs ${lastRev().rev}<br>gate</th></tr></thead><tbody>${rows}
+   <table class="pt"><thead><tr><th>Stage</th><th class="n">Design<br>(working wks)</th><th class="n">Approval<br>(working wks)</th><th>Checkpoints in stage</th><th>Interface allocation</th><th>Starts</th><th>Final submission</th><th>Gate – approved by</th><th class="n">vs ${esc(lastRev().rev)}<br>gate</th></tr></thead><tbody>${rows}
    <tr class="tot"><td>Programme</td><td class="n">${sumD}</td><td class="n">${sumA}</td><td>${total} working wks</td><td></td><td class="dt">${fmt(S[i].start)}</td><td></td><td class="dt">${fmt(S[i].end)}</td>${dv(de)}</tr></tbody></table></div>`;
 }
 function wiCalCard(w){
@@ -7650,13 +7726,13 @@ function wiImpactCard(w){
      +num("Overdue entries (stage-based)",p.od,q.od)+num("Behind checkpoint",p.behind,q.behind) });
   rows+=`<tr class="ah"><td colspan="4">Both assets</td></tr>`+num("Entries planned approved by the status date",ib.pdue,iw.pdue,false)+num("Checkpoints met",ib.met,iw.met,false)+tr("Checkpoints due",ib.due,iw.due,iw.due-ib.due?sgn(iw.due-ib.due):"no change","");
   return `<div class="visual"><div class="shead"><div class="vtitle">Impact of this what-if</div><span class="chipx up">at status date ${fmt(P.status)}</span><span class="sp"></span></div>
-   <table class="pt"><thead><tr><th></th><th class="n">Baseline ${L.rev}</th><th class="n">${esc(w.name)}</th><th class="n">Change</th></tr></thead><tbody>${rows}</tbody></table>
+   <table class="pt"><thead><tr><th></th><th class="n">Baseline ${esc(L.rev)}</th><th class="n">${esc(w.name)}</th><th class="n">Change</th></tr></thead><tbody>${rows}</tbody></table>
    <div class="note2">Actual progress is unchanged. A what-if changes the dates the entries are measured against, so overdue and behind-checkpoint show how <b>today's actuals would read against the alternative programme</b>. Move the status date to test other points in time.</div></div>`;
 }
 function tabWi(){
   const L=lastRev(), w=V.wi.sel!=null?wiById(V.wi.sel):null, full=WI.length>=WI_MAX;
   const tiles=WI.map(x=>`<button class="tile ${w&&x.id===w.id?"on":""}" data-pa="wsel" data-v="${x.id}">${esc(x.name)}<span class="n">from ${esc(x.baseRev)}</span></button>`).join("");
-  const opts=[`<option value="base">Baseline ${L.rev}${BL.locked?" (locked)":""}</option>`];
+  const opts=[`<option value="base">Baseline ${esc(L.rev)}${BL.locked?" (locked)":""}</option>`];
   if(!BL.locked&&CHG.length)opts.push(`<option value="WIP">Working programme with ${CHG.length} unsaved change${CHG.length===1?"":"s"}</option>`);
   WI.forEach(x=>opts.push(`<option value="WI:${x.id}">${esc(x.name)}</option>`));
   let h=`
@@ -7669,9 +7745,9 @@ function tabWi(){
   h+=`${V.wi.note?`<div class="banner info note moved">${esc(V.wi.note)}</div>`:""}
    <div class="visual"><div class="shead"><i class="dotc" style="background:#EA6119;width:12px;height:12px"></i><input type="text" value="${esc(w.name)}" data-pa="wname" style="height:30px;border:1px solid var(--n300);border-radius:2px;padding:0 8px;font-size:14px;font-weight:600;width:300px" aria-label="What-if name"><span class="chipx blue">Copied from ${esc(w.from)}</span><span class="chipx up">Created ${fmt(w.created)}</span><span class="sp"></span>
      <button class="btn sm" data-pa="wshow" title="Overlay this what-if's plan on the tracking curve">${shown?"Hide on tracking curve":"Show on tracking curve"}</button>
-     <button class="btn sm" data-pa="wdup" ${full?"disabled":""}>Duplicate</button><button class="btn sm" data-pa="wreset" title="Throw away the edits and start again from the current baseline">Reset to ${L.rev}</button>
+     <button class="btn sm" data-pa="wdup" ${full?"disabled":""}>Duplicate</button><button class="btn sm" data-pa="wreset" title="Throw away the edits and start again from the current baseline">Reset to ${esc(L.rev)}</button>
      <button class="btn sm pri" data-pa="wadoptq">Adopt as working programme…</button><button class="btn sm" data-pa="wdel">Delete</button></div>
-    ${stale?`<div class="banner warn" style="margin:0 0 8px">This what-if was copied from <b>${esc(w.baseRev)}</b>; the baseline is now <b>${L.rev}</b>. The comparison below still works, but you may want to <b>Reset to ${L.rev}</b> to start from the current baseline.</div>`:""}
+    ${stale?`<div class="banner warn" style="margin:0 0 8px">This what-if was copied from <b>${esc(w.baseRev)}</b>; the baseline is now <b>${esc(L.rev)}</b>. The comparison below still works, but you may want to <b>Reset to ${esc(L.rev)}</b> to start from the current baseline.</div>`:""}
     ${V.wi.adopt?`<div class="banner warn" style="margin:0 0 8px"><b>Adopt “${esc(w.name)}” as the working programme?</b> The baseline will be unlocked and the working programme, calendar and allocations replaced with this what-if${(!BL.locked&&CHG.length)?`, <b>discarding the ${CHG.length} unsaved change${CHG.length===1?"":"s"} you have now</b>`:""}. Nothing is published until you re-baseline with a reason.<div class="acts"><button class="btn sm pri" data-pa="wadopt">Adopt and go to baseline</button><button class="btn sm" data-pa="wadoptx">Cancel</button></div></div>`:""}
     <label class="fld2" style="display:flex;align-items:flex-start;gap:8px"><span style="padding-top:4px">Notes</span><textarea rows="2" data-pa="wnote" placeholder="What is this option testing? e.g. compress Concept by 2 weeks to recover the S2 gate" style="width:720px;max-width:100%;border:1px solid var(--n300);border-radius:2px;padding:4px 6px">${esc(w.notes||"")}</textarea></label></div>
    ${wiImpactCard(w)}${AIDX.map(i=>wiSetup(w,i,S)).join("")}${wiCalCard(w)}`;
@@ -7996,7 +8072,7 @@ const CATC={"Registration":"#8C9C9F","Planning":"#EA6119","NOC":"#E0A526","Desig
 const STATUS=["Not started","In preparation","Submitted","Comments received","Resubmitted","Approved","Not required"];
 const STC={"Not started":"#A9B6B8","In preparation":"#E0A526","Submitted":"#2F6FEB","Comments received":"#C8453C","Resubmitted":"#7B4FD8","Approved":"#43A874","Not required":"#CBD5D6"};
 const PRE_SUB=["Not started","In preparation"];     /* statuses where the submission has not yet gone in */
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const cls=s=>String(s).replace(/[^A-Za-z]+/g,"-");
 const JN=Object.fromEntries(DJ.map(j=>[j.n,j.c])), JC=Object.fromEntries(DJ.map(j=>[j.c,j.n]));
 /* asset-level triggers – answered per asset; all others are project-level */
@@ -8464,7 +8540,7 @@ function setAid(o){ const a=S.assets.find(x=>(x.name||"(unnamed)")===o.asset); o
 const BASE_DAY='2026-10-28';   /* the sample data is written around this date and shifted to the status date when it is loaded */
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const fd=d=>{if(!d)return'—';const p=d.split('-');return (+p[2])+' '+MON[+p[1]-1]};
-const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const cl=s=>String(s).replace(/[^A-Za-z0-9]+/g,'-').replace(/-$/,'');
 const $=s=>Q1(s);
 
@@ -8975,7 +9051,7 @@ function savePromote(c,f){
  U.sel=id;persist();return ''}
 function csvRows(rows,ext){
  const H=[...PDH,'CRS ID','External ref','Package','Source','Asset','Document','Location','Comment','Latest response','Response disposition','Approval status','Carry-forward stage','Dispute status','Dispute reason','Dispute rationale','Dispute proposed status','Dispute reviewer response','Classification','Decision type','Interface criticality','Validity','Obligation','Reviewer concurrence','Action category','Status','Owner','Due','Needed by stage','Evidence','Linked interfaces','Related comments','Duplicate of','Reopened count','Response rounds','Due-date changes','Carry-forward obligation','Authority decision (package)','Condition type','Linked approval','Condition-discharge evidence','Source platform','Platform comment ID / link'].concat(ext?[]:['Change position','Internal flag','Internal note','On-hold','On-hold reason','Escalation','Promoted from']);
- const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+ const q=v=>'"'+csvGuard(v).replace(/"/g,'""')+'"';
  const vis=new Set(D.cm.filter(x=>!ext||(x.src!=='Internal review'&&x.status!=='Draft')).map(x=>x.id));
  const L=[H.map(q).join(',')].concat(rows.map(c=>{const r=latest(c),s=c.dsp,a=c.auth||{},df=c.defer;
   return [...PD(),c.id,c.extRef||'',c.pk,c.src,c.asset,c.doc,c.loc,c.txt,r?r.resp:'',r?r.disp:'',c.code?CODEN(c.code):'Not coded',c.cf,s?s.st:'',s?s.reason:'',s?s.rationale:'',s&&s.propCode?CODEN(s.propCode):'',s?s.resp:'',c.cls,c.dec,c.crit,c.val,c.obl,c.conc,acat(c),c.status,c.owner,c.due,c.req,c.ev.join(' | '),c.links.map(l=>l.c+(l.i!=='—'?' '+l.i:'')+' – '+l.t).join(' | '),(c.rel||[]).filter(x=>vis.has(x.id)).map(x=>x.type+' '+x.id).join(' | '),c.dupOf||'',c.reopen,c.rounds.length,(c.dueHist||[]).length,df?df.stage+' · due '+df.due+' · '+df.owner+' · approver '+df.approver+' · evidence: '+df.evreq+' · '+(df.verified?'verified':'not verified'):'',(pkAuth(pkOf(c.pk))||{}).decision||'',a.ctype||'',a.apr||'',a.disch||'',c.plat||'',c.pref||''].concat(ext?[]:[c.chg,c.intFlag,c.note,c.hold?'Yes':'No',c.holdReason||'',c.esc?c.esc.to+': '+c.esc.reason:'',c.promotedFrom||'']).map(q).join(',')}));
@@ -9566,7 +9642,25 @@ return {reportHtml:reportHtml, recount:recount, sig:sig, render:show, ensure:ens
 
 
 
-renderAll();
+try{renderAll()}catch(e){
+  if(!S_FROM_STORAGE)throw e;
+  console.error("ENGAGE start-up: stored project could not be drawn",e);
+  setAsideStored("The stored project could not be drawn ("+(e&&e.message||e)+").");
+  S=demoCores(demoState());S_FROM_STORAGE=false;normalise();renderAll();
+}
+/* v133: tell the user about a set-aside project, and offer it as a download. */
+(function(){
+  let raw=null,meta=null;try{raw=localStorage.getItem(SETASIDE_KEY);meta=JSON.parse(localStorage.getItem(SETASIDE_META_KEY)||"null")}catch(e){}
+  if(STARTUP_ISSUE&&!STARTUP_ISSUE.stored){raw=STARTUP_ISSUE.raw;meta={at:STARTUP_ISSUE.at,reason:STARTUP_ISSUE.reason}}
+  if(raw===null||raw===undefined)return;
+  const unstored=!!(STARTUP_ISSUE&&!STARTUP_ISSUE.stored);
+  const when=meta&&meta.at?new Date(meta.at).toLocaleString():"earlier";
+  engageNotice({id:"setaside",kind:"bad",title:"A stored project could not be opened and has been set aside",
+    text:((meta&&meta.reason)||"It could not be loaded.")+" Set aside "+when+". ENGAGE started with the sample project instead. Download the set-aside copy to keep it"+(unstored?"; until you do, nothing is stored in this browser so it is not overwritten.":"."),
+    dismiss:false,
+    actions:[{label:"Download set-aside copy",keep:true,close:false,run:()=>download("engage_set_aside_"+new Date().toISOString().slice(0,10)+".json",raw,"application/json")},
+             {label:unstored?"Discard it and continue":"Remove it from this browser",run:()=>{if(unstored){STARTUP_ISSUE.released=true;save()}else{try{localStorage.removeItem(SETASIDE_KEY);localStorage.removeItem(SETASIDE_META_KEY)}catch(e){}}}}]});
+})();
 </script>
 <script>
 /* Engage shell: sidebar state, rail tooltips, workspace block, Export menu, save chip, tile hover text. */
@@ -10483,7 +10577,7 @@ function v113Apply(){
 }
 function v113Toast(text){const t=document.getElementById('v113Toast');if(!t)return;document.getElementById('v113ToastText').textContent=text;t.classList.add('on');clearTimeout(V113.timer);V113.timer=setTimeout(()=>t.classList.remove('on'),6000)}
 function v113Decorate(){
-  try{const ver=document.getElementById('ifVer');if(ver)ver.textContent='v132';if(typeof SRCB!=='undefined'){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}v113EnsureModal();if(S.page!=='matrix'){V113.selected.clear();V113.mode=false;return}v113EnsureBars();v113AddCellControls();v113AddRowControls();const visible=new Set(v113VisibleCells().map(td=>td.dataset.v113Key));[...V113.selected].forEach(k=>{if(!visible.has(k))V113.selected.delete(k)});v113Update()}catch(e){console.error('v113 batch integration',e)}
+  try{const ver=document.getElementById('ifVer');if(ver)ver.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=='undefined'){Object.assign(SRCB,ENGAGE_BUILD)}v113EnsureModal();if(S.page!=='matrix'){V113.selected.clear();V113.mode=false;return}v113EnsureBars();v113AddCellControls();v113AddRowControls();const visible=new Set(v113VisibleCells().map(td=>td.dataset.v113Key));[...V113.selected].forEach(k=>{if(!visible.has(k))V113.selected.delete(k)});v113Update()}catch(e){console.error('v113 batch integration',e)}
 }
 function v113Bind(){
   if(V113.bound)return;V113.bound=true;const matrix=document.getElementById('matrixV');if(matrix){
@@ -10662,8 +10756,8 @@ function v115ZoneTools(){
   [...nav.children].filter(el=>el!==icons&&el.matches('button[data-v92]')).forEach(el=>icons.appendChild(el));
   const exp=nav.querySelector(':scope>.v114-zone-export');
   if(exp)nav.appendChild(exp);
-  const ver=document.getElementById('ifVer');if(ver)ver.textContent='v132';
-  if(typeof SRCB!=='undefined'){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}
+  const ver=document.getElementById('ifVer');if(ver)ver.textContent=ENGAGE_BUILD.ver;
+  if(typeof SRCB!=='undefined'){Object.assign(SRCB,ENGAGE_BUILD)}
 }
 const previousAssets=renderAssetsPage;
 renderAssetsPage=function(){const r=previousAssets.apply(this,arguments);requestAnimationFrame(()=>setTimeout(v115ZoneTools,0));return r};
@@ -10753,15 +10847,74 @@ function resetRuntime(){
 }
 function activate(next){
   const prior=S,priorText=localStorage.getItem(KEY);
-  try{S=clone116(next);normalise();localStorage.setItem(KEY,JSON.stringify(S));savedAt=new Date();resetRuntime();renderAll();window.scrollTo(0,0);return true}
+  try{S=clone116(next);normalise();localStorage.setItem(KEY,JSON.stringify(S));savedAt=new Date();resetRuntime();drawChecked();window.scrollTo(0,0);return true}
   catch(e){try{S=prior;normalise();if(priorText===null)localStorage.removeItem(KEY);else localStorage.setItem(KEY,priorText);resetRuntime();renderAll()}catch(rollback){console.error('Clear Project rollback failed',rollback)}throw e}
 }
+/* v133: draw the project and treat any error reported while drawing as a failure, so Open
+   never reports success for a project whose page did not draw. */
+function drawChecked(){
+  const errs=[],oe=console.error;console.error=function(){errs.push([...arguments].map(a=>a&&a.message||String(a)).join(' '));return oe.apply(console,arguments)};
+  try{renderAll()}finally{console.error=oe}
+  if(errs.length)throw new Error('A page reported an error while drawing: '+errs[0]);
+}
+/* v133: identifiers in a project file end up in page markup and selectors, so they must be plain. */
+const ID_OK=/^[A-Za-z0-9_.:\-]{1,80}$/;
+function validateProject(x){
+  const bad=[];const chk=(v,where)=>{if(typeof v==='number'&&Number.isFinite(v))return;if(typeof v!=='string'||!ID_OK.test(v))bad.push(where)};
+  if(!x||typeof x!=='object'||Array.isArray(x))return ['The file is not an ENGAGE project.'];
+  if(!Array.isArray(x.assets))return ['The file has no asset list, so it is not an ENGAGE project file.'];
+  if(x.format==='engage-clear-recovery')return ['This is a recovery snapshot, not a project file.'];
+  x.assets.forEach((a,i)=>{
+    if(!a||typeof a!=='object'){bad.push('asset '+(i+1));return}
+    chk(a.id,'asset '+(i+1)+' id');
+    ['name','code'].forEach(k=>{if(a[k]!=null&&typeof a[k]!=='string')bad.push('asset '+(i+1)+' '+k)});
+    const zl=[...(Array.isArray(a.zones)?a.zones:[])];
+    [a.cz,a.zr].forEach(m=>{if(m&&typeof m==='object')Object.values(m).forEach(z=>{if(Array.isArray(z))zl.push(...z)})});
+    zl.forEach((z,j)=>{if(!z||typeof z!=='object')bad.push('asset '+(i+1)+' zone '+(j+1));else chk(z.id,'asset '+(i+1)+' zone '+(j+1)+' id')});
+  });
+  const pd=x.plotDef&&Array.isArray(x.plotDef.plots)?x.plotDef.plots:[];
+  pd.forEach((p,i)=>{if(!p||typeof p!=='object')bad.push('plot '+(i+1));else chk(p.id,'plot '+(i+1)+' id')});
+  if(x.stage!=null&&!STAGES.includes(x.stage))bad.push('current stage');
+  return bad.length?['The file has identifiers ENGAGE cannot use safely: '+bad.slice(0,6).join(', ')+(bad.length>6?' and '+(bad.length-6)+' more':'')+'.']:[];
+}
+let pendingOpen=null;
+function openBody(){
+  const x=pendingOpen.state,c=countProject(x),cur=countProject(S),name=(x.project||'Untitled project').trim()||'Untitled project',curName=(S.project||'Untitled project').trim()||'Untitled project';
+  document.getElementById('v116Title').textContent='Open project file';document.getElementById('v116Sub').textContent=pendingOpen.file;
+  const row=(k,l)=>`<div><b>${c[k]}</b><span>${l}</span></div>`;
+  document.getElementById('v116Body').innerHTML=`<div class="v116-warning v116-restore"><b>Open “${esc(name)}” in place of “${esc(curName)}”?</b> The project now in this browser is kept as a recovery snapshot, so <b>Restore previous</b> in the toolbar brings it back.</div>
+  <div class="v116-counts">${row('assets','assets')}${row('zones','zones')}${row('entries','status entries')}${row('evidence','evidence records')}${row('comments','comments')}</div>
+  <div class="v116-card"><h4>File details</h4><ul><li>Project: ${esc(name)}${x.proj&&x.proj.number?' · '+esc(x.proj.number):''}</li><li>Saved by ENGAGE schema ${esc(x.version==null?'unknown':x.version)}</li><li>Sign-off log entries: ${c.logs}</li><li>Current project: ${cur.assets} assets, ${cur.entries} status entries</li></ul></div><div class="v116-error" id="v116Error"></div>`;
+  document.getElementById('v116Foot').innerHTML='<span class="sp"></span><button type="button" class="btn" data-v116="close">Cancel</button><button type="button" class="pbtn" data-v116="open-confirm">Open project</button>';
+}
+function openFile(f){
+  if(!f)return;
+  const rd=new FileReader();
+  rd.onerror=()=>showToast('Open did not run','The file could not be read. The current project is unchanged.',true);
+  rd.onload=()=>{
+    let x;try{x=JSON.parse(String(rd.result).replace(/^﻿/,''))}catch(e){showToast('Open did not run','This file is not valid JSON, so it is not an ENGAGE project file. The current project is unchanged.',true);return}
+    const bad=validateProject(x);if(bad.length){showToast('Open did not run',bad[0]+' The current project is unchanged.',true);return}
+    pendingOpen={state:x,file:f.name};ensureUi();mode='open';returnFocus=document.activeElement;openBody();document.getElementById('v116ClearProject').classList.add('on');
+    setTimeout(()=>{const b=document.querySelector('[data-v116="open-confirm"]');if(b)b.focus()},0);
+  };
+  rd.readAsText(f);
+}
+function doOpen(){
+  if(!pendingOpen)return;const p=pendingOpen;
+  const oldRecovery=localStorage.getItem(RECOVERY_KEY),snap={format:'engage-clear-recovery',v:1,reason:'open',opened:p.file,created:new Date().toISOString(),tool:SRCB.ver,project:S.project||'',state:clone116(S)};
+  try{localStorage.setItem(RECOVERY_KEY,JSON.stringify(snap))}
+  catch(e){showError('Open did not run. The current project is unchanged. The browser could not store a recovery snapshot of it ('+(e&&e.name||'storage error')+'). Save the current project to a file, or free browser storage, and try again.');return}
+  try{activate(p.state)}
+  catch(e){try{if(oldRecovery===null)localStorage.removeItem(RECOVERY_KEY);else localStorage.setItem(RECOVERY_KEY,oldRecovery)}catch(ignore){}showError('Open did not complete, so the current project has been put back unchanged. '+(e&&e.message?e.message:''));return}
+  pendingOpen=null;closeDialog();updateToolbar();showToast('Project opened',(S.project||'Untitled project')+' is open. The previous project can be restored from the toolbar.');
+}
+window.ENGAGE_OPEN={validateProject,openFile};
 function recoveryLabel(x){const name=(x.project||x.state.project||'Previous project').trim()||'Untitled project',when=x.created?new Date(x.created).toLocaleString():'earlier';return name+' · '+when}
 function updateToolbar(){const b=document.getElementById('btnRestoreProject');if(b)b.hidden=!hasRecovery()}
 function ensureUi(){
   if(!document.getElementById('btnClearProject')){
     const saveBtn=document.getElementById('btnSave'),restore=document.createElement('button'),clear=document.createElement('button');
-    restore.className='ab';restore.id='btnRestoreProject';restore.type='button';restore.hidden=true;restore.title='Restore the project snapshot created immediately before the last Clear Project action';restore.innerHTML='<svg viewBox="0 0 16 16"><path d="M3 3v3.5h3.5"/><path d="M3.3 6.3A5 5 0 1 1 3 9.5"/></svg>Restore previous';
+    restore.className='ab';restore.id='btnRestoreProject';restore.type='button';restore.hidden=true;restore.title='Restore the project as it was immediately before the last Open or Clear Project';restore.innerHTML='<svg viewBox="0 0 16 16"><path d="M3 3v3.5h3.5"/><path d="M3.3 6.3A5 5 0 1 1 3 9.5"/></svg>Restore previous';
     clear.className='ab';clear.id='btnClearProject';clear.type='button';clear.title='Clear all project-instance data and start a blank project';clear.innerHTML='<svg viewBox="0 0 16 16"><path d="M3 4h10M6 4V2.5h4V4M5 6.5v6M8 6.5v6M11 6.5v6M4 4l.7 10h6.6L12 4"/></svg>Clear project';
     saveBtn.after(restore,clear);
   }
@@ -10778,13 +10931,13 @@ function clearBody(){
   document.getElementById('v116Body').innerHTML=`<div class="v116-warning"><b>This removes all project-entered information together.</b> ENGAGE will first save one local recovery snapshot. If that snapshot cannot be stored, the clear operation will not run.</div>
   <div class="v116-counts"><div><b>${c.assets}</b><span>assets</span></div><div><b>${c.zones}</b><span>active / deleted zones</span></div><div><b>${c.entries}</b><span>status entries</span></div><div><b>${c.evidence}</b><span>evidence records</span></div><div><b>${c.comments}</b><span>comments-resolution records</span></div></div>
   <div class="v116-grid"><div class="v116-card"><h4>Project content that will be cleared</h4><ul><li>Project details, plots, assets, uses, components, levels and zones</li><li>Programme dates, baselines, allocations, scenarios and Complete-by overrides</li><li>Interface status, evidence, notes, batch records, flags and sign-off history</li><li>Statutory Authority project data, submissions and tracking</li><li>Comments Resolution, Requirements &amp; Checks and library-request project records</li><li>Report selections, filters and other project settings</li></ul></div><div class="v116-card v116-keep"><h4>Controlled content that will remain</h4><ul><li>${SRCB.nComp.toLocaleString()}-component master library</li><li>${SRCB.nReg.toLocaleString()} master interfaces</li><li>${SRCB.nApv.toLocaleString()} statutory approvals</li><li>Asset presets, status definitions, built-in rules and application configuration</li></ul></div></div>
-  <div class="v116-confirm"><label for="v116Phrase">Type CLEAR to enable the final action</label><input id="v116Phrase" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="v116-note">After completion, use <b>Restore previous</b> in the toolbar to recover this project. The recovery snapshot is removed when another project is explicitly saved.</div><div class="v116-error" id="v116Error"></div></div>`;
+  <div class="v116-confirm"><label for="v116Phrase">Type CLEAR to enable the final action</label><input id="v116Phrase" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="v116-note">After completion, use <b>Restore previous</b> in the toolbar to recover this project. The recovery snapshot is replaced by the next Open or Clear Project.</div><div class="v116-error" id="v116Error"></div></div>`;
   document.getElementById('v116Foot').innerHTML='<button type="button" class="btn" data-v116="backup">Export backup first</button><span class="sp"></span><button type="button" class="btn" data-v116="close">Cancel</button><button type="button" class="v116-danger" id="v116Confirm" data-v116="confirm" disabled>Clear project &amp; start again</button>';
 }
 function restoreBody(){
   let x;try{x=readRecovery()}catch(e){updateToolbar();showToast('Recovery unavailable',e.message,true);return false}const c=countProject(x.state);
   document.getElementById('v116Title').textContent='Restore previous project';document.getElementById('v116Sub').textContent=recoveryLabel(x);
-  document.getElementById('v116Body').innerHTML=`<div class="v116-warning v116-restore"><b>Restore the automatic pre-clear snapshot.</b> The current project state will be replaced by the snapshot below.</div><div class="v116-counts"><div><b>${c.assets}</b><span>assets</span></div><div><b>${c.zones}</b><span>zones</span></div><div><b>${c.entries}</b><span>status entries</span></div><div><b>${c.evidence}</b><span>evidence records</span></div><div><b>${c.comments}</b><span>comments</span></div></div><div class="v116-card"><h4>Snapshot details</h4><ul><li>Project: ${esc(x.project||x.state.project||'Untitled project')}</li><li>Created immediately before Clear Project</li><li>Includes the complete project state, audit history and project settings at that time</li></ul></div><div class="v116-error" id="v116Error"></div>`;
+  document.getElementById('v116Body').innerHTML=`<div class="v116-warning v116-restore"><b>Restore the automatic snapshot taken ${x.reason==='open'?'before the last Open':'before Clear Project'}.</b> The current project state will be replaced by the snapshot below.</div><div class="v116-counts"><div><b>${c.assets}</b><span>assets</span></div><div><b>${c.zones}</b><span>zones</span></div><div><b>${c.entries}</b><span>status entries</span></div><div><b>${c.evidence}</b><span>evidence records</span></div><div><b>${c.comments}</b><span>comments</span></div></div><div class="v116-card"><h4>Snapshot details</h4><ul><li>Project: ${esc(x.project||x.state.project||'Untitled project')}</li><li>Created immediately before ${x.reason==='open'?'opening '+esc(x.opened||'another project file'):'Clear Project'}</li><li>Includes the complete project state, audit history and project settings at that time</li></ul></div><div class="v116-error" id="v116Error"></div>`;
   document.getElementById('v116Foot').innerHTML='<span class="sp"></span><button type="button" class="btn" data-v116="close">Cancel</button><button type="button" class="pbtn" data-v116="restore">Restore previous project</button>';return true;
 }
 function openDialog(which){ensureUi();mode=which||'clear';returnFocus=document.activeElement;if(mode==='restore'&&!restoreBody())return;if(mode==='clear')clearBody();const m=document.getElementById('v116ClearProject');m.classList.add('on');setTimeout(()=>{const f=mode==='clear'?document.getElementById('v116Phrase'):m.querySelector('[data-v116="close"]');if(f)f.focus()},0)}
@@ -10805,12 +10958,13 @@ function doRestore(){
   closeDialog();updateToolbar();showToast('Previous project restored',(S.project||'Untitled project')+' is active again.');
 }
 function bind(){
-  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#btnClearProject,#btnRestoreProject,[data-v116]');if(!b)return;const a=b.id==='btnClearProject'?'open-clear':b.id==='btnRestoreProject'?'open-restore':b.dataset.v116;if(a==='open-clear')openDialog('clear');else if(a==='open-restore')openDialog('restore');else if(a==='close')closeDialog();else if(a==='backup')exportBackup();else if(a==='confirm')doClear();else if(a==='restore')doRestore()},true);
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#btnClearProject,#btnRestoreProject,[data-v116]');if(!b)return;const a=b.id==='btnClearProject'?'open-clear':b.id==='btnRestoreProject'?'open-restore':b.dataset.v116;if(a==='open-clear')openDialog('clear');else if(a==='open-restore')openDialog('restore');else if(a==='close'){pendingOpen=null;closeDialog()}else if(a==='backup')exportBackup();else if(a==='confirm')doClear();else if(a==='restore')doRestore();else if(a==='open-confirm')doOpen()},true);
+  const fin=document.getElementById('fileIn');if(fin)fin.onchange=e=>{const f=e.target.files[0];e.target.value='';openFile(f)};
   document.addEventListener('input',e=>{if(e.target.id!=='v116Phrase')return;const b=document.getElementById('v116Confirm');if(b)b.disabled=e.target.value.trim().toUpperCase()!=='CLEAR';const er=document.getElementById('v116Error');if(er)er.classList.remove('on')},true);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('v116ClearProject')?.classList.contains('on')){e.preventDefault();closeDialog()}},true);
-  const saveBtn=document.getElementById('btnSave'),baseSave=saveBtn&&saveBtn.onclick;if(saveBtn)saveBtn.onclick=function(e){const r=baseSave&&baseSave.call(this,e);try{localStorage.removeItem(RECOVERY_KEY)}catch(ignore){}updateToolbar();return r};
+  const saveBtn=document.getElementById('btnSave'),baseSave=saveBtn&&saveBtn.onclick;if(saveBtn)saveBtn.onclick=function(e){const r=baseSave&&baseSave.call(this,e);updateToolbar();return r};
 }
-function decorate(){ensureUi();const ver=document.getElementById('ifVer');if(ver)ver.textContent='v132';SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}
+function decorate(){ensureUi();const ver=document.getElementById('ifVer');if(ver)ver.textContent=ENGAGE_BUILD.ver;Object.assign(SRCB,ENGAGE_BUILD)}
 decorate();bind();
 })();
 </script>
@@ -10904,7 +11058,7 @@ function evidenceBanner(){
  const im=interfaceNoEvidence(),au=authorityExceptions(),total=im+au.noev;if(!total&&!au.nodate&&S.page!=='summary')return;
  const b=document.createElement('div');b.className='visual v120-gov'+(!total&&!au.nodate?' ok':'');b.innerHTML=`<div class="vtitle">Governance exceptions · evidence and approval dates</div><div><b>${im}</b> Approved / Closed interface entr${im===1?'y':'ies'} without level-covering evidence · <b>${au.noev}</b> approved authority package${au.noev===1?'':'s'} without evidence · <b>${au.nodate}</b> approved authority package${au.nodate===1?'':'s'} missing submission or approval dates.</div><div class="mut sm">Flexible status paths are retained. These exceptions are flagged for review rather than blocked.</div>`;root.prepend(b)
 }
-function decorate(){try{const v=document.getElementById('ifVer');if(v)v.textContent='v132';if(typeof SRCB!=='undefined'){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}saRepair();evidenceBanner()}catch(e){console.error('v121 decorate',e)}}
+function decorate(){try{const v=document.getElementById('ifVer');if(v)v.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=='undefined'){Object.assign(SRCB,ENGAGE_BUILD)}saRepair();evidenceBanner()}catch(e){console.error('v121 decorate',e)}}
 const rAll=renderAll;renderAll=function(){const r=rAll.apply(this,arguments);setTimeout(decorate,0);return r};
 const rSa=renderSaPage;renderSaPage=function(){const r=rSa.apply(this,arguments);setTimeout(decorate,0);return r};
 const gPage=goPage;goPage=function(){const r=gPage.apply(this,arguments);setTimeout(decorate,0);return r};
@@ -10944,7 +11098,7 @@ decorate();
   let q=Promise.resolve();
   function show(o){ return new Promise(res=>{
     let m=document.getElementById("engDlg"); if(!m){m=document.createElement("div");m.id="engDlg";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");document.body.appendChild(m)}
-    const e=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+    const e=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
     m.innerHTML=`<div class="ed-box"><div class="ed-head">${e(o.title||"ENGAGE")}</div><div class="ed-body">${e(o.body||"")}${o.items&&o.items.length?`<ul>${o.items.map(i=>`<li>${e(i)}</li>`).join("")}</ul>`:""}${o.inputs&&o.inputs.length?o.inputs.map((f,n)=>`<label class="ed-fl">${e(f.label)}${f.multi?`<textarea class="ed-in" data-n="${n}" rows="3">${e(f.value||"")}</textarea>`:`<input class="ed-in" data-n="${n}" type="text" value="${e(f.value||"")}">`}</label>`).join("")+`<div class="ed-err"></div>`:""}</div><div class="ed-foot">${o.cancel===null?"":`<button type="button" class="ed-cancel">${e(o.cancel||"Cancel")}</button>`}<button type="button" class="ed-ok ${o.danger?"danger":""}">${e(o.ok||"OK")}</button></div></div>`;
     const prev=document.activeElement; let done=false;
     const fin=v=>{ if(done)return; done=true; m.classList.remove("on"); document.removeEventListener("keydown",key,true); if(prev&&prev.focus&&document.body.contains(prev))try{prev.focus({preventScroll:true})}catch(x){} res(v) };
@@ -10970,9 +11124,9 @@ decorate();
 </style>
 <script id="v124-stage-js">
 (function(){
- function brand(){const v=document.getElementById('ifVer');if(v)v.textContent='v132';if(typeof SRCB!=='undefined'){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}}
+ function brand(){const v=document.getElementById('ifVer');if(v)v.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=='undefined'){Object.assign(SRCB,ENGAGE_BUILD)}}
  document.addEventListener('click',e=>{const chip=e.target.closest&&e.target.closest('#v124StageChip'),pop=document.getElementById('v124StagePop');if(chip&&pop){e.preventDefault();const on=!pop.classList.contains('on');pop.classList.toggle('on',on);chip.setAttribute('aria-expanded',String(on));return}const go=e.target.closest&&e.target.closest('[data-v124-stage-go]');if(go){e.preventDefault();if(pop)pop.classList.remove('on');goPage('prog');setTimeout(()=>{if(window.PRG&&PRG.goStage)PRG.goStage()},0);return}if(pop&&!e.target.closest('.v124-stagewrap')){pop.classList.remove('on');const c=document.getElementById('v124StageChip');if(c)c.setAttribute('aria-expanded','false')}},true);
- const old=window.renderAll; if(typeof old==='function')window.renderAll=function(){const r=old.apply(this,arguments);setTimeout(brand,0);return r}; const vv=document.getElementById('ifVer');if(vv)new MutationObserver(()=>{if(vv.textContent!=='v132')brand()}).observe(vv,{childList:true,characterData:true,subtree:true}); window.addEventListener('load',()=>setTimeout(brand,50));brand();
+ const old=window.renderAll; if(typeof old==='function')window.renderAll=function(){const r=old.apply(this,arguments);setTimeout(brand,0);return r}; const vv=document.getElementById('ifVer');if(vv)new MutationObserver(()=>{if(vv.textContent!==ENGAGE_BUILD.ver)brand()}).observe(vv,{childList:true,characterData:true,subtree:true}); window.addEventListener('load',()=>setTimeout(brand,50));brand();
 })();
 </script>
 
@@ -11073,7 +11227,7 @@ decorate();
   root.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest('#azbar [data-az="save"]');if(!b||!changed().length)return;e.preventDefault();e.stopImmediatePropagation();saveScopes()},true);
  }
  const oldRender=window.renderAssetsPage||renderAssetsPage;window.renderAssetsPage=function(){const r=oldRender.apply(this,arguments);document.querySelectorAll('[data-v125-ind]').forEach(x=>x.indeterminate=true);return r};
- function brand(){const v=document.getElementById("ifVer");if(v)v.textContent="v132";if(typeof SRCB!=="undefined"){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}}
+ function brand(){const v=document.getElementById("ifVer");if(v)v.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=="undefined"){Object.assign(SRCB,ENGAGE_BUILD)}}
  brand();setTimeout(brand,0);
 })();
 </script>
@@ -11192,7 +11346,7 @@ decorate();
    bar.setPointerCapture(e.pointerId);bar.addEventListener("pointermove",move);bar.addEventListener("pointerup",done);bar.addEventListener("pointercancel",cancel);
   },true);
  }
- function brand(){const v=document.getElementById("ifVer");if(v)v.textContent="v132";if(typeof SRCB!=="undefined"){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}}
+ function brand(){const v=document.getElementById("ifVer");if(v)v.textContent=ENGAGE_BUILD.ver;if(typeof SRCB!=="undefined"){Object.assign(SRCB,ENGAGE_BUILD)}}
  brand();setTimeout(()=>{brand();try{if(typeof AZ!=="undefined"&&AZ.d&&typeof renderAssetsPage==="function")renderAssetsPage()}catch(e){}},0);
 })();
 </script>
@@ -11234,10 +11388,10 @@ body.brief-focusmode::after{content:"";position:fixed;top:80px;right:0;bottom:0;
    if(!pid)pid="P1";
    let pn="";try{pn=typeof v92PlotName==="function"?v92PlotName(a.id):""}catch(e){}
    if(!pn)pn=pid==="P1"?"All assets":pid;pm.set(pid,pn);
-   const use=useText(a),tpl=tplOf(use);
+   const use=useText(a),tpls=[...new Set(use.split(" · ").map(tplOf).filter(Boolean))],tpl=tpls[0]||tplOf(use);
    let s2="";try{const d=typeof PRG!=="undefined"&&PRG.stageDates?PRG.stageDates(a.id):null;s2=d?isoDay(d.S2gate):""}catch(e){}
    if(!s2)s2=new Date(Date.now()+84*DAY).toISOString().slice(0,10);
-   return {id:String(a.id),code:a.code||("A-"+String(i+1).padStart(2,"0")),name:a.name||("Asset "+(i+1)),plot:pid,use:use||"Not defined",tpl,variant:variantOf(use,tpl),stage:typeof assetStage==="function"?assetStage(a.id):(S.stage||"S2"),s2,cl:"",op:"",opl:""}
+   return {id:String(a.id),code:a.code||("A-"+String(i+1).padStart(2,"0")),name:a.name||("Asset "+(i+1)),plot:pid,use:use||"Not defined",tpl,tpls,variant:variantOf(use,tpl),stage:typeof assetStage==="function"?assetStage(a.id):(S.stage||"S2"),s2,cl:"",op:"",opl:""}
   });
   return {project:{name:S.project||"Project",number:S.proj&&S.proj.number||"",client:S.proj&&S.proj.client||""},plots:[...pm].map(([id,name])=>({id,name})),assets}
  }
@@ -11259,8 +11413,8 @@ body.brief-focusmode::after{content:"";position:fixed;top:80px;right:0;bottom:0;
  });
  document.addEventListener("click",function(e){const p=e.target.closest&&e.target.closest(".ptab[data-p]");if(p&&p.dataset.p!=="brief")setBriefHostFocus(false)},true);
  const sb=document.getElementById("btnSave"),oldSave=sb&&sb.onclick;if(sb&&oldSave)sb.onclick=function(){flush();save();return oldSave.apply(this,arguments)};
- const vv=document.getElementById("ifVer");if(vv){vv.textContent="v132";vv.title="v132: Power Apps response layout preview – open Project brief for release notes"}
- if(typeof SRCB!=="undefined"){SRCB.ver="v132";SRCB.file="Engage_Interface_Tool_v132.html";SRCB.built="17 Nov 2026"}
+ const vv=document.getElementById("ifVer");if(vv){vv.textContent=ENGAGE_BUILD.ver;vv.title=ENGAGE_BUILD.ver+" · built "+ENGAGE_BUILD.built+" – open Project brief for release notes"}
+ if(typeof SRCB!=="undefined"){Object.assign(SRCB,ENGAGE_BUILD)}
  window.ENGAGE_V131_CORRECTION={build:"17 Nov 2026 · Project Brief auto-height correction",pagination:"height-aware",normalModeScroll:"dynamic-iframe-height-outer-only",focusModeScroll:"single-active-pane"};
  if(S.page==="brief")window.renderBriefPage();
 })();
@@ -11269,4 +11423,4 @@ body.brief-focusmode::after{content:"";position:fixed;top:80px;right:0;bottom:0;
 </body>
 </html>
 
-<!-- ENGAGE v132 corrected Project Brief auto-height physical build · 17 Nov 2026 · baseline Engage_Interface_Tool_v132_Corrected_2026-11-17.html -->
+<!-- ENGAGE @@VERSION@@ · built @@BUILT@@ -->

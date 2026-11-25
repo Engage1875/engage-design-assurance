@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENGAGE – sign in</title>
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<main class="wrap">
+  <div class="card">
+    <h1><b>ENGAGE</b><span>: Design Assurance</span></h1>
+    <p class="sub">Sign in with an approved email address. We email you a 6-digit code.</p>
+    <form id="fEmail" novalidate>
+      <label for="email">Email address</label>
+      <input id="email" type="email" autocomplete="email" required>
+      <button id="bSend" type="submit">Email me a code</button>
+    </form>
+    <form id="fCode" hidden novalidate>
+      <label for="code">6-digit code</label>
+      <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\d{6}" required>
+      <button id="bVerify" type="submit">Sign in</button>
+      <button id="bBack" class="sec" type="button">Use another address</button>
+    </form>
+    <div id="msg" class="msg" role="status" aria-live="polite"></div>
+  </div>
+  <div class="foot" id="signedIn" hidden>Signed in as <b id="who"></b> · <a href="/app">Open ENGAGE</a> · <a id="adminLink" href="/admin.html" hidden>Approved users</a> · <a href="#" id="signOut">Sign out</a></div>
+</main>
+<script src="/signin.js"></script>
+</body>
+</html>

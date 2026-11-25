@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENGAGE – approved users</title>
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<main class="wrap wide">
+  <div class="card">
+    <h1><b>ENGAGE</b><span>: approved users and administrators</span></h1>
+    <p class="sub" id="whoLine">Checking your sign-in…</p>
+    <div id="msg" class="msg" role="status" aria-live="polite"></div>
+  </div>
+  <div class="card" id="usersCard" hidden>
+    <h2>Approved users <span class="tag" id="userCount"></span></h2>
+    <form id="fAddUser" class="row" novalidate>
+      <div style="flex:1"><label for="newUser">Add an email address</label><input id="newUser" type="email" autocomplete="off"></div>
+      <button type="submit">Approve</button>
+    </form>
+    <p class="sub" id="domainNote" hidden></p>
+    <table><thead><tr><th>Email</th><th>Added by</th><th>Added (UTC)</th><th></th></tr></thead><tbody id="users"></tbody></table>
+  </div>
+  <div class="card" id="adminsCard" hidden>
+    <h2>Administrators</h2>
+    <p class="sub">Administrators manage the approved list. Only a permanent administrator (set in the app configuration) can add or remove administrators.</p>
+    <form id="fAddAdmin" class="row" novalidate hidden>
+      <div style="flex:1"><label for="newAdmin">Add an administrator</label><input id="newAdmin" type="email" autocomplete="off"></div>
+      <button type="submit">Add administrator</button>
+    </form>
+    <table><thead><tr><th>Email</th><th>Kind</th><th>Added by</th><th></th></tr></thead><tbody id="admins"></tbody></table>
+  </div>
+  <div class="card" id="auditCard" hidden>
+    <h2>Recent changes</h2>
+    <table><thead><tr><th>When (UTC)</th><th>By</th><th>Change</th><th>Address</th><th>Outcome</th></tr></thead><tbody id="audit"></tbody></table>
+  </div>
+  <div class="foot"><a href="/app">Open ENGAGE</a> · <a href="/">Sign-in page</a></div>
+</main>
+<script src="/admin.js"></script>
+</body>
+</html>
