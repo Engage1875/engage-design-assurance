@@ -1,0 +1,55 @@
+# Deploys to Azure Static Web Apps when main changes (or when run by hand from the Actions tab).
+# It does nothing until the AZURE_STATIC_WEB_APPS_API_TOKEN secret has been added (see docs/SETUP_GUIDE.md).
+name: Deploy to Azure
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check that Azure is set up
+        id: ready
+        env:
+          TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "No AZURE_STATIC_WEB_APPS_API_TOKEN secret yet, so nothing is deployed. See docs/SETUP_GUIDE.md."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.ready.outputs.go == 'true'
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        if: steps.ready.outputs.go == 'true'
+        with: { node-version: "20" }
+      - name: Build the app and put it inside the sign-in service
+        if: steps.ready.outputs.go == 'true'
+        run: |
+          python3 tools/build.py
+          mkdir -p api/app
+          cp dist/Engage.html api/app/Engage.html
+      - name: Test before deploying
+        if: steps.ready.outputs.go == 'true'
+        run: |
+          npm ci && npx playwright install --with-deps chromium
+          node --test --test-concurrency=1 tests/*.test.mjs
+          (cd api && npm ci && npm test)
+      - name: Deploy
+        if: steps.ready.outputs.go == 'true'
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: web
+          api_location: api
+          skip_app_build: true

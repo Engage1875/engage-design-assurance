@@ -1,0 +1,31 @@
+# Builds ENGAGE and runs every test on each push and pull request.
+name: Test
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite:3.33.0
+        ports: ["10002:10002"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Install test browser
+        run: npm ci && npx playwright install --with-deps chromium
+      - name: Build
+        run: python3 tools/build.py
+      - name: App tests
+        run: node --test --test-concurrency=1 tests/*.test.mjs
+      - name: Sign-in service tests (including real Table Storage via Azurite)
+        working-directory: api
+        env:
+          ENGAGE_TEST_TABLES: "UseDevelopmentStorage=true"
+        run: npm ci && npm test
