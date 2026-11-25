@@ -4525,7 +4525,10 @@ function download(name,text,type){const b=new Blob([text],{type});const u=URL.cr
 const safe=s=>(s||"project").replace(/[^\w\-]+/g,"_");
 const PDH=["Project","Project number","Project client","Project location"];
 const PD=()=>[S.project,S.proj.number,S.proj.client,S.proj.location];
-const csvq=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+/* v133 CSV rule, used by every CSV export: text that a spreadsheet would run as a formula
+   (starting = + - @, tab or carriage return) is prefixed with an apostrophe. Plain numbers are left alone. */
+function csvGuard(v){if(v==null)return "";if(typeof v==="number"||typeof v==="boolean")return String(v);const s=String(v);return /^[=+\-@\t\r]/.test(s)&&!/^[+-]?(\d+([.,]\d+)*|\d*\.\d+)(e[+-]?\d+)?%?$/i.test(s)&&!/^[-\s]+$/.test(s)?"'"+s:s}
+const csvq=v=>`"${csvGuard(v).replace(/"/g,'""')}"`;
 function exportCsv(){
   if(S.page==="overdue")return exportTable();
   if(S.page==="flags")return exportFlags();
@@ -7471,7 +7474,7 @@ function tabAlloc(){
 }
 
 /* ====================== TAB 3: register link ====================== */
-const csvCell=v=>{v=String(v??""); return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+const csvCell=v=>{v=csvGuard(v); return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
 function dlCsv(name,rows){ const blob=new Blob(["\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500) }
 const PJ=()=>[D.proj.number,D.proj.client,D.proj.location];
 function regRows(){
@@ -9031,7 +9034,7 @@ function savePromote(c,f){
  U.sel=id;persist();return ''}
 function csvRows(rows,ext){
  const H=[...PDH,'CRS ID','External ref','Package','Source','Asset','Document','Location','Comment','Latest response','Response disposition','Approval status','Carry-forward stage','Dispute status','Dispute reason','Dispute rationale','Dispute proposed status','Dispute reviewer response','Classification','Decision type','Interface criticality','Validity','Obligation','Reviewer concurrence','Action category','Status','Owner','Due','Needed by stage','Evidence','Linked interfaces','Related comments','Duplicate of','Reopened count','Response rounds','Due-date changes','Carry-forward obligation','Authority decision (package)','Condition type','Linked approval','Condition-discharge evidence','Source platform','Platform comment ID / link'].concat(ext?[]:['Change position','Internal flag','Internal note','On-hold','On-hold reason','Escalation','Promoted from']);
- const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+ const q=v=>'"'+csvGuard(v).replace(/"/g,'""')+'"';
  const vis=new Set(D.cm.filter(x=>!ext||(x.src!=='Internal review'&&x.status!=='Draft')).map(x=>x.id));
  const L=[H.map(q).join(',')].concat(rows.map(c=>{const r=latest(c),s=c.dsp,a=c.auth||{},df=c.defer;
   return [...PD(),c.id,c.extRef||'',c.pk,c.src,c.asset,c.doc,c.loc,c.txt,r?r.resp:'',r?r.disp:'',c.code?CODEN(c.code):'Not coded',c.cf,s?s.st:'',s?s.reason:'',s?s.rationale:'',s&&s.propCode?CODEN(s.propCode):'',s?s.resp:'',c.cls,c.dec,c.crit,c.val,c.obl,c.conc,acat(c),c.status,c.owner,c.due,c.req,c.ev.join(' | '),c.links.map(l=>l.c+(l.i!=='—'?' '+l.i:'')+' – '+l.t).join(' | '),(c.rel||[]).filter(x=>vis.has(x.id)).map(x=>x.type+' '+x.id).join(' | '),c.dupOf||'',c.reopen,c.rounds.length,(c.dueHist||[]).length,df?df.stage+' · due '+df.due+' · '+df.owner+' · approver '+df.approver+' · evidence: '+df.evreq+' · '+(df.verified?'verified':'not verified'):'',(pkAuth(pkOf(c.pk))||{}).decision||'',a.ctype||'',a.apr||'',a.disch||'',c.plat||'',c.pref||''].concat(ext?[]:[c.chg,c.intFlag,c.note,c.hold?'Yes':'No',c.holdReason||'',c.esc?c.esc.to+': '+c.esc.reason:'',c.promotedFrom||'']).map(q).join(',')}));

@@ -132,3 +132,23 @@ test('a notice appears when another tab changes the project', async () => {
   assert.ok(await app.page.isVisible('[data-notice="othertab"]'));
   await app.close();
 });
+
+test('CSV rule neutralises formula-like text and leaves numbers alone', async () => {
+  const app = await openApp();
+  const r = await app.page.evaluate(() => ['=1+1', '+SUM(A1)', '-2+3', '@cmd', '\tx', '-5', '+3.5', '12%', '-', 'plain', 5, null].map(csvGuard));
+  assert.deepEqual(r, ["'=1+1", "'+SUM(A1)", "'-2+3", "'@cmd", "'\tx", '-5', '+3.5', '12%', '-', 'plain', '5', '']);
+  await app.close();
+});
+
+test('every CSV export from the main app applies the rule', async () => {
+  const app = await openApp();
+  const p = app.page;
+  await p.evaluate(() => { S.project = '=HYPERLINK("http://x","p")'; S.assets[0].name = '=cmd|calc'; save(); renderAll(); });
+  for (const btn of ['#btnCsv', '#btnLog']) {
+    const dl = p.waitForEvent('download');
+    await p.click(btn);
+    const text = fs.readFileSync(await (await dl).path(), 'utf8');
+    assert.ok(!/(^|,)"=/m.test(text), btn + ': no cell starts with =');
+  }
+  await app.close();
+});
