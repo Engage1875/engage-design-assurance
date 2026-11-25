@@ -360,7 +360,11 @@ function briefLib(tpl){
  });
  return src
 }
-const IT=a=>{ if(!a.tpl)return []; return briefLib(a.tpl).filter(r=>{const ap=r[9]; if(ap==="All"||ap==="Both")return true; if(a.variant==="Shell & core + Fit-out")return true; return ap===a.variant}) };
+/* v133 mixed use: an asset carries the template of each of its uses (a.tpls); a.tpl stays the primary one. */
+const BRIEF_TPLS=["Hotel","Resort","Residential","Office","Villa","Townhouse"];
+const tplsOf=a=>{const L=Array.isArray(a&&a.tpls)&&a.tpls.length?a.tpls:(a&&a.tpl?[a.tpl]:[]);return [...new Set(L.filter(x=>LIB[x]))]};
+const tplLabel=a=>tplsOf(a).join(" + ");
+const IT=a=>{ if(!a.tpl)return []; return tplsOf(a).flatMap(tp=>briefLib(tp)).filter(r=>{const ap=r[9]; if(ap==="All"||ap==="Both")return true; if(a.variant==="Shell & core + Fit-out")return true; return ap===a.variant}) };
 const F=r=>({id:r[0],sec:r[1],item:r[2],q:r[3],inp:r[4],by:r[5],st:r[6],pr:r[7],comp:r[8],app:r[9],note:r[10]});
 let S,PROJECT={name:"Project",number:"",client:""},BRIDGE_READY=false;
 function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0}h^=h>>>13;h=Math.imul(h,2654435761)>>>0;h^=h>>>16;return h>>>0}
@@ -419,7 +423,7 @@ function vOverview(){
  h+=`<div class="visual" style="margin-top:12px"><div class="vtitle">Brief progress by asset<span class="note">Defined = confirmed + assumed. Gate checks every applicable item is complete by the end of S2.</span></div><div style="overflow-x:auto;overflow-y:visible"><table class="t"><tr><th>Asset</th><th>Plot</th><th>Brief template</th><th>Stage</th><th>Brief due (end S2)</th><th style="width:220px">Progress</th><th class="n">Defined</th><th class="n">Open</th><th>Latest issue</th><th>Brief gate</th><th></th></tr>`+
  L.map(a=>{ if(!a.tpl)return `<tr><td><b>${esc(a.name)}</b></td><td>${esc(PLOTS.find(p=>p.id===a.plot).name)}</td><td colspan="8" class="ro">No brief template for “${a.use}” – supporting asset. <button class="lnk" data-a="tpl" data-id="${a.id}">Assign template…</button></td><td></td></tr>`;
   const s=stats([a]),g=gate(a),w=wks(a),li=S.issues.filter(x=>x.assets.includes(a.id)).slice(-1)[0];
-  return `<tr><td><b>${esc(a.name)}</b>${S.frozen[a.id]?` <span class="chip s-cf">Frozen ${S.frozen[a.id]}</span>`:""}</td><td>${esc(PLOTS.find(p=>p.id===a.plot).name)}</td><td>${a.tpl}${a.variant?` <span class="ro">· ${a.variant}</span>`:""}</td><td>${a.stage}</td><td>${fmt(P(a.s2))}<div class="ro">${w>=0?w+" wks":"overdue"}</div></td><td>${bar(s)}</td><td class="n"><b>${s.pct}%</b><div class="ro">${s.def} / ${s.app}</div></td><td class="n" style="${s.mustOpen?"color:var(--bad);font-weight:600":""}">${s.mustOpen}</td><td>${li?`${esc(li.rev)} <span class="ro">${li.status}</span>`:`<span class="ro">–</span>`}</td><td><span class="gate"><span class="d" style="background:${g[1]}"></span>${g[0]}</span></td><td><button class="btn sm" data-a="openreq" data-id="${a.id}">Open</button></td></tr>`}).join("")+`</table></div>
+  return `<tr><td><b>${esc(a.name)}</b>${S.frozen[a.id]?` <span class="chip s-cf">Frozen ${S.frozen[a.id]}</span>`:""}</td><td>${esc(PLOTS.find(p=>p.id===a.plot).name)}</td><td>${esc(tplLabel(a))}${a.variant?` <span class="ro">· ${esc(a.variant)}</span>`:""}</td><td>${a.stage}</td><td>${fmt(P(a.s2))}<div class="ro">${w>=0?w+" wks":"overdue"}</div></td><td>${bar(s)}</td><td class="n"><b>${s.pct}%</b><div class="ro">${s.def} / ${s.app}</div></td><td class="n" style="${s.mustOpen?"color:var(--bad);font-weight:600":""}">${s.mustOpen}</td><td>${li?`${esc(li.rev)} <span class="ro">${li.status}</span>`:`<span class="ro">–</span>`}</td><td><span class="gate"><span class="d" style="background:${g[1]}"></span>${g[0]}</span></td><td><button class="btn sm" data-a="openreq" data-id="${a.id}">Open</button></td></tr>`}).join("")+`</table></div>
  <div class="legend">${["cf","as","rc","rq","nr","na"].map(k=>`<span><i style="background:${STC[k]}"></i>${STN[k]}</span>`).join("")}</div></div>`;
  /* by section for single asset or provider split */
  const one=B.length===1?B[0]:null;
@@ -429,7 +433,7 @@ function vOverview(){
    return `<tr class="row" data-a="gosec" data-sec="${esc(sc)}"><td>${esc(sc)}</td><td class="n">${L2.length}</td><td>${bar(cc)}</td><td class="n" style="${mo?"color:var(--bad);font-weight:600":""}">${mo}</td><td>${by}</td></tr>`}).join("")+`</table></div>`;
  }
  h+=`<div class="visual" style="margin-top:12px"><div class="vtitle">Asset brief profiles<span class="note">Template follows the asset's use in Project definition. Variant and brief contacts are set here.</span></div><table class="t"><tr><th>Asset</th><th>Use (Project definition)</th><th>Brief template</th><th>Variant</th><th>Client representative</th><th>Operator / tenant</th><th class="n">Items</th><th></th></tr>`+
- L.map(a=>`<tr><td><b>${esc(a.name)}</b> <span class="ro">${esc(a.code)}</span></td><td>${a.use}</td><td>${a.tpl||`<span class="ro">None</span>`}</td><td>${a.variant||`<span class="ro">–</span>`}</td><td>${esc(a.cl)}</td><td>${a.op?`${esc(a.op)} <span class="ro">(${a.opl})</span>`:`<span class="ro">–</span>`}</td><td class="n">${IT(a).length||"–"}</td><td><button class="btn sm" data-a="prof" data-id="${a.id}">Edit…</button></td></tr>`).join("")+`</table></div>`;
+ L.map(a=>`<tr><td><b>${esc(a.name)}</b> <span class="ro">${esc(a.code)}</span></td><td>${esc(a.use)}</td><td>${a.tpl?esc(tplLabel(a)):`<span class="ro">None</span>`}</td><td>${a.variant||`<span class="ro">–</span>`}</td><td>${esc(a.cl)}</td><td>${a.op?`${esc(a.op)} <span class="ro">(${a.opl})</span>`:`<span class="ro">–</span>`}</td><td class="n">${IT(a).length||"–"}</td><td><button class="btn sm" data-a="prof" data-id="${a.id}">Edit…</button></td></tr>`).join("")+`</table></div>`;
  return h}
 /* ---------- v128 brief-library proposals ---------- */
 const PBQ_TYPES={add:"Add brief item",reword:"Reword",change:"Change section / provider / stage",remove:"Remove / merge"};
@@ -456,7 +460,7 @@ async function pbqPropose(a){
  if(type==="reword")Object.assign(q,{item:vals[0],q:vals[1],inp:vals[2],rationale:vals[3],local:vals[4]==="Yes"});
  if(type==="change")Object.assign(q,{sec:vals[0],by:vals[1],st:vals[2],comp:vals[3],rationale:vals[4],local:vals[5]==="Yes"});
  if(type==="remove")Object.assign(q,{rationale:vals[0],local:vals[1]==="Yes"});
- if(q.local&&!(await briefChange(ASSETS.filter(x=>x.tpl===q.tpl).map(x=>({a:x,items:[{id:q.existing||q.localId||q.id,what:"Library proposal ("+PBQ_TYPES[q.type]+")",from:"",to:pbqSummary(q)}]})),"Local library proposal")))return;
+ if(q.local&&!(await briefChange(ASSETS.filter(x=>tplsOf(x).includes(q.tpl)).map(x=>({a:x,items:[{id:q.existing||q.localId||q.id,what:"Library proposal ("+PBQ_TYPES[q.type]+")",from:"",to:pbqSummary(q)}]})),"Local library proposal")))return;
  S.proposals.push(q);log(`<b>${q.id}</b> ${PBQ_TYPES[type]} queued for the brief library team${q.local?" and applied in this project":""}`);render();toast(`${q.id} queued${q.local?" · Local · pending":""}`)
 }
 function pbqSummary(q){const r=q.existing&&Object.values(LIB).flat().find(x=>x[0]===q.existing);if(q.type==="add")return `${q.localId} · ${esc(q.item)} — ${esc(q.q)}`;if(q.type==="reword")return `${q.existing} · ${esc(q.item)} — ${esc(q.q)}`;if(q.type==="change")return `${q.existing} · ${esc(q.sec)} · ${esc(q.by)} · ${q.st} · ${q.comp}`;return `${q.existing} · remove / merge — ${r?r[2]:""}`}
@@ -474,7 +478,7 @@ function vReq(){
  const vis=R.filter(r=>(!f.st||r.rec.st===f.st)&&(!f.by||r.by===f.by)&&(f.na||isApplicable(a,r)));
  const app=R.filter(r=>isApplicable(a,r)),def=app.filter(r=>["cf","as"].includes(r.rec.st)).length,open=app.length-def;
  let h=S.frozen[a.id]?`<div class="banner ok"><b>Brief frozen at ${S.frozen[a.id]}.</b> Changes to confirmed items are recorded as brief changes and raise a change flag for the linked interfaces.</div>`:"";
- h+=`<div class="visual"><div class="vtitle"><span>Brief requirements – ${esc(a.name)}</span><span class="note">${a.tpl}${a.variant?" · "+a.variant:""} · ${app.length} applicable · ${app.length?Math.round(def/app.length*100):0}% defined · ${open} open · due ${fmt(P(a.s2))}</span><span class="sp"></span>
+ h+=`<div class="visual"><div class="vtitle"><span>Brief requirements – ${esc(a.name)}</span><span class="note">${esc(tplLabel(a))}${a.variant?" · "+esc(a.variant):""} · ${app.length} applicable · ${app.length?Math.round(def/app.length*100):0}% defined · ${open} open · due ${fmt(P(a.s2))}</span><span class="sp"></span>
  <span class="reqactions"><span class="vhdr reqvh pin" title="Navigate brief sections">
  <button class="vh" data-a="navprev" aria-label="Roll up all sections" title="Roll up all sections"><svg viewBox="0 0 16 16"><path d="M8 13V3M4.5 6.5L8 3l3.5 3.5"/></svg></button>
  <button class="vh" data-a="navnext" aria-label="Expand all sections" title="Expand all sections"><svg viewBox="0 0 16 16"><path d="M8 2v12M4 6l4 4 4-4M4 10l4 4 4-4"/></svg></button>
@@ -559,7 +563,7 @@ function briefModel(ids,rev,status,inc){
  return {v:1,at:new Date().toISOString(),date:TODAY,rev,status,inc:Object.assign({},inc),
   project:{name:PROJECT.name||"",number:PROJECT.number||"",client:PROJECT.client||""},
   history:S.issues.filter(x=>x.assets.some(id=>ids.includes(id))).map(x=>({rev:x.rev,status:x.status,at:x.at})),
-  assets:ids.map(id=>A_(id)).filter(Boolean).map(a=>({id:a.id,name:a.name,code:a.code,tpl:a.tpl,variant:a.variant,
+  assets:ids.map(id=>A_(id)).filter(Boolean).map(a=>({id:a.id,name:a.name,code:a.code,tpl:a.tpl,tpls:tplsOf(a),variant:a.variant,
    rows:rows(a).map(r=>({id:r.id,sec:r.sec,item:r.item,q:r.q,by:r.by,st:r.st,pr:r.pr,rec:{st:r.rec.st,ans:r.rec.ans||"",src:r.rec.src||"",asOwner:r.rec.asOwner||"",asBy:r.rec.asBy||"",naWhy:r.rec.naWhy||""}}))}))}}
 function docPages(ids,rev){return docPagesFrom(briefModel(ids,rev,S.iss.status,S.iss.inc))}
 function docPagesFrom(m){
@@ -568,7 +572,7 @@ function docPagesFrom(m){
  const cnt=R=>{const c={tot:0,nr:0,rq:0,rc:0,cf:0,as:0,na:0,mustOpen:0};R.forEach(r=>{c.tot++;c[r.rec.st]=(c[r.rec.st]||0)+1;if(r.pr==="Must"&&!["cf","as","na"].includes(r.rec.st))c.mustOpen++});c.app=c.tot-c.na;return c};
  const pages=[];const names=m.assets.map(a=>a.name).join(", ");
  if(I.inc.cov)pages.push(`<div class="page">${band(names)}<h2>Project brief</h2><div style="font-size:14px">${esc(names)}</div>
-  <div class="cov"><div>Project</div><div>${esc(PROJ.name||"Project")}${PROJ.number?" ("+esc(PROJ.number)+")":""}</div><div>Client</div><div>${esc(PROJ.client||"–")}</div><div>Assets</div><div>${m.assets.map(a=>`${esc(a.name)} (${esc(a.code)}) – ${esc(a.tpl)}${a.variant?" · "+esc(a.variant):""}`).join("<br>")}</div><div>Revision</div><div>${esc(rev)} – ${esc(I.status)}</div><div>Date</div><div>${fmt(m.date)}</div><div>Basis</div><div>Brief content library v05; Project definition as saved</div></div>
+  <div class="cov"><div>Project</div><div>${esc(PROJ.name||"Project")}${PROJ.number?" ("+esc(PROJ.number)+")":""}</div><div>Client</div><div>${esc(PROJ.client||"–")}</div><div>Assets</div><div>${m.assets.map(a=>`${esc(a.name)} (${esc(a.code)}) – ${esc((a.tpls&&a.tpls.length?a.tpls:[a.tpl]).join(" + "))}${a.variant?" · "+esc(a.variant):""}`).join("<br>")}</div><div>Revision</div><div>${esc(rev)} – ${esc(I.status)}</div><div>Date</div><div>${fmt(m.date)}</div><div>Basis</div><div>Brief content library v05; Project definition as saved</div></div>
   <h3>Status summary</h3><table><tr><th>Asset</th><th>Applicable</th><th>Confirmed</th><th>Assumed</th><th>Open</th><th>Must open</th></tr>${m.assets.map(a=>{const s=cnt(a.rows);return `<tr><td>${esc(a.name)}</td><td>${s.app}</td><td>${s.cf}</td><td>${s.as}</td><td>${s.nr+s.rq+s.rc}</td><td>${s.mustOpen}</td></tr>`}).join("")}</table>
   <h3>Document control</h3><table><tr><th>Rev</th><th>Status</th><th>Date</th></tr>${m.history.map(x=>`<tr><td>${esc(x.rev)}</td><td>${esc(x.status)}</td><td>${fmt(x.at)}</td></tr>`).join("")}${m.history.some(x=>x.rev===rev)?"":`<tr><td>${esc(rev)}</td><td>${esc(I.status)}</td><td>${fmt(m.date)}</td></tr>`}</table></div>`);
  m.assets.forEach(a=>{const R=a.rows,secs=[...new Set(R.map(r=>r.sec))];
@@ -783,7 +787,7 @@ document.addEventListener("click",async e=>{const t=e.target.closest("[data-a],[
  case "pbqnew":await pbqPropose(a);return;
  case "pbqpack":pbqPack();return;
  case "pbqsubmit":{const q=(S.proposals||[]).find(x=>x.id===ds.id);if(!q)return;const ok=await dlg("Confirm submitted",`<p>Confirm <b>${q.id}</b> was sent to the brief library team?</p>`,[],"Confirm submitted");if(!ok)return;q.status="sub";q.sent=new Date().toISOString();log(`<b>${q.id}</b> submitted to the brief library team`);render();return}
- case "pbqwithdraw":{const q=(S.proposals||[]).find(x=>x.id===ds.id);if(!q)return;const ok=await dlg("Withdraw proposal",`<p>Withdraw <b>${q.id}</b>? Any Local · pending overlay is removed from this project.</p>`,[],"Withdraw");if(!ok)return;if(q.local&&!(await briefChange(ASSETS.filter(x=>x.tpl===q.tpl).map(x=>({a:x,items:[{id:q.existing||q.localId||q.id,what:"Library proposal withdrawn",from:pbqSummary(q),to:""}]})),"Local library proposal withdrawn")))return;q.status="wd";q.local=false;log(`<b>${q.id}</b> withdrawn`);render();return}
+ case "pbqwithdraw":{const q=(S.proposals||[]).find(x=>x.id===ds.id);if(!q)return;const ok=await dlg("Withdraw proposal",`<p>Withdraw <b>${q.id}</b>? Any Local · pending overlay is removed from this project.</p>`,[],"Withdraw");if(!ok)return;if(q.local&&!(await briefChange(ASSETS.filter(x=>tplsOf(x).includes(q.tpl)).map(x=>({a:x,items:[{id:q.existing||q.localId||q.id,what:"Library proposal withdrawn",from:pbqSummary(q),to:""}]})),"Local library proposal withdrawn")))return;q.status="wd";q.local=false;log(`<b>${q.id}</b> withdrawn`);render();return}
  case "openreq":S.asset=ds.id;S.plot=A_(ds.id).plot;S.tab="req";S.cur=null;S.sel.clear();render();return;
  case "gosec":S.f.sec=ds.sec;S.tab="req";render();return;
  case "coll":S.coll.has(ds.sec)?S.coll.delete(ds.sec):S.coll.add(ds.sec);render();return;
@@ -803,7 +807,7 @@ document.addEventListener("click",async e=>{const t=e.target.closest("[data-a],[
  case "b-req":case "one-req":{const ids=ds.a==="b-req"?[...S.sel]:[ds.id];const open=S.packs.filter(k=>k.status==="Open"&&k.assets.includes(a.id));const r=await dlg("Add to request pack",`<p>${ids.length} item${ids.length>1?"s":""} from ${esc(a.name)}.</p>`,[{l:"Request pack",type:"select",opts:[...open.map(k=>k.id+" – "+k.to),"New request pack"],v:open[0]?open[0].id+" – "+open[0].to:"New request pack"}],"Add");if(!r)return;let pk;if(r[0]==="New request pack"){pk={id:"RP-"+String(S.packs.length+1).padStart(3,"0"),to:"All providers",assets:[a.id],n:0,issued:TODAY,due:P(a.s2)-14*DAY,status:"Open"};S.packs.push(pk)}else pk=S.packs.find(k=>r[0].startsWith(k.id));ids.forEach(id=>{const o=S.rec[a.id][id];o.pk=pk.id;if(o.st==="nr")o.st="rq"});if(!pk.assets.includes(a.id))pk.assets.push(a.id);pk.items=null;pk.snap=null;packSnapshot(pk);log(`${ids.length} ${esc(a.name)} item${ids.length>1?"s":""} added to <b>${pk.id}</b>`);S.sel.clear();render();toast(`Added to ${pk.id}`);return}
  case "toif":if(window.parent&&window.parent!==window)window.parent.postMessage({type:"engage-brief-open-interface",assetId:a&&a.id||S.asset||"",component:ds.comp||"",briefId:ds.id||""},"*");else toast("Open the Interface matrix filtered to this component and asset");return;
  case "hist":toast("History: status changes, answers and brief changes for this item");return;
- case "tpl":case "prof":{const x=A_(ds.id);const tpls=["None","Hotel","Resort","Residential","Office","Villa","Townhouse"];const r=await dlg(`Brief profile – ${x.name}`,`<p>Use in Project definition: <b>${esc(x.use)}</b>.</p>`,[{l:"Brief template",type:"select",opts:tpls,v:x.tpl||"None"},{l:"Variant",type:"select",opts:["–","Branded","Non-branded","Shell & core","Fit-out","Shell & core + Fit-out"],v:x.variant||"–"},{l:"Client representative",v:x.cl},{l:"Operator / tenant / community manager",v:x.op}],"Save");if(!r)return;{const nt=r[0]==="None"?null:r[0],nv=r[1]==="–"?null:r[1];if((nt||null)!==(x.tpl||null)||(nv||null)!==(x.variant||null)){if(!(await briefChange([{a:x,items:[{id:"Profile",what:"Brief template",from:(x.tpl||"None")+(x.variant?" · "+x.variant:""),to:(nt||"None")+(nv?" · "+nv:"")}]}],"Brief template")))return}}x.tpl=r[0]==="None"?null:r[0];x.variant=r[1]==="–"?null:r[1];x.cl=r[2];x.op=r[3];if(x.tpl&&!S.rec[x.id])S.rec[x.id]={};log(`<b>${esc(x.name)}</b> brief profile updated – ${x.tpl||"no template"}${x.variant?" · "+x.variant:""}`);render();return}
+ case "tpl":case "prof":{const x=A_(ds.id);const tpls=["None","Hotel","Resort","Residential","Office","Villa","Townhouse"];const r=await dlg(`Brief profile – ${x.name}`,`<p>Use in Project definition: <b>${esc(x.use)}</b>.</p>`,[{l:"Brief template",type:"select",opts:tpls,v:x.tpl||"None"},{l:"Variant",type:"select",opts:["–","Branded","Non-branded","Shell & core","Fit-out","Shell & core + Fit-out"],v:x.variant||"–"},{l:"Client representative",v:x.cl},{l:"Operator / tenant / community manager",v:x.op},{l:"Further templates for mixed use (comma-separated, e.g. Office, Residential)",v:tplsOf(x).slice(1).join(", ")}],"Save");if(!r)return;{const nt=r[0]==="None"?null:r[0],nv=r[1]==="–"?null:r[1];const extra=String(r[4]||"").split(",").map(s=>s.trim()).map(s=>BRIEF_TPLS.find(b=>b.toLowerCase()===s.toLowerCase())).filter(Boolean);const bad=String(r[4]||"").split(",").map(s=>s.trim()).filter(s=>s&&!BRIEF_TPLS.some(b=>b.toLowerCase()===s.toLowerCase()));if(bad.length){toast("Unknown template: "+esc(bad.join(", "))+". Use "+BRIEF_TPLS.join(", ")+".");return}const ntl=nt?[...new Set([nt,...extra])]:[];const from=(tplLabel(x)||"None")+(x.variant?" · "+x.variant:""),to=(ntl.join(" + ")||"None")+(nv?" · "+nv:"");if(from!==to){if(!(await briefChange([{a:x,items:[{id:"Profile",what:"Brief template",from,to}]}],"Brief template")))return}x.tpls=ntl}x.tpl=r[0]==="None"?null:r[0];x.variant=r[1]==="–"?null:r[1];x.cl=r[2];x.op=r[3];if(x.tpl&&!S.rec[x.id])S.rec[x.id]={};log(`<b>${esc(x.name)}</b> brief profile updated – ${esc(tplLabel(x)||"no template")}${x.variant?" · "+x.variant:""}`);render();return}
  case "rqup":rqCandidates(briefAssets(scope()).map(a=>a.id)).forEach(r=>S.rqCollapse.add(r.sec));render();return;
  case "rqdown":S.rqCollapse.clear();render();return;
  case "rqfocus":S.rqFocus=!S.rqFocus;S.rqScopeShown=!S.rqFocus;render();return;
@@ -880,7 +884,7 @@ function briefBlank(){
 }
 function briefPlain(){
  const x=JSON.parse(JSON.stringify(S,(k,v)=>v instanceof Set?{__engageSet:[...v]}:v));
- x.__profiles=Object.fromEntries(ASSETS.map(a=>[a.id,{use:a.use,tpl:a.tpl,variant:a.variant,cl:a.cl,op:a.op,opl:a.opl}]));
+ x.__profiles=Object.fromEntries(ASSETS.map(a=>[a.id,{use:a.use,tpl:a.tpl,tpls:a.tpls,variant:a.variant,cl:a.cl,op:a.op,opl:a.opl}]));
  return x
 }
 function briefRevive(x){return JSON.parse(JSON.stringify(x||{}),(k,v)=>v&&Array.isArray(v.__engageSet)?new Set(v.__engageSet):v)}
@@ -905,7 +909,7 @@ window.EngageBrief={
   PLOTS=Array.isArray(ctx.plots)&&ctx.plots.length?ctx.plots:[{id:"P1",name:"All assets"}];
   ASSETS=Array.isArray(ctx.assets)?ctx.assets:[];
   const incoming=briefRevive(saved),profiles=incoming.__profiles||{};delete incoming.__profiles;
-  ASSETS.forEach(a=>{const p=profiles[a.id];if(p&&p.use===a.use){a.tpl=p.tpl;a.variant=p.variant;a.cl=p.cl;a.op=p.op;a.opl=p.opl}});
+  ASSETS.forEach(a=>{const p=profiles[a.id];if(p&&p.use===a.use){a.tpl=p.tpl;a.tpls=Array.isArray(p.tpls)?p.tpls:(p.tpl?[p.tpl]:[]);a.variant=p.variant;a.cl=p.cl;a.op=p.op;a.opl=p.opl}});
   S=briefBlank();
   if(saved)S=Object.assign(S,incoming);
   briefNormalise();BRIDGE_READY=true;render();briefNotify()

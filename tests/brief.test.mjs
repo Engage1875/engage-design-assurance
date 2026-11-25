@@ -179,3 +179,17 @@ test('an issued brief and an issued request pack print from the copy kept at iss
   assert.deepEqual(app.errors, []);
   await app.close();
 });
+
+test('a mixed-use asset carries the brief template of each of its uses', async () => {
+  const app = await openBrief();
+  const { page, frame } = app;
+  const ids = await page.evaluate(() => { const by = n => PRE.uses.find(u => u.name === n).id; return [by('Hotel'), by('Office')]; });
+  await page.evaluate(ids => { S.assets[0].uses = ids; save(); window.renderBriefPage(); }, ids);
+  await page.waitForTimeout(300);
+  const r = await frame.evaluate(() => { const a = ASSETS[0]; return { tpls: tplsOf(a), label: tplLabel(a), prefixes: [...new Set(rows(a).map(r => r.id.split('-').slice(0, 2).join('-')))] }; });
+  assert.deepEqual(r.tpls, ['Hotel', 'Office']);
+  assert.equal(r.label, 'Hotel + Office');
+  assert.equal(r.prefixes.length, 2, 'requirements from both templates');
+  assert.deepEqual(app.errors, []);
+  await app.close();
+});
