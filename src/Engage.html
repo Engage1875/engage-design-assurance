@@ -2797,6 +2797,12 @@ html body #pg-matrix .matrixv.focus.focus{position:fixed!important;top:88px!impo
 html body .matrixv.focus .back{display:none!important}
 body.focusmode::after{inset:80px 0 0!important;left:var(--isbw)!important}
 #pg-crs .crs-hs,#crs-hs{display:none!important}
+/* v133 notices */
+#engageNotices{position:fixed;right:16px;bottom:16px;z-index:10000;display:flex;flex-direction:column;gap:8px;max-width:min(460px,calc(100vw - 32px))}
+.engage-notice{background:#fff;border:1px solid #CBD5D6;border-left:4px solid #2F6FEB;border-radius:8px;box-shadow:0 6px 24px rgba(13,43,49,.18);padding:10px 12px;font-size:12.5px;color:#0D2B31;display:flex;flex-direction:column;gap:4px}
+.engage-notice.bad{border-left-color:#C8453C;background:#fff8f7}.engage-notice.ok{border-left-color:#2F8A5C}
+.engage-notice b{font-size:13px}.engage-notice-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+@media print{#engageNotices{display:none!important}}
 </style>
 <link rel="icon" href="data:,">
 <!-- Release notes: see the in-tool Release notes on the Project brief page. -->
@@ -3206,8 +3212,22 @@ function demoCores(s){
   s.assets[0].cz[COR]=[{id:uid(),name:"Core 1",levels:["B1","G","03–15","16–30","31–42","RF"]}];
   s.assets[1].cz[COR]=[{id:uid(),name:"Core 2",levels:["B1","G","03–20","RF"]}]; return s;
 }
-let S; try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
-if(!S||!S.assets)S=demoCores(demoState());
+/* v133 safe start-up: a stored project that cannot be read, migrated or drawn is set aside
+   (kept under SETASIDE_KEY, downloadable from a notice) instead of being silently overwritten. */
+const SETASIDE_KEY=KEY+".setAside", SETASIDE_META_KEY=KEY+".setAside.meta";
+let STARTUP_ISSUE=null, S_FROM_STORAGE=false;
+function setAsideStored(reason){
+  let raw=null;try{raw=localStorage.getItem(KEY)}catch(e){}
+  if(raw===null||(STARTUP_ISSUE&&STARTUP_ISSUE.raw===raw))return;
+  STARTUP_ISSUE={reason:String(reason||"Unknown problem"),raw,stored:false,at:new Date().toISOString()};
+  try{localStorage.setItem(SETASIDE_KEY,raw);localStorage.setItem(SETASIDE_META_KEY,JSON.stringify({at:STARTUP_ISSUE.at,reason:STARTUP_ISSUE.reason,bytes:raw.length}));localStorage.removeItem(KEY);STARTUP_ISSUE.stored=true}
+  catch(e){try{localStorage.removeItem(SETASIDE_KEY)}catch(ig){}}
+  console.warn("ENGAGE: stored project set aside –",STARTUP_ISSUE.reason);
+}
+let S=null;
+try{const raw=localStorage.getItem(KEY);if(raw!==null){const x=JSON.parse(raw);if(x&&typeof x==="object"&&Array.isArray(x.assets)){S=x;S_FROM_STORAGE=true}else setAsideStored("The stored project has no asset list.")}}
+catch(e){setAsideStored("The stored project could not be read ("+(e&&e.message||e)+").")}
+if(!S)S=demoCores(demoState());
 /* v30: overview fields – one definition, in the order used by the PDF roll-up (status counts, then Overdue / Due / Flags). */
 const PCOLDEF=[
  {k:"nm",l:"Pane",fixed:1,tip:"Pane name. Sorts A–Z; the default order follows the component, asset and zone order of the project."},
@@ -3268,11 +3288,46 @@ function normalise(){
     S.prog=(S.prog&&S.prog.v===1)?S.prog:null; progApplyCb();
 pdNormalise(); S.version=56;
 }
-normalise();
+try{normalise()}catch(e){if(!S_FROM_STORAGE)throw e;console.error("ENGAGE start-up: stored project could not be migrated",e);setAsideStored("The stored project could not be migrated ("+(e&&e.message||e)+").");S=demoCores(demoState());S_FROM_STORAGE=false;normalise()}
 let savedAt=null, openDD=null, ddQuery="", selSrc=null, drill=null, tview=null, tvSort={key:null,dir:1};
 const sel=new Set(), selCats=new Set(), fpOpen=new Set(); let fpQuery="", fcQuery={};
 const kb={active:false,mode:null,rk:null,idx:0,sel:null};
-const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));savedAt=new Date()};
+/* v133 save: never throws; tells the user when the browser refuses to store the project,
+   and does not overwrite a set-aside project that could not be copied aside. */
+let saveFailing=false, lastStoredText=null;
+const save=()=>{
+  if(STARTUP_ISSUE&&!STARTUP_ISSUE.stored&&!STARTUP_ISSUE.released){engageNotice({id:"setaside"});return false}
+  let txt;try{txt=JSON.stringify(S)}catch(e){console.error("ENGAGE save",e);return false}
+  try{localStorage.setItem(KEY,txt);lastStoredText=txt;savedAt=new Date();if(saveFailing){saveFailing=false;engageNotice({id:"quota",close:true})}return true}
+  catch(e){saveFailing=true;savedAt=null;engageNotice({id:"quota",kind:"bad",title:"Changes are not being stored in this browser",
+    text:"The browser refused to store the project ("+(e&&e.name||"storage error")+"), usually because its storage is full. Your latest changes exist only in this tab. Use Save to download the project file now.",
+    actions:[{label:"Save project file",run:()=>document.getElementById("btnSave").click()}]});return false}
+};
+/* v133 notices: one small stack of dismissible messages, shown as text only. */
+function engageNotice(o){
+  let box=document.getElementById("engageNotices");
+  if(!box){box=document.createElement("div");box.id="engageNotices";box.setAttribute("role","status");box.setAttribute("aria-live","polite");document.body.appendChild(box)}
+  let el=o.id?box.querySelector('[data-notice="'+o.id+'"]'):null;
+  if(o.close){if(el)el.remove();return}
+  if(!o.title){return}
+  if(!el){el=document.createElement("div");if(o.id)el.dataset.notice=o.id;box.appendChild(el)}
+  el.className="engage-notice"+(o.kind==="bad"?" bad":o.kind==="ok"?" ok":"");el.textContent="";
+  const b=document.createElement("b");b.textContent=o.title;el.appendChild(b);
+  if(o.text){const s=document.createElement("span");s.textContent=o.text;el.appendChild(s)}
+  const row=document.createElement("div");row.className="engage-notice-actions";
+  (o.actions||[]).forEach(a=>{const btn=document.createElement("button");btn.type="button";btn.className="btn";btn.textContent=a.label;btn.onclick=()=>{try{a.run()}finally{if(a.close!==false&&!a.keep)el.remove()}};row.appendChild(btn)});
+  if(o.dismiss!==false){const x=document.createElement("button");x.type="button";x.className="btn";x.textContent="Dismiss";x.onclick=()=>{if(o.onDismiss)o.onDismiss();el.remove()};row.appendChild(x)}
+  el.appendChild(row);
+  return el;
+}
+window.engageNotice=engageNotice;
+/* v133: warn when the same project is changed in another tab or window of this browser. */
+window.addEventListener("storage",e=>{
+  if(e.key!==KEY||e.newValue===null||e.newValue===lastStoredText)return;
+  engageNotice({id:"othertab",kind:"bad",title:"This project was changed in another tab or window",
+    text:"ENGAGE is open more than once in this browser. Each copy saves over the other. Load the other version to continue from its changes, or keep this version to overwrite them.",
+    actions:[{label:"Load the other version",run:()=>location.reload()},{label:"Keep this version",run:()=>save()}]});
+});
 
 /* ================= helpers ================= */
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -9567,7 +9622,25 @@ return {reportHtml:reportHtml, recount:recount, sig:sig, render:show, ensure:ens
 
 
 
-renderAll();
+try{renderAll()}catch(e){
+  if(!S_FROM_STORAGE)throw e;
+  console.error("ENGAGE start-up: stored project could not be drawn",e);
+  setAsideStored("The stored project could not be drawn ("+(e&&e.message||e)+").");
+  S=demoCores(demoState());S_FROM_STORAGE=false;normalise();renderAll();
+}
+/* v133: tell the user about a set-aside project, and offer it as a download. */
+(function(){
+  let raw=null,meta=null;try{raw=localStorage.getItem(SETASIDE_KEY);meta=JSON.parse(localStorage.getItem(SETASIDE_META_KEY)||"null")}catch(e){}
+  if(STARTUP_ISSUE&&!STARTUP_ISSUE.stored){raw=STARTUP_ISSUE.raw;meta={at:STARTUP_ISSUE.at,reason:STARTUP_ISSUE.reason}}
+  if(raw===null||raw===undefined)return;
+  const unstored=!!(STARTUP_ISSUE&&!STARTUP_ISSUE.stored);
+  const when=meta&&meta.at?new Date(meta.at).toLocaleString():"earlier";
+  engageNotice({id:"setaside",kind:"bad",title:"A stored project could not be opened and has been set aside",
+    text:((meta&&meta.reason)||"It could not be loaded.")+" Set aside "+when+". ENGAGE started with the sample project instead. Download the set-aside copy to keep it"+(unstored?"; until you do, nothing is stored in this browser so it is not overwritten.":"."),
+    dismiss:false,
+    actions:[{label:"Download set-aside copy",keep:true,close:false,run:()=>download("engage_set_aside_"+new Date().toISOString().slice(0,10)+".json",raw,"application/json")},
+             {label:unstored?"Discard it and continue":"Remove it from this browser",run:()=>{if(unstored){STARTUP_ISSUE.released=true;save()}else{try{localStorage.removeItem(SETASIDE_KEY);localStorage.removeItem(SETASIDE_META_KEY)}catch(e){}}}}]});
+})();
 </script>
 <script>
 /* Engage shell: sidebar state, rail tooltips, workspace block, Export menu, save chip, tile hover text. */
@@ -10754,15 +10827,74 @@ function resetRuntime(){
 }
 function activate(next){
   const prior=S,priorText=localStorage.getItem(KEY);
-  try{S=clone116(next);normalise();localStorage.setItem(KEY,JSON.stringify(S));savedAt=new Date();resetRuntime();renderAll();window.scrollTo(0,0);return true}
+  try{S=clone116(next);normalise();localStorage.setItem(KEY,JSON.stringify(S));savedAt=new Date();resetRuntime();drawChecked();window.scrollTo(0,0);return true}
   catch(e){try{S=prior;normalise();if(priorText===null)localStorage.removeItem(KEY);else localStorage.setItem(KEY,priorText);resetRuntime();renderAll()}catch(rollback){console.error('Clear Project rollback failed',rollback)}throw e}
 }
+/* v133: draw the project and treat any error reported while drawing as a failure, so Open
+   never reports success for a project whose page did not draw. */
+function drawChecked(){
+  const errs=[],oe=console.error;console.error=function(){errs.push([...arguments].map(a=>a&&a.message||String(a)).join(' '));return oe.apply(console,arguments)};
+  try{renderAll()}finally{console.error=oe}
+  if(errs.length)throw new Error('A page reported an error while drawing: '+errs[0]);
+}
+/* v133: identifiers in a project file end up in page markup and selectors, so they must be plain. */
+const ID_OK=/^[A-Za-z0-9_.:\-]{1,80}$/;
+function validateProject(x){
+  const bad=[];const chk=(v,where)=>{if(typeof v==='number'&&Number.isFinite(v))return;if(typeof v!=='string'||!ID_OK.test(v))bad.push(where)};
+  if(!x||typeof x!=='object'||Array.isArray(x))return ['The file is not an ENGAGE project.'];
+  if(!Array.isArray(x.assets))return ['The file has no asset list, so it is not an ENGAGE project file.'];
+  if(x.format==='engage-clear-recovery')return ['This is a recovery snapshot, not a project file.'];
+  x.assets.forEach((a,i)=>{
+    if(!a||typeof a!=='object'){bad.push('asset '+(i+1));return}
+    chk(a.id,'asset '+(i+1)+' id');
+    ['name','code'].forEach(k=>{if(a[k]!=null&&typeof a[k]!=='string')bad.push('asset '+(i+1)+' '+k)});
+    const zl=[...(Array.isArray(a.zones)?a.zones:[])];
+    [a.cz,a.zr].forEach(m=>{if(m&&typeof m==='object')Object.values(m).forEach(z=>{if(Array.isArray(z))zl.push(...z)})});
+    zl.forEach((z,j)=>{if(!z||typeof z!=='object')bad.push('asset '+(i+1)+' zone '+(j+1));else chk(z.id,'asset '+(i+1)+' zone '+(j+1)+' id')});
+  });
+  const pd=x.plotDef&&Array.isArray(x.plotDef.plots)?x.plotDef.plots:[];
+  pd.forEach((p,i)=>{if(!p||typeof p!=='object')bad.push('plot '+(i+1));else chk(p.id,'plot '+(i+1)+' id')});
+  if(x.stage!=null&&!STAGES.includes(x.stage))bad.push('current stage');
+  return bad.length?['The file has identifiers ENGAGE cannot use safely: '+bad.slice(0,6).join(', ')+(bad.length>6?' and '+(bad.length-6)+' more':'')+'.']:[];
+}
+let pendingOpen=null;
+function openBody(){
+  const x=pendingOpen.state,c=countProject(x),cur=countProject(S),name=(x.project||'Untitled project').trim()||'Untitled project',curName=(S.project||'Untitled project').trim()||'Untitled project';
+  document.getElementById('v116Title').textContent='Open project file';document.getElementById('v116Sub').textContent=pendingOpen.file;
+  const row=(k,l)=>`<div><b>${c[k]}</b><span>${l}</span></div>`;
+  document.getElementById('v116Body').innerHTML=`<div class="v116-warning v116-restore"><b>Open “${esc(name)}” in place of “${esc(curName)}”?</b> The project now in this browser is kept as a recovery snapshot, so <b>Restore previous</b> in the toolbar brings it back.</div>
+  <div class="v116-counts">${row('assets','assets')}${row('zones','zones')}${row('entries','status entries')}${row('evidence','evidence records')}${row('comments','comments')}</div>
+  <div class="v116-card"><h4>File details</h4><ul><li>Project: ${esc(name)}${x.proj&&x.proj.number?' · '+esc(x.proj.number):''}</li><li>Saved by ENGAGE schema ${esc(x.version==null?'unknown':x.version)}</li><li>Sign-off log entries: ${c.logs}</li><li>Current project: ${cur.assets} assets, ${cur.entries} status entries</li></ul></div><div class="v116-error" id="v116Error"></div>`;
+  document.getElementById('v116Foot').innerHTML='<span class="sp"></span><button type="button" class="btn" data-v116="close">Cancel</button><button type="button" class="pbtn" data-v116="open-confirm">Open project</button>';
+}
+function openFile(f){
+  if(!f)return;
+  const rd=new FileReader();
+  rd.onerror=()=>showToast('Open did not run','The file could not be read. The current project is unchanged.',true);
+  rd.onload=()=>{
+    let x;try{x=JSON.parse(String(rd.result).replace(/^﻿/,''))}catch(e){showToast('Open did not run','This file is not valid JSON, so it is not an ENGAGE project file. The current project is unchanged.',true);return}
+    const bad=validateProject(x);if(bad.length){showToast('Open did not run',bad[0]+' The current project is unchanged.',true);return}
+    pendingOpen={state:x,file:f.name};ensureUi();mode='open';returnFocus=document.activeElement;openBody();document.getElementById('v116ClearProject').classList.add('on');
+    setTimeout(()=>{const b=document.querySelector('[data-v116="open-confirm"]');if(b)b.focus()},0);
+  };
+  rd.readAsText(f);
+}
+function doOpen(){
+  if(!pendingOpen)return;const p=pendingOpen;
+  const oldRecovery=localStorage.getItem(RECOVERY_KEY),snap={format:'engage-clear-recovery',v:1,reason:'open',opened:p.file,created:new Date().toISOString(),tool:SRCB.ver,project:S.project||'',state:clone116(S)};
+  try{localStorage.setItem(RECOVERY_KEY,JSON.stringify(snap))}
+  catch(e){showError('Open did not run. The current project is unchanged. The browser could not store a recovery snapshot of it ('+(e&&e.name||'storage error')+'). Save the current project to a file, or free browser storage, and try again.');return}
+  try{activate(p.state)}
+  catch(e){try{if(oldRecovery===null)localStorage.removeItem(RECOVERY_KEY);else localStorage.setItem(RECOVERY_KEY,oldRecovery)}catch(ignore){}showError('Open did not complete, so the current project has been put back unchanged. '+(e&&e.message?e.message:''));return}
+  pendingOpen=null;closeDialog();updateToolbar();showToast('Project opened',(S.project||'Untitled project')+' is open. The previous project can be restored from the toolbar.');
+}
+window.ENGAGE_OPEN={validateProject,openFile};
 function recoveryLabel(x){const name=(x.project||x.state.project||'Previous project').trim()||'Untitled project',when=x.created?new Date(x.created).toLocaleString():'earlier';return name+' · '+when}
 function updateToolbar(){const b=document.getElementById('btnRestoreProject');if(b)b.hidden=!hasRecovery()}
 function ensureUi(){
   if(!document.getElementById('btnClearProject')){
     const saveBtn=document.getElementById('btnSave'),restore=document.createElement('button'),clear=document.createElement('button');
-    restore.className='ab';restore.id='btnRestoreProject';restore.type='button';restore.hidden=true;restore.title='Restore the project snapshot created immediately before the last Clear Project action';restore.innerHTML='<svg viewBox="0 0 16 16"><path d="M3 3v3.5h3.5"/><path d="M3.3 6.3A5 5 0 1 1 3 9.5"/></svg>Restore previous';
+    restore.className='ab';restore.id='btnRestoreProject';restore.type='button';restore.hidden=true;restore.title='Restore the project as it was immediately before the last Open or Clear Project';restore.innerHTML='<svg viewBox="0 0 16 16"><path d="M3 3v3.5h3.5"/><path d="M3.3 6.3A5 5 0 1 1 3 9.5"/></svg>Restore previous';
     clear.className='ab';clear.id='btnClearProject';clear.type='button';clear.title='Clear all project-instance data and start a blank project';clear.innerHTML='<svg viewBox="0 0 16 16"><path d="M3 4h10M6 4V2.5h4V4M5 6.5v6M8 6.5v6M11 6.5v6M4 4l.7 10h6.6L12 4"/></svg>Clear project';
     saveBtn.after(restore,clear);
   }
@@ -10779,13 +10911,13 @@ function clearBody(){
   document.getElementById('v116Body').innerHTML=`<div class="v116-warning"><b>This removes all project-entered information together.</b> ENGAGE will first save one local recovery snapshot. If that snapshot cannot be stored, the clear operation will not run.</div>
   <div class="v116-counts"><div><b>${c.assets}</b><span>assets</span></div><div><b>${c.zones}</b><span>active / deleted zones</span></div><div><b>${c.entries}</b><span>status entries</span></div><div><b>${c.evidence}</b><span>evidence records</span></div><div><b>${c.comments}</b><span>comments-resolution records</span></div></div>
   <div class="v116-grid"><div class="v116-card"><h4>Project content that will be cleared</h4><ul><li>Project details, plots, assets, uses, components, levels and zones</li><li>Programme dates, baselines, allocations, scenarios and Complete-by overrides</li><li>Interface status, evidence, notes, batch records, flags and sign-off history</li><li>Statutory Authority project data, submissions and tracking</li><li>Comments Resolution, Requirements &amp; Checks and library-request project records</li><li>Report selections, filters and other project settings</li></ul></div><div class="v116-card v116-keep"><h4>Controlled content that will remain</h4><ul><li>${SRCB.nComp.toLocaleString()}-component master library</li><li>${SRCB.nReg.toLocaleString()} master interfaces</li><li>${SRCB.nApv.toLocaleString()} statutory approvals</li><li>Asset presets, status definitions, built-in rules and application configuration</li></ul></div></div>
-  <div class="v116-confirm"><label for="v116Phrase">Type CLEAR to enable the final action</label><input id="v116Phrase" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="v116-note">After completion, use <b>Restore previous</b> in the toolbar to recover this project. The recovery snapshot is removed when another project is explicitly saved.</div><div class="v116-error" id="v116Error"></div></div>`;
+  <div class="v116-confirm"><label for="v116Phrase">Type CLEAR to enable the final action</label><input id="v116Phrase" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="v116-note">After completion, use <b>Restore previous</b> in the toolbar to recover this project. The recovery snapshot is replaced by the next Open or Clear Project.</div><div class="v116-error" id="v116Error"></div></div>`;
   document.getElementById('v116Foot').innerHTML='<button type="button" class="btn" data-v116="backup">Export backup first</button><span class="sp"></span><button type="button" class="btn" data-v116="close">Cancel</button><button type="button" class="v116-danger" id="v116Confirm" data-v116="confirm" disabled>Clear project &amp; start again</button>';
 }
 function restoreBody(){
   let x;try{x=readRecovery()}catch(e){updateToolbar();showToast('Recovery unavailable',e.message,true);return false}const c=countProject(x.state);
   document.getElementById('v116Title').textContent='Restore previous project';document.getElementById('v116Sub').textContent=recoveryLabel(x);
-  document.getElementById('v116Body').innerHTML=`<div class="v116-warning v116-restore"><b>Restore the automatic pre-clear snapshot.</b> The current project state will be replaced by the snapshot below.</div><div class="v116-counts"><div><b>${c.assets}</b><span>assets</span></div><div><b>${c.zones}</b><span>zones</span></div><div><b>${c.entries}</b><span>status entries</span></div><div><b>${c.evidence}</b><span>evidence records</span></div><div><b>${c.comments}</b><span>comments</span></div></div><div class="v116-card"><h4>Snapshot details</h4><ul><li>Project: ${esc(x.project||x.state.project||'Untitled project')}</li><li>Created immediately before Clear Project</li><li>Includes the complete project state, audit history and project settings at that time</li></ul></div><div class="v116-error" id="v116Error"></div>`;
+  document.getElementById('v116Body').innerHTML=`<div class="v116-warning v116-restore"><b>Restore the automatic snapshot taken ${x.reason==='open'?'before the last Open':'before Clear Project'}.</b> The current project state will be replaced by the snapshot below.</div><div class="v116-counts"><div><b>${c.assets}</b><span>assets</span></div><div><b>${c.zones}</b><span>zones</span></div><div><b>${c.entries}</b><span>status entries</span></div><div><b>${c.evidence}</b><span>evidence records</span></div><div><b>${c.comments}</b><span>comments</span></div></div><div class="v116-card"><h4>Snapshot details</h4><ul><li>Project: ${esc(x.project||x.state.project||'Untitled project')}</li><li>Created immediately before ${x.reason==='open'?'opening '+esc(x.opened||'another project file'):'Clear Project'}</li><li>Includes the complete project state, audit history and project settings at that time</li></ul></div><div class="v116-error" id="v116Error"></div>`;
   document.getElementById('v116Foot').innerHTML='<span class="sp"></span><button type="button" class="btn" data-v116="close">Cancel</button><button type="button" class="pbtn" data-v116="restore">Restore previous project</button>';return true;
 }
 function openDialog(which){ensureUi();mode=which||'clear';returnFocus=document.activeElement;if(mode==='restore'&&!restoreBody())return;if(mode==='clear')clearBody();const m=document.getElementById('v116ClearProject');m.classList.add('on');setTimeout(()=>{const f=mode==='clear'?document.getElementById('v116Phrase'):m.querySelector('[data-v116="close"]');if(f)f.focus()},0)}
@@ -10806,10 +10938,11 @@ function doRestore(){
   closeDialog();updateToolbar();showToast('Previous project restored',(S.project||'Untitled project')+' is active again.');
 }
 function bind(){
-  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#btnClearProject,#btnRestoreProject,[data-v116]');if(!b)return;const a=b.id==='btnClearProject'?'open-clear':b.id==='btnRestoreProject'?'open-restore':b.dataset.v116;if(a==='open-clear')openDialog('clear');else if(a==='open-restore')openDialog('restore');else if(a==='close')closeDialog();else if(a==='backup')exportBackup();else if(a==='confirm')doClear();else if(a==='restore')doRestore()},true);
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#btnClearProject,#btnRestoreProject,[data-v116]');if(!b)return;const a=b.id==='btnClearProject'?'open-clear':b.id==='btnRestoreProject'?'open-restore':b.dataset.v116;if(a==='open-clear')openDialog('clear');else if(a==='open-restore')openDialog('restore');else if(a==='close'){pendingOpen=null;closeDialog()}else if(a==='backup')exportBackup();else if(a==='confirm')doClear();else if(a==='restore')doRestore();else if(a==='open-confirm')doOpen()},true);
+  const fin=document.getElementById('fileIn');if(fin)fin.onchange=e=>{const f=e.target.files[0];e.target.value='';openFile(f)};
   document.addEventListener('input',e=>{if(e.target.id!=='v116Phrase')return;const b=document.getElementById('v116Confirm');if(b)b.disabled=e.target.value.trim().toUpperCase()!=='CLEAR';const er=document.getElementById('v116Error');if(er)er.classList.remove('on')},true);
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('v116ClearProject')?.classList.contains('on')){e.preventDefault();closeDialog()}},true);
-  const saveBtn=document.getElementById('btnSave'),baseSave=saveBtn&&saveBtn.onclick;if(saveBtn)saveBtn.onclick=function(e){const r=baseSave&&baseSave.call(this,e);try{localStorage.removeItem(RECOVERY_KEY)}catch(ignore){}updateToolbar();return r};
+  const saveBtn=document.getElementById('btnSave'),baseSave=saveBtn&&saveBtn.onclick;if(saveBtn)saveBtn.onclick=function(e){const r=baseSave&&baseSave.call(this,e);updateToolbar();return r};
 }
 function decorate(){ensureUi();const ver=document.getElementById('ifVer');if(ver)ver.textContent=ENGAGE_BUILD.ver;Object.assign(SRCB,ENGAGE_BUILD)}
 decorate();bind();

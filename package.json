@@ -1,0 +1,12 @@
+{
+  "name": "engage-design-assurance",
+  "private": true,
+  "description": "ENGAGE: Design Assurance - build and tests",
+  "scripts": {
+    "build": "python3 tools/build.py",
+    "test": "python3 tools/build.py && node --test --test-concurrency=1 tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}
