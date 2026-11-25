@@ -121,3 +121,61 @@ test('response import previews every row, brings ticked rows in as Received and 
   assert.deepEqual(app.errors, []);
   await app.close();
 });
+
+test('Brief PDF prints every requirement across as many pages as needed', async () => {
+  const app = await openBrief();
+  const { frame } = app;
+  const { aid } = await frozenAsset(frame);
+  const n = await frame.evaluate(([aid]) => {
+    delete S.frozen[aid];
+    const R = rows(A_(aid)); R.forEach((r, i) => { S.rec[aid][r.id].st = i < 20 ? 'cf' : 'nr'; S.rec[aid][r.id].ans = 'Answer ' + i + ' ' + 'detail '.repeat(i % 7 * 6); });
+    window.print = () => { window.__printed = (window.__printed || 0) + 1; };
+    S.iss.scope = 'asset'; S.iss.inc = { cov: 1, sum: 1, req: 1, as: 1, open: 1, na: 0 };
+    printPages(docPages([aid], 'P01'));
+    return { cf: R.filter(r => S.rec[aid][r.id].st === 'cf').length, open: R.filter(r => S.rec[aid][r.id].st === 'nr').length };
+  }, [aid]);
+  await frame.waitForFunction(() => window.__printed === 1);
+  const r = await frame.evaluate(() => {
+    const pa = document.getElementById('printArea');
+    const tables = [...pa.querySelectorAll('.page')].map(p => ({ h: p.querySelector('h3') ? p.querySelector('h3').textContent : '', rows: p.querySelectorAll('table.split tr').length - (p.querySelector('table.split') ? 1 : 0), over: p.scrollHeight > p.clientHeight + 1 && !p.classList.contains('bp-overflow') }));
+    const sum = re => tables.filter(t => re.test(t.h)).reduce((s, t) => s + t.rows, 0);
+    return { pages: tables.length, cf: sum(/confirmed requirements/), open: sum(/open items/), cont: tables.filter(t => /continued/.test(t.h)).length, overflow: tables.filter(t => t.over).length };
+  });
+  assert.equal(r.cf, n.cf, 'every confirmed requirement printed');
+  assert.equal(r.open, n.open, 'every open item printed (v132 stopped at 45)');
+  assert.ok(r.cont > 0, 'long tables continue on further pages');
+  assert.equal(r.overflow, 0, 'no page overflows its A4 height');
+  assert.deepEqual(app.errors, []);
+  await app.close();
+});
+
+test('an issued brief and an issued request pack print from the copy kept at issue', async () => {
+  const app = await openBrief();
+  const { frame } = app;
+  const { aid, id } = await frozenAsset(frame);
+  const r = await frame.evaluate(([aid, id]) => {
+    delete S.frozen[aid];
+    window.print = () => {};
+    // brief issue with its stored copy
+    S.issues.push({ rev: '01', assets: [aid], status: 'Issued – brief freeze', at: TODAY, by: 'X', must: 0, snap: briefModel([aid], '01', 'Issued – brief freeze', { cov: 1, sum: 0, req: 1, as: 0, open: 0, na: 0 }) });
+    // request pack with its stored copy
+    const k = { id: 'RP-050', to: 'Client', assets: [aid], items: [aid + '|' + id], n: 1, issued: TODAY, due: TODAY, status: 'Open', issuedBy: 'X', note: '' };
+    S.packs.push(k); packSnapshot(k);
+    // the live brief changes after issue
+    S.rec[aid][id].ans = 'Changed later'; A_(aid).name = 'Renamed asset';
+    printPages(docPagesFrom(S.issues[S.issues.length - 1].snap));
+    const brief = document.getElementById('printArea').textContent;
+    printPages(packPages(k));
+    const pack = document.getElementById('printArea').textContent;
+    const legacy = { ...k, snap: null, id: 'RP-051' }; S.packs.push(legacy);
+    printPages(packPages(legacy));
+    const old = document.getElementById('printArea').textContent;
+    return { brief, pack, old };
+  }, [aid, id]);
+  assert.match(r.brief, /Original answer/);
+  assert.ok(!/Changed later|Renamed asset/.test(r.brief), 'brief issue prints what was issued');
+  assert.ok(!/Renamed asset/.test(r.pack), 'pack prints the asset name as issued');
+  assert.match(r.old, /Legacy record/);
+  assert.deepEqual(app.errors, []);
+  await app.close();
+});
