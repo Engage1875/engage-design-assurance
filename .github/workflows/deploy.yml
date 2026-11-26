@@ -1,26 +1,29 @@
-# Deploys to Azure Static Web Apps when main changes (or when run by hand from the Actions tab).
-# A pull request into main gets its own preview site (Azure posts its address on the pull
-# request); the live site is not touched until the pull request is merged. The preview is
-# removed when the pull request is closed or merged.
+# Deploys to Azure Static Web Apps.
+#  - main (or a run by hand from the Actions tab on main) goes to the LIVE site. Only main does.
+#  - dep-midp, the separate development line for Design Earned Progress and MIDP work, goes to
+#    its own fixed preview site (Azure environment "depmidp"). It never touches the live site.
+#  - A pull request into main or into dep-midp gets its own temporary preview site (Azure posts
+#    its address on the pull request), removed when the pull request is closed or merged.
 # It does nothing until the AZURE_STATIC_WEB_APPS_API_TOKEN secret has been added (see docs/SETUP_GUIDE.md).
 name: Deploy to Azure
 on:
   push:
-    branches: [main]
+    branches: [main, dep-midp]
   pull_request:
-    branches: [main]
+    branches: [main, dep-midp]
     types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
 permissions:
   contents: read
   pull-requests: write
 concurrency:
-  group: deploy-${{ github.event.pull_request.number || 'live' }}
+  group: deploy-${{ github.event.pull_request.number || github.ref_name }}
   cancel-in-progress: false
 jobs:
   deploy:
     # previews only for pull requests from this repository (forks never get the secret)
-    if: github.event_name != 'pull_request' || (github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository)
+    # a run by hand deploys only from main or dep-midp
+    if: (github.event_name != 'pull_request' && (github.ref_name == 'main' || github.ref_name == 'dep-midp')) || (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +67,9 @@ jobs:
           app_location: web
           api_location: api
           skip_app_build: true
+          production_branch: main
+          # dep-midp has its own fixed preview site; empty means production (main) or a pull-request preview
+          deployment_environment: ${{ github.event_name != 'pull_request' && github.ref_name == 'dep-midp' && 'depmidp' || '' }}
       - name: Show the address
         if: steps.ready.outputs.go == 'true'
         run: echo "Deployed to ${{ steps.swa.outputs.static_web_app_url }}" | tee -a "$GITHUB_STEP_SUMMARY"
