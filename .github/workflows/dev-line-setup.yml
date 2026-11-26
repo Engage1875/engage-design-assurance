@@ -1,0 +1,46 @@
+# One-off setup for the separate DEP and MIDP development line (branch dep-midp).
+# Runs only when this file changes on dep-midp. It never touches main or the live site.
+#  1. Marks the v134 release with a tag (the commit that is live on main).
+#  2. Checks that the AZURE_CREDENTIALS key can sign in to Azure, and lists what it can see
+#     (names only, no keys or settings values are printed).
+name: Development line setup
+on:
+  push:
+    branches: [dep-midp]
+    paths: [.github/workflows/dev-line-setup.yml]
+permissions:
+  contents: write
+concurrency:
+  group: dev-line-setup
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Tag v134
+        run: |
+          git fetch --tags origin
+          if git rev-parse -q --verify refs/tags/v134 >/dev/null; then
+            echo "v134 tag already exists at $(git rev-list -n1 v134)"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898319+github-actions[bot]@users.noreply.github.com"
+            git tag -a v134 4b7c3541edd6dbc7b62b2a62dca4402ebdf161b7 -m "ENGAGE v134 (live 26 Nov 2026)"
+            git push origin v134
+          fi
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: What the key can see
+        run: |
+          az account show --query "{subscription:name, state:state}" -o table
+          echo "--- resource groups"; az group list --query "[].{name:name, location:location}" -o table
+          for g in $(az group list --query "[].name" -o tsv); do
+            echo "--- resources in $g"; az resource list -g "$g" --query "[].{name:name, type:type, location:location}" -o table
+          done
+          echo "--- static web apps"; az staticwebapp list --query "[].{name:name, rg:resourceGroup, sku:sku.name, host:defaultHostname}" -o table
+          for s in $(az staticwebapp list --query "[].name" -o tsv); do
+            echo "--- environments of $s"; az staticwebapp environment list -n "$s" --query "[].{name:name, build:buildId, host:hostname, status:status}" -o table || true
+            echo "--- setting names of $s (values not shown)"; az staticwebapp appsettings list -n "$s" --query "keys(properties)" -o tsv || true
+          done
