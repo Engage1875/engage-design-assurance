@@ -67,7 +67,7 @@ function makeHandler({ auth, cfg, appHtmlPath, now = () => Date.now() }) {
   const originOk = h => {
     const o = h.origin;
     if (!o) return false;
-    if (cfg.origin) return o === cfg.origin;
+    if (cfg.origin) return o === cfg.origin || !!(cfg.previewOrigin && cfg.previewOrigin.test(o));
     return !cfg.azure && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o); // development only
   };
 

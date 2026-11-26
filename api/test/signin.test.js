@@ -67,6 +67,19 @@ test('changes from another site, or without an Origin header, are refused', asyn
   assert.equal((await call('POST', '/api/auth/verify', { email: 'boss@example.com', code: '123456' }, { origin: undefined })).status, 403);
 });
 
+test('pull-request preview addresses of the same Static Web App are accepted, others are not', async () => {
+  const site = 'https://brave-flower-01b070800.5.azurestaticapps.net';
+  const { call } = setup({ ENGAGE_ALLOWED_ORIGIN: site });
+  const req = origin => call('POST', '/api/auth/signout', {}, { origin });
+  assert.equal((await req(site)).status, 200);
+  assert.equal((await req('https://brave-flower-01b070800-2.westeurope.5.azurestaticapps.net')).status, 200);
+  for (const bad of ['https://other-name-2.westeurope.5.azurestaticapps.net', 'https://brave-flower-01b070800-2.westeurope.5.azurestaticapps.net.evil.example',
+    'https://xbrave-flower-01b070800-2.westeurope.5.azurestaticapps.net', 'http://brave-flower-01b070800-2.westeurope.5.azurestaticapps.net', 'https://brave-flower-01b070800-2.5.azurestaticapps.net'])
+    assert.equal((await req(bad)).status, 403, bad);
+  // a custom domain gets no preview rule
+  assert.equal(config.load({ ...BASE_ENV, ENGAGE_ALLOWED_ORIGIN: 'https://engage.example.com' }).previewOrigin, null);
+});
+
 test('responses carry security headers and are never cached', async () => {
   const { call } = setup();
   const r = await call('GET', '/api/auth/me');

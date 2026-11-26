@@ -230,6 +230,8 @@ them.
 | Add an administrator | `/admin.html` → *Administrators* (permanent administrators only) |
 | Change a permanent administrator | Azure → Static Web App → *Environment variables* → `ADMIN_EMAILS` |
 | Change the app | Edit `src/` on a branch, open a pull request, check that the tests pass, merge. The deploy workflow publishes it. |
+| Try a change before it goes live | Every pull request into `main` gets its own preview site; Azure posts its address on the pull request. Sign in there as usual. It uses the live approved users and settings, and it is removed when the pull request is merged or closed. |
+| Open the admin page | Administrators see an **Admin** button in the ENGAGE toolbar (or go to `/admin.html`) |
 | Change the version | Edit `VERSION`: line 1 is the label (e.g. `v134`), line 2 is the date |
 
 Project data is not stored in Azure. Each person's work stays in their browser, so they
