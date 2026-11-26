@@ -7,6 +7,7 @@
 //   POST   /api/auth/signout
 //   GET    /api/auth/me
 //   GET    /api/app                            the ENGAGE app, only with a valid session
+//                                              (administrators' copy shows the Admin button)
 //   GET    /api/manage/users | POST {email} | DELETE {email}     administrators
 //   GET    /api/manage/admins | POST {email} | DELETE {email}    permanent administrators change it
 //   GET    /api/manage/audit
@@ -48,10 +49,17 @@ function visitorIp(headers, fallback) {
 const sleep = ms => new Promise(r => setTimeout(r, Math.max(0, ms)));
 
 function makeHandler({ auth, cfg, appHtmlPath, now = () => Date.now() }) {
-  let appHtml = null;
-  const loadApp = () => {
+  let appHtml = null, adminHtml = null;
+  const loadApp = admin => {
     if (appHtml === null) appHtml = fs.existsSync(appHtmlPath) ? fs.readFileSync(appHtmlPath) : Buffer.from('');
-    return appHtml;
+    if (!admin || !appHtml.length) return appHtml;
+    // Administrators get the same app with one marker added, which shows its Admin button
+    // (a meta tag, not a script, so the app's Content-Security-Policy hashes still match).
+    if (adminHtml === null) {
+      const i = appHtml.indexOf('<head>');
+      adminHtml = i < 0 ? appHtml : Buffer.concat([appHtml.subarray(0, i + 6), Buffer.from('\n<meta name="engage-admin" content="1">'), appHtml.subarray(i + 6)]);
+    }
+    return adminHtml;
   };
   const json = (status, obj, extra) => ({ status, headers: { ...SECURITY_HEADERS, 'Content-Type': 'application/json; charset=utf-8', ...(extra || {}) }, body: JSON.stringify(obj) });
   const cookie = (value, maxAgeS) => `${COOKIE}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAgeS}${cfg.secureCookie ? '; Secure' : ''}`;
@@ -93,7 +101,7 @@ function makeHandler({ auth, cfg, appHtmlPath, now = () => Date.now() }) {
 
       if (p === '/api/app' && method === 'GET') {
         if (!user) return { status: 302, headers: { ...SECURITY_HEADERS, Location: '/' }, body: '' };
-        const html = loadApp();
+        const html = loadApp(!!user.admin);
         if (!html.length) return json(503, { ok: false, error: 'The app has not been built into this deployment.' });
         // X-Frame-Options SAMEORIGIN: the app embeds its own Project brief frame.
         return { status: 200, headers: { ...SECURITY_HEADERS, 'X-Frame-Options': 'SAMEORIGIN', 'Content-Type': 'text/html; charset=utf-8' }, body: html };

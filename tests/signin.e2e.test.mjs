@@ -49,7 +49,11 @@ test('an administrator signs in with an emailed code, opens ENGAGE and approves 
   await page.waitForURL(BASE + '/app');
   await page.waitForFunction(() => typeof window.renderAll === 'function');
   assert.match(await page.title(), /ENGAGE/);
-  await page.goto(BASE + '/admin.html');
+  // administrators see the Admin button in the toolbar, next to Reset; it opens the admin page
+  assert.equal(await page.isVisible('#btnAdmin'), true);
+  assert.equal(await page.evaluate(() => document.getElementById('btnReset').nextElementSibling.id), 'btnAdmin');
+  await page.click('#btnAdmin');
+  await page.waitForURL(BASE + '/admin.html');
   await page.waitForSelector('#usersCard:not([hidden])');
   await page.fill('#newUser', 'colleague@example.com');
   await page.click('#fAddUser button');
@@ -62,6 +66,8 @@ test('an administrator signs in with an emailed code, opens ENGAGE and approves 
   const p2 = await ctx2.newPage();
   await signIn(p2, 'colleague@example.com');
   await p2.waitForURL(BASE + '/app');
+  await p2.waitForFunction(() => typeof window.renderAll === 'function');
+  assert.equal(await p2.isVisible('#btnAdmin'), false);
   await p2.goto(BASE + '/admin.html');
   await p2.waitForFunction(() => /not an administrator/.test(document.getElementById('whoLine').textContent));
   await ctx.close(); await ctx2.close();

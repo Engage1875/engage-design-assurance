@@ -22,7 +22,7 @@ function setup(envExtra = {}, opts = {}) {
   const mailer = opts.mailer || { async send(to, code) { sent.push({ to, code }); } };
   const auth = new AuthService({ cfg, store, mailer, now: clock.now, log: { error() {}, info() {} } });
   const appFile = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'engage-api-')), 'Engage.html');
-  fs.writeFileSync(appFile, '<!doctype html><title>ENGAGE</title>');
+  fs.writeFileSync(appFile, '<!doctype html><html><head><title>ENGAGE</title></head></html>');
   const handle = makeHandler({ auth, cfg, appHtmlPath: appFile });
   const call = async (method, p, body, headers = {}) => {
     const r = await handle({ method, path: p, headers: { origin: ORIGIN, 'x-azure-clientip': '203.0.113.9', ...headers }, body: body ? JSON.stringify(body) : '' });
@@ -200,6 +200,22 @@ test('a session opens the app; without one the app redirects to sign-in', async 
   assert.equal(r.status, 200);
   assert.match(String(r.body), /ENGAGE/);
   assert.equal(r.headers['X-Frame-Options'], 'SAMEORIGIN');
+});
+
+test('only administrators get the app with the Admin button marker', async () => {
+  const s = setup();
+  await s.auth.addApproved('boss@example.com', 'user@example.com');
+  const boss = await s.call('GET', '/api/app', null, { cookie: await s.signIn('boss@example.com') });
+  assert.match(String(boss.body), /^<!doctype html><html><head>\n<meta name="engage-admin" content="1"><title>/);
+  const user = await s.call('GET', '/api/app', null, { cookie: await s.signIn('user@example.com') });
+  assert.equal(user.status, 200);
+  assert.doesNotMatch(String(user.body), /engage-admin/);
+  // an approved user made administrator gets the marker on the next load, and loses it when removed
+  await s.auth.addAdmin('boss@example.com', 'user@example.com');
+  const ck = await s.signIn('user@example.com');
+  assert.match(String((await s.call('GET', '/api/app', null, { cookie: ck })).body), /engage-admin/);
+  await s.auth.removeAdmin('boss@example.com', 'user@example.com');
+  assert.doesNotMatch(String((await s.call('GET', '/api/app', null, { cookie: ck })).body), /engage-admin/);
 });
 
 test('a tampered or expired session is refused', async () => {
