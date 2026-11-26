@@ -29,9 +29,30 @@ jobs:
             git tag -a v134 4b7c3541edd6dbc7b62b2a62dca4402ebdf161b7 -m "ENGAGE v134 (live 26 Nov 2026)"
             git push origin v134
           fi
-      - uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Sign in to Azure with the AZURE_CREDENTIALS key
+        # The key may have Azure's "--sdk-auth is deprecated" warning pasted in front of it,
+        # so only the {...} part is used. Nothing from the key is printed.
+        env:
+          CREDS: ${{ secrets.AZURE_CREDENTIALS }}
+        run: |
+          python3 - <<'PY' > "$RUNNER_TEMP/sp.env"
+          import json, os, re, shlex, sys
+          raw = os.environ.get('CREDS', '')
+          i, j = raw.find('{'), raw.rfind('}')
+          if i < 0 or j < i: sys.exit('AZURE_CREDENTIALS holds no {...} block')
+          c = json.loads(raw[i:j+1])
+          need = ['clientId', 'clientSecret', 'tenantId', 'subscriptionId']
+          missing = [k for k in need if not c.get(k)]
+          if missing: sys.exit('AZURE_CREDENTIALS is missing: ' + ', '.join(missing))
+          for k in need:
+              print('::add-mask::' + c[k], file=sys.stderr)
+              print(f'{k.upper()}={shlex.quote(c[k])}')
+          print('Text before the key: ' + ('yes, ignored' if raw[:i].strip() else 'none'), file=sys.stderr)
+          PY
+          . "$RUNNER_TEMP/sp.env"; rm -f "$RUNNER_TEMP/sp.env"
+          az login --service-principal -u "$CLIENTID" -p "$CLIENTSECRET" --tenant "$TENANTID" -o none
+          az account set -s "$SUBSCRIPTIONID"
+          echo "Signed in to Azure."
       - name: What the key can see
         run: |
           az account show --query "{subscription:name, state:state}" -o table
