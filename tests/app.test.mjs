@@ -177,3 +177,12 @@ test('links from project files are followed only when plain http(s)', async () =
   assert.deepEqual(r, ['https://a.b/c', 'http://x', '', '', '', '', '']);
   await app.close();
 });
+
+test('the Admin button is hidden when the app is opened as a file', async () => {
+  const app = await openApp();
+  assert.equal(await app.page.locator('#btnAdmin').count(), 1);
+  assert.equal(await app.page.isVisible('#btnAdmin'), false);
+  assert.equal(await app.page.isVisible('#btnReset'), true);
+  assert.deepEqual(app.errors, []);
+  await app.close();
+});
