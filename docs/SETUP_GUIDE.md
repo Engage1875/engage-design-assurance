@@ -280,3 +280,29 @@ sent to your email. Alerts only notify you. They never stop the site.
   but not perfectly constant, a failed clean-up can leave an unusable code until it
   expires, and the outcome line of an admin record can fail to write after its
   "requested" line.
+
+## 10. The development line for DEP and MIDP work (branch `dep-midp`)
+
+New Design Earned Progress and MIDP features are built on a separate, long-lived branch
+called `dep-midp`. Nothing from it reaches the live site until it is merged into `main`,
+which only happens when Steve says so (that merge becomes v135). `main` was tagged `v134`
+before the branch was made, so the live release can always be found again.
+
+| Branch | Where it goes |
+|---|---|
+| `main` | the live site, https://brave-flower-01b070800.5.azurestaticapps.net |
+| `dep-midp` | its own fixed preview site (Azure environment `depmidp`), updated on every push |
+| a pull request into `main` or `dep-midp` | a temporary preview site, removed when it closes |
+
+The free Azure plan allows three preview sites at a time, and `depmidp` uses one of them.
+
+The preview site has its **own** Storage account (`stengage1875dev`) and its own session
+secret, so its approved-users list and sign-ins are separate from the live site's. The
+permanent administrators (`ADMIN_EMAILS`) and email sending are copied from the live site.
+Project data saved in the browser is also separate, because the browser keeps it per
+site address.
+
+The workflow `.github/workflows/dev-line-setup.yml` made this setup. It signs in to Azure
+with the `AZURE_CREDENTIALS` repository secret, a key that can reach only the `rg-engage`
+resource group. Delete that key in Azure (Microsoft Entra ID → App registrations →
+`engage-claude`) to withdraw access at any time.

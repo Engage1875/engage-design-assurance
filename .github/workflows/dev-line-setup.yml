@@ -3,6 +3,10 @@
 #  1. Marks the v134 release with a tag (the commit that is live on main).
 #  2. Checks that the AZURE_CREDENTIALS key can sign in to Azure, and lists what it can see
 #     (names only, no keys or settings values are printed).
+#  3. Gives the dep-midp preview site (Azure environment "depmidp") its own Storage account,
+#     so its approved-users list and sign-in records are separate from the live site's, and
+#     its own session secret, so a sign-in on one site is not valid on the other. Email sending
+#     and the permanent administrators are copied from the live site.
 name: Development line setup
 on:
   push:
@@ -35,7 +39,7 @@ jobs:
         env:
           CREDS: ${{ secrets.AZURE_CREDENTIALS }}
         run: |
-          python3 - <<'PY' > "$RUNNER_TEMP/sp.env"
+          python3 - <<'PY'
           import json, os, re, shlex, sys
           raw = os.environ.get('CREDS', '')
           i, j = raw.find('{'), raw.rfind('}')
@@ -45,8 +49,8 @@ jobs:
           missing = [k for k in need if not c.get(k)]
           if missing: sys.exit('AZURE_CREDENTIALS is missing: ' + ', '.join(missing))
           for k in need:
-              print('::add-mask::' + c[k], file=sys.stderr)
-              print(f'{k.upper()}={shlex.quote(c[k])}')
+              print('::add-mask::' + c[k])
+              with open(os.environ['RUNNER_TEMP'] + '/sp.env', 'a') as f: f.write(f'{k.upper()}={shlex.quote(c[k])}\n')
           print('Text before the key: ' + ('yes, ignored' if raw[:i].strip() else 'none'), file=sys.stderr)
           PY
           . "$RUNNER_TEMP/sp.env"; rm -f "$RUNNER_TEMP/sp.env"
@@ -65,3 +69,45 @@ jobs:
             echo "--- environments of $s"; az staticwebapp environment list -n "$s" --query "[].{name:name, build:buildId, host:hostname, status:status}" -o table || true
             echo "--- setting names of $s (values not shown)"; az staticwebapp appsettings list -n "$s" --query "keys(properties)" -o tsv || true
           done
+      - name: Separate storage and settings for the dep-midp preview site
+        env:
+          RG: rg-engage
+          SWA: engage-design-assurance
+          ENV_NAME: depmidp
+          DEV_STORAGE: stengage1875dev
+        run: |
+          host=$(az staticwebapp environment list -n "$SWA" --query "[?name=='$ENV_NAME'].hostname | [0]" -o tsv)
+          if [ -z "$host" ]; then echo "The $ENV_NAME preview site does not exist yet; deploy dep-midp first."; exit 1; fi
+          echo "dep-midp preview site: https://$host"
+          if ! az storage account show -g "$RG" -n "$DEV_STORAGE" -o none 2>/dev/null; then
+            echo "Creating Storage account $DEV_STORAGE"
+            az storage account create -g "$RG" -n "$DEV_STORAGE" -l uaenorth --sku Standard_LRS --kind StorageV2 \
+              --min-tls-version TLS1_2 --allow-blob-public-access false --https-only true -o none
+          else
+            echo "Storage account $DEV_STORAGE already exists"
+          fi
+          conn=$(az storage account show-connection-string -g "$RG" -n "$DEV_STORAGE" --query connectionString -o tsv)
+          echo "::add-mask::$conn"
+          az staticwebapp appsettings list -n "$SWA" -o json > "$RUNNER_TEMP/live.json"
+          existing=$(az staticwebapp appsettings list -n "$SWA" --environment-name "$ENV_NAME" -o json 2>/dev/null || echo '{}')
+          python3 - "$RUNNER_TEMP/live.json" "$host" "$conn" "$existing" "$RUNNER_TEMP/args" <<'PY'
+          import json, secrets, sys
+          live = json.load(open(sys.argv[1])).get('properties', {})
+          host, conn = sys.argv[2], sys.argv[3]
+          try: old = json.loads(sys.argv[4]).get('properties', {}) or {}
+          except Exception: old = {}
+          keep = ['ADMIN_EMAILS', 'ACS_EMAIL_CONNECTION_STRING', 'ACS_EMAIL_SENDER', 'AUTH_ALLOWED_DOMAINS']
+          out = {k: live[k] for k in keep if live.get(k)}
+          out['ENGAGE_ALLOWED_ORIGIN'] = 'https://' + host
+          out['ENGAGE_TABLES_CONNECTION'] = conn
+          # keep an earlier dev secret if it is already separate, so dev sign-ins survive re-runs
+          sec = old.get('SESSION_SECRET')
+          out['SESSION_SECRET'] = sec if sec and sec != live.get('SESSION_SECRET') else secrets.token_urlsafe(48)
+          print('::add-mask::' + out['SESSION_SECRET'])
+          open(sys.argv[5], 'w').write('\n'.join(f'{k}={v}' for k, v in out.items()) + '\n')
+          print('Settings for the preview site: ' + ', '.join(out))
+          PY
+          mapfile -t args < "$RUNNER_TEMP/args"; rm -f "$RUNNER_TEMP/args" "$RUNNER_TEMP/live.json"
+          az staticwebapp appsettings set -n "$SWA" --environment-name "$ENV_NAME" --setting-names "${args[@]}" -o none
+          echo "Preview site settings now: $(az staticwebapp appsettings list -n "$SWA" --environment-name "$ENV_NAME" --query 'keys(properties)' -o tsv | tr '\n' ' ')"
+          echo "Live site settings unchanged: $(az staticwebapp appsettings list -n "$SWA" --query 'keys(properties)' -o tsv | tr '\n' ' ')"
