@@ -1823,6 +1823,7 @@ body.isb-col .isb .tg{width:40px;padding:0;justify-content:center;margin:0 12px 
 .ptab[data-p="crs"]{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z%22/%3E%3Cpath d=%22M7 8h10%22/%3E%3Cpath d=%22M7 12h6%22/%3E%3C/svg%3E")}
 .ptab[data-p="flags"]{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z%22/%3E%3Cline x1=%224%22 x2=%224%22 y1=%2222%22 y2=%2215%22/%3E%3C/svg%3E")}
 .ptab[data-p="reqs"]{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect width=%228%22 height=%224%22 x=%228%22 y=%222%22 rx=%221%22 ry=%221%22/%3E%3Cpath d=%22M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2%22/%3E%3Cpath d=%22m9 14 2 2 4-4%22/%3E%3C/svg%3E")}
+.ptab[data-p="dep"]{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M4 18a8 8 0 1 1 16 0%22/%3E%3Cpath d=%22M12 18l4-6%22/%3E%3Cpath d=%22M3 21h18%22/%3E%3C/svg%3E")}
 
 /* ---------- footer ---------- */
 .ifoot{position:fixed;left:0;right:0;bottom:0;height:var(--ifoot);background:var(--act-navy);color:#9FB3B9;font-size:11.5px;display:flex;align-items:center;
@@ -2919,12 +2920,13 @@ body.focusmode::after{inset:80px 0 0!important;left:var(--isbw)!important}
   </section>
   <section class="pg" id="pg-assets"></section>
   <section class="pg" id="pg-prog"></section>
-  <section class="pg" id="pg-brief"><details class="v128-release"><summary>Release notes · @@VERSION@@ · built @@BUILT@@</summary><ul><li><b>@@VERSION@@:</b> Administrators see an Admin button in the toolbar, next to Reset, which opens the admin page (approved users, administrators and the sign-in log). Other users do not see it, and the admin page still checks every request on the server.</li><li><b>v133:</b> Open shows what the file contains before anything changes; the project in the browser is kept, and Restore previous brings it back. A file that fails to open or draw leaves the current project untouched.</li><li><b>v133:</b> A stored project that cannot be loaded is set aside and can be downloaded; ENGAGE still starts.</li><li><b>v133:</b> Text from project files is always shown as text, links open only when they are plain http(s) addresses, and a Content-Security-Policy stops anything else from running.</li><li><b>v133:</b> Every CSV export neutralises text that a spreadsheet would run as a formula.</li><li><b>v133:</b> Response import previews each row; imported responses arrive as Received with the text exactly as written, and reviewed items change only when ticked.</li><li><b>v133:</b> After a brief is frozen, every change to reviewed content asks for a reason and an authoriser and is listed on the Change flags page.</li><li><b>v133:</b> Request packs and brief issues keep a copy of what was issued and print from it; older ones are labelled as legacy records.</li><li><b>v133:</b> The Brief PDF prints every requirement, continuing long tables onto further pages.</li><li><b>v133:</b> A mixed-use asset carries the brief template of each of its uses.</li><li><b>v133:</b> Notices appear when browser storage is full or another tab changes the project.</li><li><b>v133:</b> One version constant, set in the VERSION file at build time.</li><li><b>v132 correction verification marker:</b> Height-aware request-pack pagination, bottom-anchored issued-record footnotes, normal-mode outer scrolling and one focused-pane scroller rebuilt from the actual v132 baseline · 17 Nov 2026 11:54 GST.</li><li><b>v132 issued request-pack PDF:</b> Rebuilt the Project Brief request-pack PDF as a static issued record aligned to the Power Apps response portal visual hierarchy. It now includes the ENGAGE header, request-pack reference, project and asset/group, addressee, issue and response dates, reference/status details and compact Project, Assets, Requested by, Respond by and Requirements cards.</li><li><b>Asset and Brief-section grouping:</b> Requirements are ordered first by asset and then by Brief section. Every requirement shows Brief ID above the item title, the full question, Typical input, Complete by S1/S2, and fixed Response / requirement and Supporting reference instructions.</li><li><b>Static record boundary:</b> Portal navigation, progress-entry indicators, editable fields, response-position choices, Save draft, Review responses and Submit responses are deliberately excluded from the PDF. The issued-record footer confirms that responses are submitted separately and remain subject to design-team review before controlled-brief incorporation.</li><li><b>Portal preserved:</b> The local Power Apps response layout preview and its v130 Previous/Next navigation correction remain unchanged.</li><li><b>v130 and earlier functionality retained:</b> Request-pack actions, focus modes, Scope toggle, Brief Issue navigation, manual CSV export/import, proposals, normal ENGAGE navigation and Save/Open/browser-reopen persistence remain in place.</li></ul></details><iframe id="briefFrame" class="v128-brief-frame" title="Project brief"></iframe></section>
+  <section class="pg" id="pg-brief"><details class="v128-release"><summary>Release notes · @@VERSION@@ · built @@BUILT@@</summary><ul><li><b>@@VERSION@@ (development line, not live):</b> New Design earned progress page for the DEP pilot: deliverables linked to interfaces, D × I × M per deliverable with a full calculation trace, a weighted roll-up, an exception queue, provisional settings, sample deliverables and CSV export.</li><li><b>v134:</b> Administrators see an Admin button in the toolbar, next to Reset, which opens the admin page (approved users, administrators and the sign-in log). Other users do not see it, and the admin page still checks every request on the server.</li><li><b>v133:</b> Open shows what the file contains before anything changes; the project in the browser is kept, and Restore previous brings it back. A file that fails to open or draw leaves the current project untouched.</li><li><b>v133:</b> A stored project that cannot be loaded is set aside and can be downloaded; ENGAGE still starts.</li><li><b>v133:</b> Text from project files is always shown as text, links open only when they are plain http(s) addresses, and a Content-Security-Policy stops anything else from running.</li><li><b>v133:</b> Every CSV export neutralises text that a spreadsheet would run as a formula.</li><li><b>v133:</b> Response import previews each row; imported responses arrive as Received with the text exactly as written, and reviewed items change only when ticked.</li><li><b>v133:</b> After a brief is frozen, every change to reviewed content asks for a reason and an authoriser and is listed on the Change flags page.</li><li><b>v133:</b> Request packs and brief issues keep a copy of what was issued and print from it; older ones are labelled as legacy records.</li><li><b>v133:</b> The Brief PDF prints every requirement, continuing long tables onto further pages.</li><li><b>v133:</b> A mixed-use asset carries the brief template of each of its uses.</li><li><b>v133:</b> Notices appear when browser storage is full or another tab changes the project.</li><li><b>v133:</b> One version constant, set in the VERSION file at build time.</li><li><b>v132 correction verification marker:</b> Height-aware request-pack pagination, bottom-anchored issued-record footnotes, normal-mode outer scrolling and one focused-pane scroller rebuilt from the actual v132 baseline · 17 Nov 2026 11:54 GST.</li><li><b>v132 issued request-pack PDF:</b> Rebuilt the Project Brief request-pack PDF as a static issued record aligned to the Power Apps response portal visual hierarchy. It now includes the ENGAGE header, request-pack reference, project and asset/group, addressee, issue and response dates, reference/status details and compact Project, Assets, Requested by, Respond by and Requirements cards.</li><li><b>Asset and Brief-section grouping:</b> Requirements are ordered first by asset and then by Brief section. Every requirement shows Brief ID above the item title, the full question, Typical input, Complete by S1/S2, and fixed Response / requirement and Supporting reference instructions.</li><li><b>Static record boundary:</b> Portal navigation, progress-entry indicators, editable fields, response-position choices, Save draft, Review responses and Submit responses are deliberately excluded from the PDF. The issued-record footer confirms that responses are submitted separately and remain subject to design-team review before controlled-brief incorporation.</li><li><b>Portal preserved:</b> The local Power Apps response layout preview and its v130 Previous/Next navigation correction remain unchanged.</li><li><b>v130 and earlier functionality retained:</b> Request-pack actions, focus modes, Scope toggle, Brief Issue navigation, manual CSV export/import, proposals, normal ENGAGE navigation and Save/Open/browser-reopen persistence remain in place.</li></ul></details><iframe id="briefFrame" class="v128-brief-frame" title="Project brief"></iframe></section>
   <script>window.renderBriefPage=window.renderBriefPage||function(){};</script>
   <section class="pg" id="pg-sa"></section>
   <section class="pg" id="pg-crs"></section>
   <section class="pg" id="pg-reqs"></section>
   <section class="pg" id="pg-lib"></section>
+  <section class="pg" id="pg-dep"></section>
 </div>
 </div>
 <aside class="fpane" id="fpane"></aside>
@@ -3289,7 +3291,7 @@ function normalise(){
     S.recent=(Array.isArray(S.recent)?S.recent:[]).filter(c=>REGS[c]);
     if(S.rscope!=="all"){ S.rscope=Array.isArray(S.rscope)?S.rscope.filter(c=>REGS[c]):null; if(!S.rscope||S.rscope.length<2)S.rscope=null }
     S.prog=(S.prog&&S.prog.v===1)?S.prog:null; progApplyCb();
-pdNormalise(); S.version=56;
+pdNormalise(); if(window.DEP)DEP.norm(); S.version=57;
 }
 try{normalise()}catch(e){if(!S_FROM_STORAGE)throw e;console.error("ENGAGE start-up: stored project could not be migrated",e);setAsideStored("The stored project could not be migrated ("+(e&&e.message||e)+").");S=demoCores(demoState());S_FROM_STORAGE=false;normalise()}
 let savedAt=null, openDD=null, ddQuery="", selSrc=null, drill=null, tview=null, tvSort={key:null,dir:1};
@@ -3928,7 +3930,7 @@ function openPicker(td,fromKb){
 }
 
 /* ================= render orchestration ================= */
-const PAGES=[["summary","Summary","Residential Apartment – Summary"],["assets","Project definition","Project definition"],["prog","Programme","Programme"],["brief","Project brief","Project brief"],["matrix","Interface matrix","Residential Apartment – Interface Status"],["sa","Statutory authorities","Statutory authorities"],["overdue","Overdue & due","Overdue and Due"],["crs","Comments resolution","Comment Resolution Sheet"],["flags","Change flags","Change Management Flags"],["reqs","Requirements & checks","Requirements & checks"],["lib","Library requests","Library requests"]];
+const PAGES=[["summary","Summary","Residential Apartment – Summary"],["assets","Project definition","Project definition"],["prog","Programme","Programme"],["brief","Project brief","Project brief"],["matrix","Interface matrix","Residential Apartment – Interface Status"],["sa","Statutory authorities","Statutory authorities"],["overdue","Overdue & due","Overdue and Due"],["crs","Comments resolution","Comment Resolution Sheet"],["flags","Change flags","Change Management Flags"],["reqs","Requirements & checks","Requirements & checks"],["dep","Design earned progress","Design earned progress"],["lib","Library requests","Library requests"]];
 function setComp(c){
   if(!REGS[c]||c===S.component)return;
   S.component=useComp(c); S.filters.groups=[]; S.filters.owners=[]; S.filters.assets=[]; clearSel(); openDD=null; tview=null;
@@ -4153,6 +4155,7 @@ window.addEventListener("resize",()=>closeCompPanel());
   if(S.page==="crs")T_("comments",renderCrsPage);
   if(S.page==="reqs")T_("requirements",renderReqPage);
   if(S.page==="lib")T_("library",renderLibPage);
+  if(S.page==="dep")T_("design earned progress",()=>{ if(window.DEP)DEP.render() });
   if(S.page==="detail")T_("detail",renderDetail);
   T_("drill",drillBtns); T_("filters pane",renderFpane); T_("navigation",renderTabs); if(S.page==="matrix")T_("matrix arrows",v92Arrows);
   { let eb=document.getElementById("v85err"); if(!eb){ eb=document.createElement("div"); eb.id="v85err"; eb.className="banner warn"; eb.style.cssText="margin:0 0 10px"; const pp=document.querySelector(".page"); const rp=document.getElementById("rprojpane"); if(pp&&rp)rp.after(eb) }
@@ -4539,6 +4542,7 @@ function exportCsv(){
   if(S.page==="flags")return exportFlags();
   if(S.page==="assets")return exportAssets();
   if(S.page==="reqs")return exportReqs();
+  if(S.page==="dep"&&window.DEP)return DEP.exportCsv();
     if(S.page==="prog")return PRG.exportDates();
     if(S.page==="sa")return STA.exportRegister();
     if(S.page==="crs")return CRS.exportCsv();
@@ -4623,6 +4627,7 @@ function renderFpane(){
   if(!S.fpane){el.innerHTML=`<div class="fph"><button class="fpbtn" data-act="fpane" title="Expand Filters pane">${ICON_COLLAPSE_L}</button><b>Filters</b></div>`;return}
   const head=`<div class="fph"><b>Filters</b><button class="fpbtn" data-act="fpane" title="Collapse Filters pane">${ICON_COLLAPSE_R}</button></div>`;
   if(S.page==="reqs"){el.innerHTML=head+`<div class="fpbody"><div class="fsec">Filters on this page</div><div class="fempty">Library filters (document, status and search) are on the page itself.</div></div>`;return}
+  if(S.page==="dep"){el.innerHTML=head+`<div class="fpbody"><div class="fsec">Filters on this page</div><div class="fempty">Design earned progress lists every deliverable in the project. The report filters do not apply here.</div></div>`;return}
   if(S.page==="lib"){el.innerHTML=head+`<div class="fpbody"><div class="fsec">Filters on this page</div><div class="fempty">The Library requests page lists the proposals made in this project. The report filters do not apply here.</div></div>`;return}
   if(S.page==="crs"){el.innerHTML=head+`<div class="fpbody"><div class="fsec">Filters on this page</div><div class="fempty">The Comments resolution page has its own chips and filters above the register. The report filters do not apply here.</div></div>`;return}
   if(S.page==="sa"){el.innerHTML=head+`<div class="fpbody"><div class="fsec">Filters on this page</div><div class="fempty">The Statutory authorities page has its own filters on each view. The report filters do not apply here.</div></div>`;return}
@@ -11434,6 +11439,323 @@ body.brief-focusmode::after{content:"";position:fixed;top:80px;right:0;bottom:0;
  var on=!!m&&m.getAttribute("content")==="1"&&/^https?:$/.test(location.protocol);
  b.hidden=!on;
  if(on)b.addEventListener("click",function(){location.assign("/admin.html")});
+})();
+</script>
+
+<style>
+/* ================= Design Earned Progress (DEP), development line ================= */
+#pg-dep{--dp-sub:#2F6FEB;--dp-acc:#43A874;--dp-warn:#B98419}
+#pg-dep .dp-desc{margin:0 0 12px;color:var(--muted);max-width:980px;line-height:1.45}
+#pg-dep .dp-dev{display:inline-block;background:#FFF4E5;color:#8A5A00;border:1px solid #F0D3A0;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:600;margin-left:6px;vertical-align:1px}
+#pg-dep .dp-kpis{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+#pg-dep .dp-kpi{background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 14px;min-width:150px}
+#pg-dep .dp-kpi b{display:block;font-size:22px;line-height:1.2;color:var(--ink)}
+#pg-dep .dp-kpi span{font-size:12px;color:var(--muted)}
+#pg-dep .dp-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px}
+#pg-dep .dp-bar .sp{flex:1}
+#pg-dep .dp-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 12px}
+#pg-dep .dp-card h3{margin:0 0 8px;font-size:13.5px}
+#pg-dep .dp-card h4{margin:12px 0 6px;font-size:12.5px}
+#pg-dep table.dp-t{border-collapse:collapse;width:100%;font-size:12px}
+#pg-dep .dp-t th{background:var(--hdr);text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+#pg-dep .dp-t td{padding:5px 8px;border-bottom:1px solid var(--line2);vertical-align:top}
+#pg-dep .dp-t td.id{white-space:nowrap}
+#pg-dep .dp-t td.n,#pg-dep .dp-t th.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#pg-dep .dp-t tr.dp-row{cursor:pointer}
+#pg-dep .dp-t tr.dp-row:hover td{background:var(--n50)}
+#pg-dep .dp-t tr.dp-row.sel td{background:var(--selbg)}
+#pg-dep .dp-t tr.dp-x td{color:var(--n500)}
+#pg-dep .mut{color:var(--muted)} #pg-dep .sm{font-size:11.5px}
+#pg-dep .dp-pct{font-weight:600}
+#pg-dep .dp-na{color:var(--n500);font-style:italic}
+#pg-dep .dp-ex{color:#A8352E;font-weight:600}
+#pg-dep .dp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 14px}
+#pg-dep .dp-grid label,#pg-dep .dp-f{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--muted)}
+#pg-dep .dp-grid input,#pg-dep .dp-grid select,#pg-dep .dp-f input,#pg-dep .dp-f select,#pg-dep .dp-f textarea{font:inherit;font-size:12.5px;color:var(--ink);border:1px solid var(--n400);border-radius:5px;padding:4px 6px;background:#fff}
+#pg-dep .dp-lvls{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--ink)}
+#pg-dep .dp-lvls label{flex-direction:row;align-items:center;gap:4px;color:var(--ink);font-size:12px}
+#pg-dep .dp-calc{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--n50);border:1px solid var(--line);border-radius:6px;padding:8px 10px;line-height:1.6;white-space:pre-wrap}
+#pg-dep .dp-chip{display:inline-block;border-radius:9px;padding:0 7px;font-size:11px;line-height:17px;border:1px solid var(--line);background:var(--n50);white-space:nowrap}
+#pg-dep .dp-chip.sub{background:#EAF1FE;border-color:#C7D8FB;color:#1F4FB0}
+#pg-dep .dp-chip.acc{background:#E6F4EC;border-color:#BFE3CD;color:#1F6B4A}
+#pg-dep .dp-chip.zero{background:#F3F6F6;color:var(--muted)}
+#pg-dep .dp-chip.x{background:#fff;color:var(--n500);border-style:dashed}
+#pg-dep .dp-pick{max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:6px;margin-top:6px}
+#pg-dep .dp-pick label{display:flex;gap:8px;align-items:flex-start;padding:4px 8px;border-bottom:1px solid var(--line2);font-size:12px;color:var(--ink);cursor:pointer}
+#pg-dep .dp-pick label:hover{background:var(--n50)}
+#pg-dep .dp-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:1100px){#pg-dep .dp-two{grid-template-columns:1fr}}
+#pg-dep ul.dp-exl{margin:0;padding-left:18px;font-size:12px;line-height:1.5}
+#pg-dep .dp-prov{color:#8A5A00;font-size:11px;font-weight:600}
+#pg-dep .btn.dp-pri{background:#0F2A30;color:#fff;border-color:#0F2A30}
+</style>
+<script>
+/* ================= Design Earned Progress (DEP), phase 1 pilot (dep-midp development line) =================
+   DEP for a deliverable = D x I x M (DEP specification v1.0, 13 Nov 2026).
+   D  existence gate: 1 when the deliverable has a document number and a CDE suitability code, else 0.
+   I  interface maturity: (submitted credit x N submitted + 1.0 x N accepted) / N applicable, over the
+      interface entries linked to the deliverable (interface x asset x level), counting only interfaces whose
+      Complete by stage is at or before the deliverable's stage. N/A entries are excluded.
+   M  model coordination factor, entered by hand from a provisional scale.
+   The roll-up weights each deliverable once by its weight; deliverables that cannot be assessed are left out
+   and listed. All provisional values are settings in S.dep.cfg. Data lives in S.dep; nothing else in the
+   project is changed by this page. */
+(function(){
+  const DEP_DEF_CFG=()=>({sub:0.8,awc:0.8,method:"mult",m:{"":0,iss:0.5,minor:0.8,acc:1,na:1}});
+  const M_ST=[["","Not checked"],["iss","Checked – material issues remain"],["minor","Coordinated – minor accepted issues remain"],["acc","Coordination accepted"],["na","Not applicable"]];
+  const M_N=Object.fromEntries(M_ST);
+  const DEF_DISC=["Architecture","Structures","MEP"];
+  const UI={sel:null,cfg:false,pick:false,q:"",due:true};
+  const num=(v,d)=>{const x=parseFloat(v);return isFinite(x)?x:d};
+  const clamp01=x=>Math.max(0,Math.min(1,x));
+
+  /* ---------- pure calculation (no project data); used by the page and by the tests ---------- */
+  /* credit for one ENGAGE status: null = excluded from the denominator */
+  function credit(st,cfg){ if(st==="NA")return null; if(st==="APP"||st==="CLS")return 1; if(st==="AWC")return cfg.awc; if(st==="SUB")return cfg.sub; return 0 }
+  /* core({D, statuses:[...], M, cfg}) -> factors; statuses are ENGAGE status codes, one per linked entry */
+  function core(o){
+    const cfg=Object.assign(DEP_DEF_CFG(),o.cfg||{}), sts=o.statuses||[];
+    let napp=0,nsub=0,nacc=0,nawc=0,nna=0,earned=0;
+    sts.forEach(s=>{const c=credit(s,cfg); if(c===null){nna++;return} napp++; earned+=c; if(s==="SUB")nsub++; else if(s==="AWC")nawc++; else if(s==="APP"||s==="CLS")nacc++ });
+    const D=o.D?1:0, M=clamp01(num(o.M,0));
+    if(!napp)return {assessable:false,D,M,I:null,dep:null,ceil:null,napp,nsub,nawc,nacc,nna,earned};
+    const I=earned/napp;
+    return {assessable:true,D,M,I,dep:D*I*M,ceil:D*Math.min(I,M),napp,nsub,nawc,nacc,nna,earned};
+  }
+  /* weighted roll-up: each deliverable counted once by its weight; not-assessable ones are left out */
+  function rollup(list,method){
+    let w=0,e=0,ec=0,n=0,nx=0; list.forEach(x=>{ if(!x.r.assessable){nx++;return} const wt=Math.max(0,num(x.w,1)); w+=wt; e+=wt*x.r.dep; ec+=wt*x.r.ceil; n++ });
+    return {n,nx,w,dep:w?e/w:null,ceil:w?ec/w:null,head:w?(method==="ceil"?ec:e)/w:null};
+  }
+
+  /* ---------- project data ---------- */
+  function norm(){
+    const d=(S.dep&&typeof S.dep==="object"&&S.dep.v===1)?S.dep:{v:1,items:[],log:[]};
+    d.items=Array.isArray(d.items)?d.items.filter(x=>x&&typeof x==="object"):[];
+    d.log=Array.isArray(d.log)?d.log:[];
+    d.disc=Array.isArray(d.disc)&&d.disc.length?d.disc.map(String):DEF_DISC.slice();
+    const c=Object.assign(DEP_DEF_CFG(),d.cfg||{}); c.m=Object.assign(DEP_DEF_CFG().m,(d.cfg&&d.cfg.m)||{});
+    c.sub=clamp01(num(c.sub,0.8)); c.awc=clamp01(num(c.awc,0.8)); c.method=c.method==="ceil"?"ceil":"mult"; Object.keys(c.m).forEach(k=>c.m[k]=clamp01(num(c.m[k],0))); d.cfg=c;
+    d.items.forEach(x=>{ x.uid=x.uid||uid(); x.id=String(x.id||""); x.title=String(x.title||""); x.disc=String(x.disc||"");
+      x.lv=Array.isArray(x.lv)?x.lv.map(String):[]; x.links=Array.isArray(x.links)?x.links.filter(i=>BYID[i]):[];
+      x.w=Math.max(0,num(x.w,1)); x.stage=STAGES.includes(x.stage)?x.stage:""; x.m=Object.assign({st:"",ref:"",note:""},x.m||{}); if(!(x.m.st in M_N))x.m.st="";
+      ["owner","due","docNo","rev","suit","aid"].forEach(k=>x[k]=String(x[k]||"")) });
+    S.dep=d; return d;
+  }
+  const D=()=>S.dep&&S.dep.v===1?S.dep:norm();
+  const assetOf=x=>S.assets.find(a=>a.id===x.aid);
+  const stageOf=x=>x.stage||(x.aid?assetStage(x.aid):S.stage);
+  const exists=x=>!!(x.docNo.trim()&&x.suit);
+  function mOf(x){ const c=D().cfg; if(x.m.st==="na"&&!x.m.note.trim())return 0; return c.m[x.m.st]??0 }
+  /* level names available on an asset, across its components, in order */
+  function levelNames(a){ const out=[]; if(!a)return out; BUILT_LIST.filter(c=>a.sel.includes(c)).forEach(c=>cols(a,c).forEach(k=>{ if(!out.includes(k.l))out.push(k.l) })); return out }
+  /* the entries one deliverable is assessed on, with credit and notes */
+  function entries(x){
+    const a=assetOf(x), cfg=D().cfg, st=stageOf(x), out=[], linkNotes=[];
+    if(!a)return {out,linkNotes,a:null,st};
+    x.links.forEach(id=>{ const r=BYID[id]; if(!r)return;
+      if(!a.sel.includes(r.comp)){linkNotes.push({id,why:`${r.comp} is not set up on ${a.name}`});return}
+      const cs=cols(a,r.comp).filter(c=>!x.lv.length||x.lv.includes(c.l));
+      if(!cs.length){linkNotes.push({id,why:`no ${r.comp} levels match this deliverable's levels`});return}
+      const due=sIdx(r.cb)<=sIdx(st);
+      cs.forEach(c=>{ const key=r.id+"|"+c.key, ifna=isIfNA(a,r), s=ifna?"NA":cellState(a,r,c);
+        let why=""; if(s==="NA"){ if(ifna)why="no recorded reason"; else{ const l=lastLog(a.id,r.id,c.key,e=>e.kind==="status"&&e.to==="NA"); why=l&&l.cmt?l.cmt:"no recorded reason" } }
+        out.push({r,c,key,s,due,cr:due?credit(s,cfg):undefined,naWhy:why,ev:hasEv(a,r.id,c.key),flag:!!a.flags[key]}) }) });
+    return {out,linkNotes,a,st};
+  }
+  function calc(x){
+    const E=entries(x), counted=E.out.filter(e=>e.due);
+    const r=core({D:exists(x),statuses:counted.map(e=>e.s),M:mOf(x),cfg:D().cfg});
+    const ex=[];
+    if(!E.a)ex.push("No asset chosen (or its asset was deleted)");
+    if(!x.links.length)ex.push("No interfaces linked");
+    else if(!r.assessable)ex.push("Not assessable: no applicable interface entries at this stage – review its scope");
+    if(!exists(x))ex.push("No existence evidence: document number and CDE suitability code needed (D = 0)");
+    if(x.m.st==="na"&&!x.m.note.trim())ex.push("Coordination marked N/A without a reason (M taken as 0)");
+    if(x.m.st&&x.m.st!=="na"&&!x.m.ref.trim())ex.push("Coordination status has no review reference");
+    const nsNoEv=counted.filter(e=>(e.s==="SUB"||e.s==="AWC")&&!e.ev).length; if(nsNoEv)ex.push(`${nsNoEv} submitted entr${nsNoEv===1?"y has":"ies have"} no evidence record`);
+    const naNo=E.out.filter(e=>e.s==="NA"&&e.naWhy==="no recorded reason").length; if(naNo)ex.push(`${naNo} N/A entr${naNo===1?"y has":"ies have"} no recorded reason`);
+    E.linkNotes.forEach(n=>ex.push(`${n.id}: ${n.why}`));
+    if(x.id.trim()&&D().items.filter(y=>y.id.trim().toLowerCase()===x.id.trim().toLowerCase()).length>1)ex.push(`Deliverable ID ${x.id} is used more than once`);
+    if(!x.id.trim())ex.push("No deliverable ID");
+    return Object.assign(r,{E,counted,ex,notDue:E.out.filter(e=>!e.due).length});
+  }
+  const pct=v=>v===null||v===undefined?"–":(Math.round(v*1000)/10).toFixed(1)+"%";
+  const f2=v=>v===null||v===undefined?"–":(Math.round(v*1000)/1000).toFixed(3).replace(/0+$/,"").replace(/\.$/,"");
+  function logIt(x,what){ D().log.push({ts:Date.now(),uid:x?x.uid:"",id:x?x.id:"",what,by:S.signer&&S.signer.name||""}); if(D().log.length>500)D().log.splice(0,D().log.length-500) }
+
+  /* ---------- sample deliverables: Arch / Struct / MEP general arrangements at ground, typical and roof ---------- */
+  const SAMPLE_OWN={Architecture:["Architecture"],Structures:["Structures"],MEP:["Building Services","Building Services/FLS"]};
+  function sampleLevels(a,kind){
+    const L=levelNames(a);
+    if(kind==="gf")return L.filter(l=>/^(g|gf|grd|ground|l?0?0)$/i.test(l.trim()));
+    if(kind==="rf")return L.filter(l=>/^(rf|r|roof|rl)$/i.test(l.trim()));
+    return L.filter(l=>!/^(g|gf|grd|ground|l?0?0|rf|r|roof|rl|b\d*|basement)$/i.test(l.trim())).slice(0,1);
+  }
+  function addSamples(){
+    const a=S.assets[0]; if(!a){alert0("Add an asset on the Project definition page first.");return}
+    const d=D(), made=[];
+    [["gf","Ground Floor","GF"],["typ","Typical Floor","TYP"],["rf","Roof Level","RF"]].forEach(([k,lname,code])=>{
+      const lv=sampleLevels(a,k);
+      [["Architecture","ARC"],["Structures","STR"],["MEP","MEP"]].forEach(([disc,dc])=>{
+        const id=`${(a.code||a.name).replace(/[^A-Za-z0-9-]+/g,"").toUpperCase().slice(0,8)||"AS"}-${dc}-GA-${code}`;
+        if(d.items.some(y=>y.id===id))return;
+        /* general arrangements are assessed from S2: before S2 the sample is fixed at S2 */
+        const ast=assetStage(a.id), stage=sIdx(ast)<sIdx("S2")?"S2":"", st=stage||ast, own=SAMPLE_OWN[disc];
+        const links=BUILT_LIST.filter(c=>a.sel.includes(c)&&cols(a,c).some(cc=>!lv.length||lv.includes(cc.l)))
+          .flatMap(c=>REGS[c]).filter(r=>own.includes(r.owner)&&sIdx(r.cb)<=sIdx(st)).slice(0,8).map(r=>r.id);
+        const x={uid:uid(),id,title:`${disc==="MEP"?"MEP":disc==="Structures"?"Structural":"Architectural"} General Arrangement – ${lname}`,disc,aid:a.id,lv,stage,owner:"",due:"",w:1,docNo:"",rev:"",suit:"",links,m:{st:"",ref:"",note:""},sample:true};
+        if(!d.disc.includes(disc))d.disc.push(disc);
+        d.items.push(x); made.push(x); logIt(x,"Sample deliverable added") }) });
+    if(made.length)UI.sel=made[0].uid; save(); render();
+    alert0(made.length?`${made.length} sample deliverables added on ${a.name}. They have no document numbers yet, so D = 0 until you add them.`:"The sample deliverables are already in this project.");
+  }
+  function alert0(t){ try{ engageNotice({id:"dep",title:"Design earned progress",text:t}) }catch(e){} }
+
+  /* ---------- page ---------- */
+  const el=()=>document.getElementById("pg-dep");
+  const opt=(L,v)=>L.map(o=>{const [k,l]=Array.isArray(o)?o:[o,o];return `<option value="${esc(k)}" ${String(k)===String(v)?"selected":""}>${esc(l)}</option>`}).join("");
+  const chip=(s,cr,due)=>{ if(!due)return `<span class="dp-chip x">not due</span>`; if(cr===null)return `<span class="dp-chip x">excluded</span>`; return `<span class="dp-chip ${cr>=1?"acc":cr>0?"sub":"zero"}">${f2(cr)}</span>` };
+  function render(){
+    const host=el(); if(!host)return; const d=D(), cfg=d.cfg;
+    const rows=d.items.map(x=>({x,r:calc(x),w:x.w}));
+    if(UI.sel&&!d.items.some(x=>x.uid===UI.sel))UI.sel=null;
+    const ru=rollup(rows,cfg.method), nEx=rows.reduce((n,y)=>n+y.r.ex.length,0);
+    const mname=cfg.method==="ceil"?"coordination ceiling D × min(I, M)":"multiplication D × I × M";
+    let h=`<p class="dp-desc"><b>Design earned progress</b><span class="dp-dev">Development line · pilot</span><br>Each deliverable earns progress from its linked interface decisions: nothing before formal submission, ${f2(cfg.sub)} on submission and 1.0 on approval, multiplied by whether the deliverable exists (D) and its model coordination factor (M). The figures read the Interface matrix as it stands; this page never changes interface statuses.</p>`;
+    h+=`<div class="dp-kpis"><div class="dp-kpi"><b>${pct(ru.head)}</b><span>Overall DEP · ${cfg.method==="ceil"?"ceiling":"multiplication"}</span></div><div class="dp-kpi"><b>${pct(cfg.method==="ceil"?ru.dep:ru.ceil)}</b><span>For comparison · ${cfg.method==="ceil"?"multiplication":"ceiling"}</span></div><div class="dp-kpi"><b>${rows.length}</b><span>Deliverables · ${ru.n} assessable</span></div><div class="dp-kpi"><b>${nf(ru.w)}</b><span>Total weight assessed</span></div><div class="dp-kpi"><b class="${nEx?"dp-ex":""}">${nEx}</b><span>Exceptions to review</span></div></div>`;
+    h+=`<div class="dp-bar"><button class="btn sm dp-pri" data-dp="add">＋ Add deliverable</button><button class="btn sm" data-dp="samples" title="Adds Architectural, Structural and MEP general arrangements for ground, typical and roof levels on the first asset">Add sample deliverables</button><button class="btn sm" data-dp="csv">Export CSV</button><span class="sp"></span><button class="btn sm" data-dp="cfg">${UI.cfg?"Hide":"Show"} settings and assumptions</button></div>`;
+    if(UI.cfg)h+=cfgCard(d);
+    h+=`<div class="dp-card"><h3>Deliverables</h3>${rows.length?tableHtml(rows):`<p class="mut">No deliverables yet. Use <b>Add sample deliverables</b> to start with nine general arrangement layouts, or <b>Add deliverable</b>.</p>`}
+      ${ru.nx?`<p class="mut sm" style="margin:8px 0 0">${ru.nx} deliverable${ru.nx===1?" is":"s are"} not assessable and left out of the overall figure.</p>`:""}</div>`;
+    const sx=d.items.find(x=>x.uid===UI.sel); if(sx)h+=detailHtml(sx,rows.find(y=>y.x===sx).r);
+    if(rows.length)h+=`<div class="dp-two">${discHtml(rows,cfg)}${excHtml(rows)}</div>`;
+    host.innerHTML=h;
+  }
+  function tableHtml(rows){
+    return `<table class="dp-t"><thead><tr><th>ID</th><th>Deliverable</th><th>Discipline</th><th>Asset · levels</th><th>Stage</th><th class="n">Weight</th><th class="n">D</th><th class="n">I</th><th class="n">M</th><th class="n">DEP</th><th class="n">Ceiling</th><th class="n">Entries</th><th class="n">Exceptions</th></tr></thead><tbody>${rows.map(({x,r})=>{const a=assetOf(x);
+      return `<tr class="dp-row ${UI.sel===x.uid?"sel":""}" data-dp="sel" data-u="${x.uid}" tabindex="0"><td class="id"><b>${esc(x.id)||"<span class='mut'>–</span>"}</b></td><td>${esc(x.title)}</td><td>${esc(x.disc)}</td><td>${a?esc(a.name):"<span class='dp-ex'>none</span>"}${x.lv.length?` <span class="mut">· ${esc(x.lv.join(", "))}</span>`:` <span class="mut">· all levels</span>`}</td><td>${esc(stageOf(x))}</td><td class="n">${nf(x.w)}</td><td class="n">${r.D}</td><td class="n">${r.assessable?pct(r.I):"–"}</td><td class="n">${f2(r.M)}</td><td class="n dp-pct">${r.assessable?pct(r.dep):`<span class="dp-na">not assessable</span>`}</td><td class="n mut">${r.assessable?pct(r.ceil):"–"}</td><td class="n">${r.napp}${r.notDue?` <span class="mut sm">+${r.notDue} not due</span>`:""}</td><td class="n ${r.ex.length?"dp-ex":"mut"}">${r.ex.length||"–"}</td></tr>`}).join("")}</tbody></table>`;
+  }
+  function cfgCard(d){ const c=d.cfg;
+    return `<div class="dp-card"><h3>Settings and assumptions</h3><p class="mut sm" style="margin:0 0 8px">Values marked <span class="dp-prov">PROVISIONAL</span> are pilot assumptions from the DEP specification, not settled policy.</p><div class="dp-grid">
+      <label>Disciplines (comma separated)<input data-dpc="disc" value="${esc(d.disc.join(", "))}"></label>
+      <label>Credit on submission <span class="dp-prov">PROVISIONAL</span><input type="number" step="0.05" min="0" max="1" data-dpc="sub" value="${c.sub}"></label>
+      <label>Credit while approved with comments <span class="dp-prov">PROVISIONAL</span><input type="number" step="0.05" min="0" max="1" data-dpc="awc" value="${c.awc}"></label>
+      <label>Headline method <span class="dp-prov">PROVISIONAL</span><select data-dpc="method">${opt([["mult","Multiplication D × I × M"],["ceil","Coordination ceiling D × min(I, M)"]],c.method)}</select></label>
+      ${M_ST.map(([k,l])=>`<label>M when “${esc(l)}” <span class="dp-prov">PROVISIONAL</span><input type="number" step="0.05" min="0" max="1" data-dpc="m" data-k="${k}" value="${c.m[k]}"></label>`).join("")}
+      </div><p class="mut sm" style="margin:8px 0 0">Approved and Closed always earn 1.0; Not started, In progress and Work complete earn 0; N/A entries are excluded. Only interfaces whose Complete by stage is at or before the deliverable's stage are counted.</p></div>`;
+  }
+  function detailHtml(x,r){
+    const d=D(), A=S.assets, a=assetOf(x), L=levelNames(a);
+    const form=`<div class="dp-grid">
+      <label>Deliverable ID<input data-dpf="id" value="${esc(x.id)}" placeholder="free text"></label>
+      <label>Title<input data-dpf="title" value="${esc(x.title)}"></label>
+      <label>Discipline<select data-dpf="disc">${opt([""].concat(d.disc.includes(x.disc)||!x.disc?d.disc:d.disc.concat([x.disc])),x.disc)}</select></label>
+      <label>Asset<select data-dpf="aid">${opt([["","– choose –"]].concat(A.map(a=>[a.id,a.name])),x.aid)}</select></label>
+      <label>Assessed at stage<select data-dpf="stage">${opt([["",`Asset's current stage (${a?assetStage(a.id):S.stage})`]].concat(STAGES.map(s=>[s,s])),x.stage)}</select></label>
+      <label>Owner<input data-dpf="owner" value="${esc(x.owner)}"></label>
+      <label>Planned issue date<input type="date" data-dpf="due" value="${esc(x.due)}"></label>
+      <label>Weight<input type="number" min="0" step="0.5" data-dpf="w" value="${x.w}"></label>
+      <label>Document number<input data-dpf="docNo" value="${esc(x.docNo)}"></label>
+      <label>Revision<input data-dpf="rev" value="${esc(x.rev)}"></label>
+      <label>CDE suitability<select data-dpf="suit">${opt([["","– none –"]].concat(SUIT),x.suit)}</select></label>
+      <label>Model coordination<select data-dpf="m.st">${opt(M_ST,x.m.st)}</select></label>
+      <label>Coordination review reference<input data-dpf="m.ref" value="${esc(x.m.ref)}"></label>
+      <label>${x.m.st==="na"?"Reason coordination is not applicable":"Coordination note"}<input data-dpf="m.note" value="${esc(x.m.note)}"></label>
+    </div>
+    <div class="dp-f" style="margin-top:8px">Levels covered (none ticked = all levels of the asset)<div class="dp-lvls">${L.length?L.map(l=>`<label><input type="checkbox" data-dpl="${esc(l)}" ${x.lv.includes(l)?"checked":""}>${esc(l)}</label>`).join(""):"<span class='mut'>Choose an asset first.</span>"}</div></div>`;
+    const cfg=D().cfg;
+    const calcTxt=r.assessable?`Applicable entries   ${r.napp}  (excluded N/A: ${r.nna}; not yet due: ${r.notDue})
+Submitted            ${r.nsub} × ${f2(cfg.sub)}${r.nawc?`
+Approved w/ comments ${r.nawc} × ${f2(cfg.awc)}`:""}
+Approved / closed    ${r.nacc} × 1
+I   = ${f2(r.earned)} / ${r.napp} = ${pct(r.I)}
+D   = ${r.D}   ${r.D?"(document number and suitability recorded)":"(no document number or suitability yet)"}
+M   = ${f2(r.M)}   (${esc(M_N[x.m.st])})
+DEP = D × I × M = ${r.D} × ${f2(r.I)} × ${f2(r.M)} = ${pct(r.dep)}
+Ceiling D × min(I, M) = ${pct(r.ceil)}
+Weight ${nf(x.w)} → earned ${f2(x.w*r.dep)} of ${nf(x.w)}`:`Not assessable: no applicable interface entries${r.notDue?` (${r.notDue} linked entr${r.notDue===1?"y is":"ies are"} not due until a later stage)`:""}. D = ${r.D}, M = ${f2(r.M)}.`;
+    const tr=r.E.out.map(e=>`<tr class="${e.due&&e.cr!==null?"":"dp-x"}"><td class="id">${esc(e.r.id)}</td><td>${esc(e.r.text)}<div class="mut sm">${esc(e.r.comp)} · ${esc(e.r.owner)} · Complete by ${esc(e.r.cb)}</div></td><td>${esc(e.c.z.name)} · ${esc(e.c.l)}</td><td>${esc(ST[e.s]?ST[e.s].n:e.s)}${e.flag?` <span class="dp-chip" title="Open change flag">flag</span>`:""}</td><td class="n">${chip(e.s,e.cr,e.due)}</td><td class="sm">${!e.due?`Counted from ${esc(e.r.cb)}`:e.s==="NA"?`N/A: ${esc(e.naWhy)}`:(e.s==="SUB"||e.s==="AWC")&&!e.ev?"<span class='dp-ex'>no evidence record</span>":e.ev?"evidence recorded":""}</td></tr>`).join("");
+    const linked=x.links.map(id=>{const rr=BYID[id];return `<span class="dp-chip" style="margin:0 4px 4px 0">${esc(id)} <a href="#" data-dp="unlink" data-i="${esc(id)}" title="Remove this link" style="text-decoration:none">×</a></span>`}).join("");
+    const hist=D().log.filter(l=>l.uid===x.uid).slice(-6).reverse().map(l=>`<li>${esc(fmtDT(l.ts))} · ${esc(l.what)}${l.by?" · "+esc(l.by):""}</li>`).join("");
+    return `<div class="dp-card"><div class="dp-bar" style="margin:0 0 6px"><h3 style="margin:0">${esc(x.id||"New deliverable")} · ${esc(x.title||"untitled")}</h3><span class="sp"></span><button class="btn sm danger" data-dp="del">Delete deliverable</button></div>${form}
+      <h4>Linked interfaces (${x.links.length})</h4><div>${linked||"<span class='mut'>None yet.</span>"}</div>
+      <div class="dp-bar" style="margin-top:6px"><button class="btn sm" data-dp="pick">${UI.pick?"Close interface picker":"＋ Link interfaces"}</button></div>${UI.pick?pickHtml(x):""}
+      <h4>Calculation</h4><div class="dp-calc">${calcTxt}</div>
+      ${r.ex.length?`<h4>Exceptions</h4><ul class="dp-exl">${r.ex.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}
+      <h4>Calculation trace (${r.E.out.length} entr${r.E.out.length===1?"y":"ies"})</h4>${tr?`<table class="dp-t"><thead><tr><th>ID</th><th>Interface</th><th>Level</th><th>Status</th><th class="n">Credit</th><th>Note</th></tr></thead><tbody>${tr}</tbody></table>`:"<p class='mut'>No entries.</p>"}
+      ${hist?`<h4>History</h4><ul class="dp-exl mut">${hist}</ul>`:""}</div>`;
+  }
+  function pickRows(x){
+    const a=assetOf(x); if(!a)return []; const q=UI.q.trim().toLowerCase(), st=stageOf(x);
+    return BUILT_LIST.filter(c=>a.sel.includes(c)).flatMap(c=>REGS[c]).filter(r=>(!UI.due||sIdx(r.cb)<=sIdx(st))&&(!q||(r.id+" "+r.text+" "+r.owner+" "+r.group+" "+r.comp).toLowerCase().includes(q)));
+  }
+  function pickList(x){ const R=pickRows(x), sh=R.slice(0,150);
+    return `${sh.map(r=>`<label><input type="checkbox" data-dpk="${esc(r.id)}" ${x.links.includes(r.id)?"checked":""}><span><b>${esc(r.id)}</b> ${esc(r.text)}<br><span class="mut sm">${esc(r.comp)} › ${esc(r.group)} · ${esc(r.owner)} · Complete by ${esc(r.cb)}</span></span></label>`).join("")||"<p class='mut' style='padding:6px 8px'>No interfaces match.</p>"}${R.length>sh.length?`<p class="mut sm" style="padding:6px 8px">Showing 150 of ${R.length}. Narrow the search to see more.</p>`:""}`; }
+  function pickHtml(x){ const a=assetOf(x); if(!a)return `<p class="mut">Choose an asset first.</p>`;
+    return `<div class="dp-card" style="margin:6px 0 0;background:var(--n50)"><div class="dp-bar" style="margin:0"><input data-dp="q" placeholder="Search ID, text, owner or group" value="${esc(UI.q)}" style="flex:1;min-width:220px;font:inherit;padding:4px 8px;border:1px solid var(--n400);border-radius:5px"><label class="sm" style="display:flex;gap:4px;align-items:center"><input type="checkbox" data-dp="due" ${UI.due?"checked":""}>Only interfaces due by ${esc(stageOf(x))}</label></div><div class="dp-pick" id="dpPick">${pickList(x)}</div><p class="mut sm" style="margin:6px 0 0">Interfaces from the components set up on ${esc(a.name)}. Ticking links the interface on every level this deliverable covers.</p></div>`; }
+  function discHtml(rows,cfg){
+    const ds=[...new Set(rows.map(y=>y.x.disc||"(no discipline)"))];
+    const tr=ds.map(dn=>{const L=rows.filter(y=>(y.x.disc||"(no discipline)")===dn), u=rollup(L,cfg.method); const sub=L.reduce((n,y)=>n+y.r.nsub+y.r.nawc,0), acc=L.reduce((n,y)=>n+y.r.nacc,0), app=L.reduce((n,y)=>n+y.r.napp,0);
+      return `<tr><td>${esc(dn)}</td><td class="n">${L.length}</td><td class="n dp-pct">${pct(u.head)}</td><td class="n">${app}</td><td class="n">${sub}</td><td class="n">${acc}</td><td class="n">${u.nx||"–"}</td></tr>`}).join("");
+    return `<div class="dp-card"><h3>By discipline</h3><table class="dp-t"><thead><tr><th>Discipline</th><th class="n">Deliverables</th><th class="n">DEP</th><th class="n">Applicable entries</th><th class="n">Submitted</th><th class="n">Accepted</th><th class="n">Not assessable</th></tr></thead><tbody>${tr}</tbody></table></div>`;
+  }
+  function excHtml(rows){
+    const L=rows.filter(y=>y.r.ex.length);
+    return `<div class="dp-card"><h3>Exception queue</h3>${L.length?L.map(({x,r})=>`<div style="margin:0 0 8px"><a href="#" data-dp="sel" data-u="${x.uid}"><b>${esc(x.id||"(no ID)")}</b></a> <span class="mut">${esc(x.title)}</span><ul class="dp-exl">${r.ex.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`).join(""):"<p class='mut'>Nothing to review.</p>"}</div>`;
+  }
+  function exportCsv(){
+    const d=D(), H=["Project","Deliverable ID","Title","Discipline","Asset","Levels","Stage","Owner","Planned issue","Weight","Document number","Revision","Suitability","D","Applicable entries","Submitted","Approved with comments","Accepted","N/A excluded","Not yet due","I","Coordination status","M","DEP","DEP (ceiling)","Weighted earned","Linked interfaces","Exceptions","Method","Submission credit","Calculated"];
+    const now=new Date().toISOString(), out=[H.map(csvq).join(",")];
+    d.items.forEach(x=>{const r=calc(x), a=assetOf(x); out.push([S.project,x.id,x.title,x.disc,a?a.name:"",x.lv.join("; ")||"All",stageOf(x),x.owner,x.due,x.w,x.docNo,x.rev,x.suit,r.D,r.napp,r.nsub,r.nawc,r.nacc,r.nna,r.notDue,r.assessable?r.I.toFixed(4):"Not assessable",M_N[x.m.st],r.M,r.assessable?r.dep.toFixed(4):"Not assessable",r.assessable?r.ceil.toFixed(4):"",r.assessable?(x.w*r.dep).toFixed(4):"",x.links.join("; "),r.ex.join(" | "),d.cfg.method,d.cfg.sub,now].map(csvq).join(","))});
+    download(`${safe(S.project)}_design_earned_progress.csv`,"﻿"+out.join("\r\n"),"text/csv");
+  }
+
+  /* ---------- events ---------- */
+  function cur(){ return D().items.find(x=>x.uid===UI.sel) }
+  function onClick(e){
+    const t=e.target.closest("[data-dp]"); if(!t||!el().contains(t))return; const k=t.dataset.dp;
+    if(k==="q"||k==="due")return;
+    e.preventDefault(); const d=D();
+    if(k==="add"){ const a=S.assets[0]; const x={uid:uid(),id:"",title:"",disc:d.disc[0]||"",aid:a?a.id:"",lv:[],stage:"",owner:"",due:"",w:1,docNo:"",rev:"",suit:"",links:[],m:{st:"",ref:"",note:""}}; d.items.push(x); UI.sel=x.uid; UI.pick=false; logIt(x,"Deliverable added"); save(); render(); const i=el().querySelector('[data-dpf="id"]'); if(i)i.focus(); return }
+    if(k==="samples")return addSamples();
+    if(k==="csv")return exportCsv();
+    if(k==="cfg"){UI.cfg=!UI.cfg;return render()}
+    if(k==="sel"){ UI.sel=UI.sel===t.dataset.u&&t.tagName==="TR"?null:t.dataset.u; UI.pick=false; render(); const c=el().querySelector(".dp-card h3"); return }
+    const x=cur(); if(!x)return;
+    if(k==="del"){ if(!confirmDel(x))return; d.items=d.items.filter(y=>y!==x); logIt(x,"Deliverable deleted"); UI.sel=null; save(); return render() }
+    if(k==="pick"){UI.pick=!UI.pick;return render()}
+    if(k==="unlink"){ x.links=x.links.filter(i=>i!==t.dataset.i); logIt(x,`Unlinked ${t.dataset.i}`); save(); return render() }
+  }
+  /* deleting needs a second click within a few seconds (no browser dialogs in this app) */
+  let delArm=0;
+  function confirmDel(x){ const b=el().querySelector('[data-dp="del"]'); if(Date.now()-delArm<4000){delArm=0;return true} delArm=Date.now(); if(b)b.textContent="Click again to delete"; return false }
+  function onChange(e){
+    const t=e.target, d=D(); if(!el().contains(t))return;
+    if(t.dataset.dpc){ const k=t.dataset.dpc;
+      if(k==="disc")d.disc=t.value.split(",").map(s=>s.trim()).filter(Boolean).filter((v,i,A)=>A.indexOf(v)===i);
+      else if(k==="method")d.cfg.method=t.value==="ceil"?"ceil":"mult";
+      else if(k==="m")d.cfg.m[t.dataset.k]=clamp01(num(t.value,0));
+      else d.cfg[k]=clamp01(num(t.value,d.cfg[k]));
+      logIt(null,`Setting changed: ${k}${t.dataset.k?" "+t.dataset.k:""} = ${t.value}`); save(); return render() }
+    const x=cur(); if(!x)return;
+    if(t.dataset.dpf){ const f=t.dataset.dpf, v=t.value;
+      if(f.startsWith("m."))x.m[f.slice(2)]=v; else if(f==="w")x.w=Math.max(0,num(v,1)); else x[f]=v;
+      if(f==="aid"){x.lv=[];x.stage=""}
+      logIt(x,`${f} changed`); save(); return render() }
+    if(t.dataset.dpl!==undefined){ const l=t.dataset.dpl; x.lv=t.checked?[...new Set(x.lv.concat([l]))]:x.lv.filter(y=>y!==l); logIt(x,"Levels changed"); save(); return render() }
+    if(t.dataset.dpk){ const id=t.dataset.dpk; x.links=t.checked?[...new Set(x.links.concat([id]))]:x.links.filter(y=>y!==id); logIt(x,`${t.checked?"Linked":"Unlinked"} ${id}`); save();
+      const y=window.scrollY, sc=(document.getElementById("dpPick")||{}).scrollTop||0; render(); window.scrollTo(0,y); const p=document.getElementById("dpPick"); if(p)p.scrollTop=sc; return }
+    if(t.dataset.dp==="due"){ UI.due=t.checked; const p=document.getElementById("dpPick"); if(p)p.innerHTML=pickList(x); return }
+  }
+  function onInput(e){ const t=e.target; if(t.dataset.dp!=="q"||!el().contains(t))return; UI.q=t.value; const x=cur(), p=document.getElementById("dpPick"); if(x&&p)p.innerHTML=pickList(x) }
+  function onKey(e){ const t=e.target; if((e.key==="Enter"||e.key===" ")&&t.matches&&t.matches('#pg-dep tr.dp-row')){ e.preventDefault(); t.click() } }
+  function wire(){ const h=el(); if(!h||h.dataset.dpw)return; h.dataset.dpw="1"; h.addEventListener("click",onClick); h.addEventListener("change",onChange); h.addEventListener("input",onInput); h.addEventListener("keydown",onKey) }
+  function renderPage(){ wire(); render() }
+
+  window.DEP={core,credit,rollup,norm,calc,render:renderPage,exportCsv,addSamples,defaults:DEP_DEF_CFG};
+  try{norm()}catch(e){console.error("ENGAGE DEP: could not prepare deliverables",e)}
+  if(S.page==="dep")try{renderPage()}catch(e){console.error(e)}
 })();
 </script>
 

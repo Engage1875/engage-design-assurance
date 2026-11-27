@@ -20,7 +20,7 @@ async function chooseFile(page, file) {
 test('every page draws without errors', async () => {
   const app = await openApp();
   const ps = await pages(app.page);
-  assert.equal(ps.length, 11);
+  assert.equal(ps.length, 12);
   for (const p of ps) await goPage(app.page, p);
   assert.deepEqual(app.errors, []);
   await app.close();
