@@ -1,0 +1,93 @@
+# Read-only check of the live site's sign-in settings and email service. Changes nothing.
+name: Sign-in diagnose
+on:
+  push:
+    branches: [claude/project-thread-sm6mb1]
+    paths: [.github/workflows/signin-diagnose.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    env:
+      RG: rg-engage
+      SWA: engage-design-assurance
+      WHO: steve.harrison1875@gmail.com
+    steps:
+      - name: Sign in to Azure
+        env:
+          CREDS: ${{ secrets.AZURE_CREDENTIALS }}
+        run: |
+          python3 - <<'PY'
+          import json, os, shlex
+          raw = os.environ['CREDS']; c = json.loads(raw[raw.find('{'):raw.rfind('}')+1])
+          for k in ['clientId','clientSecret','tenantId','subscriptionId']:
+              print('::add-mask::' + c[k])
+              open(os.environ['RUNNER_TEMP'] + '/sp.env','a').write(f'{k.upper()}={shlex.quote(c[k])}\n')
+          PY
+          . "$RUNNER_TEMP/sp.env"; rm -f "$RUNNER_TEMP/sp.env"
+          az login --service-principal -u "$CLIENTID" -p "$CLIENTSECRET" --tenant "$TENANTID" -o none
+          az account set -s "$SUBSCRIPTIONID"
+      - name: Compare live and depmidp settings
+        run: |
+          az staticwebapp appsettings list -n "$SWA" -o json > live.json
+          az staticwebapp appsettings list -n "$SWA" --environment-name depmidp -o json > dev.json || echo '{}' > dev.json
+          az staticwebapp environment list -n "$SWA" --query "[].{name:name, host:hostname, status:status, updated:lastUpdatedOn}" -o table
+          python3 - <<'PY'
+          import json, re, hashlib
+          L = json.load(open('live.json')).get('properties', {}) or {}
+          D = json.load(open('dev.json')).get('properties', {}) or {}
+          for k in sorted(set(L) | set(D)):
+              lv, dv = L.get(k), D.get(k)
+              h = lambda v: hashlib.sha256(v.encode()).hexdigest()[:8] if v else '-'
+              print(f'{k:30} live={h(lv)} dev={h(dv)} same={lv == dv} livelen={len(lv or "")}')
+          def acct(v): m = re.search(r'AccountName=([^;]+)', v or ''); return m.group(1) if m else '?'
+          def ep(v): m = re.search(r'endpoint=([^;]+)', v or '', re.I); return m.group(1) if m else '?'
+          print('LIVE origin:', L.get('ENGAGE_ALLOWED_ORIGIN'))
+          print('LIVE storage account:', acct(L.get('ENGAGE_TABLES_CONNECTION')))
+          print('LIVE admins:', L.get('ADMIN_EMAILS'))
+          print('LIVE domains:', L.get('AUTH_ALLOWED_DOMAINS'))
+          print('LIVE sender:', L.get('ACS_EMAIL_SENDER'))
+          print('LIVE ACS endpoint:', ep(L.get('ACS_EMAIL_CONNECTION_STRING')))
+          print('DEV origin:', D.get('ENGAGE_ALLOWED_ORIGIN'), 'DEV storage:', acct(D.get('ENGAGE_TABLES_CONNECTION')))
+          open('acct.txt','w').write(acct(L.get('ENGAGE_TABLES_CONNECTION')))
+          PY
+      - name: Steve's code record and approval in live storage
+        run: |
+          a=$(cat acct.txt); k=$(az storage account keys list -g "$RG" -n "$a" --query "[0].value" -o tsv); echo "::add-mask::$k"
+          for t in engagecodes engageadmins engageapproved; do
+            echo "--- $t rows for $WHO"
+            az storage entity query --account-name "$a" --account-key "$k" -t "$t" --filter "RowKey eq '$WHO'" -o json 2>&1 | python3 -c "
+          import json,sys,datetime
+          s=sys.stdin.read()
+          try: d=json.loads(s)
+          except Exception: print(s[:500]); sys.exit()
+          for r in d.get('items',[]):
+            r.pop('h',None); r.pop('data',None) if False else None
+            print({k:v for k,v in r.items() if k not in ('h',)})
+          "
+          done
+          echo "--- row counts"; for t in engagecodes engageapproved engageadmins engageaudit engagerate; do
+            n=$(az storage entity query --account-name "$a" --account-key "$k" -t "$t" --select RowKey -o json 2>/dev/null | python3 -c "import json,sys; print(len(json.load(sys.stdin).get('items',[])))" 2>/dev/null); echo "$t: ${n:-?}"; done
+      - name: Email service
+        run: |
+          az resource list -g "$RG" --query "[?contains(type,'Communication')].{name:name,type:type,state:properties.provisioningState}" -o table
+          az communication email domain list --email-service-name acsmail-engage1875 -g "$RG" --query "[].{name:name, mgmt:domainManagement, verify:verificationStates, mail:mailFromSenderDomain}" -o json 2>&1 | head -60 || true
+          id=$(az resource show -g "$RG" -n acs-engage1875 --resource-type Microsoft.Communication/communicationServices --query id -o tsv)
+          az communication show -n acs-engage1875 -g "$RG" --query "{linked:linkedDomains, state:provisioningState}" -o json || true
+          az monitor metrics list-definitions --resource "$id" --query "[].name.value" -o tsv || true
+          for m in EmailSendMailOperationResult EmailDeliveryStatusUpdate EmailUserEngagement; do
+            echo "--- $m (last 3 days, hourly)"
+            az monitor metrics list --resource "$id" --metric "$m" --interval PT1H --offset 3d --aggregation Count --dimension "*" -o json 2>&1 | python3 -c "
+          import json,sys
+          s=sys.stdin.read()
+          try: d=json.loads(s)
+          except Exception: print(s[:800]); sys.exit()
+          for v in d.get('value',[]):
+            for ts in v.get('timeseries',[]):
+              md={x['name']['value']:x['value'] for x in ts.get('metadatavalues',[])}
+              pts=[(p['timeStamp'],p.get('count')) for p in ts.get('data',[]) if p.get('count')]
+              if pts: print(md, pts)
+          " || true
+          done
