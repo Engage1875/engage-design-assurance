@@ -1,5 +1,5 @@
 # Read-only check of the live site's sign-in settings and email service. Changes nothing.
-# run 2
+# run 3
 name: Sign-in diagnose
 on:
   push:
@@ -78,9 +78,10 @@ jobs:
           id=$(az resource show -g "$RG" -n acs-engage1875 --resource-type Microsoft.Communication/communicationServices --query id -o tsv)
           az communication show -n acs-engage1875 -g "$RG" --query "{linked:linkedDomains, state:provisioningState}" -o json || true
           az monitor metrics list-definitions --resource "$id" --query "[].name.value" -o tsv || true
-          for m in ApiRequests DeliveryStatusUpdate UserEngagement; do
+          for md in "ApiRequests:Operation StatusCode StatusCodeReason" "DeliveryStatusUpdate:MessageStatus Result SmtpStatusCode EnhancedSmtpStatusCode IsHardBounce" "UserEngagement:EngagementType"; do
+            m=${md%%:*}; dims=${md#*:}
             echo "--- $m (last 3 days, hourly)"
-            az monitor metrics list --resource "$id" --metric "$m" --interval PT5M --offset 2d --aggregation Count --dimension "*" -o json 2>&1 | python3 -c "
+            az monitor metrics list --resource "$id" --metric "$m" --interval PT5M --offset 2d --aggregation Count --dimension $dims -o json 2>&1 | python3 -c "
           import json,sys
           s=sys.stdin.read()
           try: d=json.loads(s)
